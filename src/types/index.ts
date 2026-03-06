@@ -9,14 +9,25 @@ export interface Location {
   mapsUrl?: string;
 }
 
+export interface Expense {
+  id: string;
+  amount: number;
+  description: string;
+  paidBy: string;
+  date: string; // ISO string
+  category?: string;
+}
+
 export interface DayPlan {
   id: string;
   dayNumber: number;
   title: string;
-  date?: string;
   locations: Location[];
 }
 
 export interface Itinerary {
+  id: string;
+  title: string;
   days: DayPlan[];
+  expenses?: Expense[];
 }

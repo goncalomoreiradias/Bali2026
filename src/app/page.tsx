@@ -7,6 +7,9 @@ import EditItinerarySheet from "@/components/EditItinerarySheet";
 import { List, Map as MapIcon, Loader2, Plus } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import AddLocationSheet from "@/components/AddLocationSheet";
+import AddExpenseSheet from "@/components/AddExpenseSheet";
+import FinanceSection from "@/components/FinanceSection";
+import Navigation from "@/components/Navigation";
 import dynamic from "next/dynamic";
 
 const MapSection = dynamic(() => import("@/components/MapSection"), {
@@ -21,11 +24,13 @@ export default function Home() {
   const [passwordInput, setPasswordInput] = useState("");
   const [itinerary, setItinerary] = useState<Itinerary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"itinerary" | "finance">("itinerary");
 
   // Edit State
   const [editingDay, setEditingDay] = useState<DayPlan | null>(null);
   const [selectedDayId, setSelectedDayId] = useState<string | null>(null);
   const [isAddLocationOpen, setIsAddLocationOpen] = useState(false);
+  const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
 
   useEffect(() => {
     // Check if previously authenticated in this session
@@ -142,64 +147,113 @@ export default function Home() {
       {/* Header */}
       <header className="sticky top-0 z-40 glass border-b border-black/5 dark:border-white/5 py-4 px-6 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div>
+          <div className="flex items-center gap-4">
             <h1 className="text-2xl font-bold font-outfit text-bali-dark dark:text-white">Bali 🌴</h1>
-            <p className="text-xs font-semibold text-bali-terra tracking-widest uppercase">15-Day Expedition</p>
+            <p className="hidden sm:block text-xs font-semibold text-bali-terra tracking-widest uppercase">15-Day Expedition</p>
+          </div>
+          {/* Desktop Navigation */}
+          <div className="hidden sm:block">
+            <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row lg:h-[calc(100vh-80px)] relative">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row relative">
 
-        {/* Map View - Normal flow on mobile, sticky to full height on Desktop */}
-        <div className="w-full h-[45vh] lg:h-full lg:w-1/2 p-4 lg:p-6 lg:sticky lg:top-[73px] z-30 lg:z-0 bg-bali-sand/80 lg:bg-transparent">
-          <MapSection days={itinerary.days} selectedDayId={selectedDayId} />
-        </div>
+        {/* --- MAP SECTION --- */}
+        {/* Render Map only when Itinerary is active */}
+        <div className={`w-full ${activeTab === 'itinerary' ? 'block' : 'hidden'} lg:block lg:w-1/2`}>
+          {/* Premium Fixed Map Layout: 35vh height, sticky on mobile with shadow */}
+          <div className="w-full h-[35vh] lg:h-[calc(100vh-80px)] p-0 lg:p-6 sticky top-[73px] z-30 lg:z-0 shadow-md lg:shadow-none bg-bali-sand/80 lg:bg-transparent">
+            <div className="h-full w-full lg:rounded-2xl overflow-hidden shadow-inner">
+              <MapSection days={itinerary.days} selectedDayId={selectedDayId} />
+            </div>
 
-        {/* Desktop Left / Mobile Bottom - Scrollable Itinerary List */}
-        <div className="w-full lg:w-1/2 p-4 lg:p-8 overflow-y-visible lg:h-full relative z-10 lg:pl-0">
-          {/* Day Filtering Controls */}
-          <div className="mb-6 flex overflow-x-auto pb-2 gap-2 hide-scrollbar">
-            <button
-              onClick={() => setSelectedDayId(null)}
-              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap shadow-sm ${selectedDayId === null
-                ? "bg-bali-ocean text-white"
-                : "bg-white/50 text-gray-600 hover:bg-white border border-gray-200"
-                }`}
-            >
-              All Days
-            </button>
-            {itinerary.days.map((day) => (
-              <button
-                key={`filter-${day.id}`}
-                onClick={() => setSelectedDayId(selectedDayId === day.id ? null : day.id)}
-                className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap shadow-sm ${selectedDayId === day.id
-                  ? "bg-bali-terra text-white"
-                  : "bg-white/50 text-gray-600 hover:bg-white border border-gray-200"
-                  }`}
-              >
-                Day {day.dayNumber}
-              </button>
-            ))}
-          </div>
-
-          <div className="space-y-6 max-w-2xl mx-auto">
-            {itinerary.days.map((day) => (
-              <div
-                key={day.id}
-                className={`transition-opacity duration-300 ${selectedDayId && selectedDayId !== day.id ? 'opacity-30' : 'opacity-100'}`}
-              >
-                <DayCard
-                  day={day}
-                  onEditDay={(d) => setEditingDay(d)}
-                  onToggleComplete={toggleComplete}
-                />
+            {/* Sticky Day Filters (Only on Mobile, right below the map) */}
+            <div className="lg:hidden absolute bottom-0 translate-y-full left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md px-4 py-3 border-b border-gray-200 dark:border-gray-800 shadow-sm z-40">
+              <div className="flex overflow-x-auto gap-2 hide-scrollbar">
+                <button
+                  onClick={() => setSelectedDayId(null)}
+                  className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-sm ${selectedDayId === null
+                    ? "bg-bali-ocean text-white"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 border border-transparent"
+                    }`}
+                >
+                  All Days
+                </button>
+                {itinerary.days.map((day) => (
+                  <button
+                    key={`filter-mob-${day.id}`}
+                    onClick={() => setSelectedDayId(selectedDayId === day.id ? null : day.id)}
+                    className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-sm ${selectedDayId === day.id
+                      ? "bg-bali-terra text-white"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 border border-transparent"
+                      }`}
+                  >
+                    Day {day.dayNumber}
+                  </button>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
 
+        {/* --- CONTENT SECTION --- */}
+        {/* Desktop Left / Mobile Bottom - Scrollable Area depending on active tab */}
+        <div className="w-full lg:w-1/2 p-4 lg:p-8 pt-16 lg:pt-8 overflow-y-visible lg:h-[calc(100vh-80px)] lg:overflow-y-auto relative z-10 lg:pl-0">
+
+          {activeTab === "itinerary" ? (
+            <>
+              {/* Desktop Day Filters (Hidden on Mobile) */}
+              <div className="hidden lg:flex mb-6 overflow-x-auto pb-2 gap-2 hide-scrollbar">
+                <button
+                  onClick={() => setSelectedDayId(null)}
+                  className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap shadow-sm ${selectedDayId === null
+                    ? "bg-bali-ocean text-white"
+                    : "bg-white/50 text-gray-600 hover:bg-white border border-gray-200"
+                    }`}
+                >
+                  All Days
+                </button>
+                {itinerary.days.map((day) => (
+                  <button
+                    key={`filter-desk-${day.id}`}
+                    onClick={() => setSelectedDayId(selectedDayId === day.id ? null : day.id)}
+                    className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap shadow-sm ${selectedDayId === day.id
+                      ? "bg-bali-terra text-white"
+                      : "bg-white/50 text-gray-600 hover:bg-white border border-gray-200"
+                      }`}
+                  >
+                    Day {day.dayNumber}
+                  </button>
+                ))}
+              </div>
+
+              {/* Day Cards */}
+              <AnimatePresence mode="popLayout">
+                {itinerary.days
+                  .filter((day) => (selectedDayId ? day.id === selectedDayId : true))
+                  .map((day) => (
+                    <DayCard
+                      key={day.id}
+                      day={day}
+                      onToggleComplete={toggleComplete}
+                      onEditDay={setEditingDay}
+                    />
+                  ))}
+              </AnimatePresence>
+            </>
+          ) : (
+            /* Finance Dashboard View */
+            <div className="pt-2 lg:pt-0">
+              <FinanceSection
+                itinerary={itinerary}
+                onSave={saveItinerary}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Editing Drawer */}
@@ -226,13 +280,38 @@ export default function Home() {
         }}
       />
 
-      {/* FAB - Floating Action Button for Adding Data */}
-      <button
-        onClick={() => setIsAddLocationOpen(true)}
-        className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-[50] w-16 h-16 bg-bali-terra text-white rounded-full shadow-2xl hover:shadow-[0_10px_40px_rgba(224,122,95,0.6)] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-      >
-        <Plus size={32} />
-      </button>
+      {/* Add Finance Sheet */}
+      <AddExpenseSheet
+        isOpen={isAddExpenseOpen}
+        onClose={() => setIsAddExpenseOpen(false)}
+        onAdd={(expense) => {
+          if (!itinerary) return;
+          const currentExpenses = itinerary.expenses || [];
+          saveItinerary({ ...itinerary, expenses: [...currentExpenses, expense] });
+        }}
+      />
+
+      {/* FAB - Dynamically changes based on Active Tab */}
+      {activeTab === "itinerary" ? (
+        <button
+          onClick={() => setIsAddLocationOpen(true)}
+          className="fixed bottom-24 sm:bottom-6 right-6 lg:bottom-10 lg:right-10 z-[50] w-14 h-14 sm:w-16 sm:h-16 bg-bali-terra text-white rounded-full shadow-2xl hover:shadow-[0_8px_30px_rgba(224,122,95,0.6)] flex items-center justify-center transition-all hover:scale-105 active:scale-95 border-2 border-white/20"
+        >
+          <Plus size={28} />
+        </button>
+      ) : (
+        <button
+          onClick={() => setIsAddExpenseOpen(true)}
+          className="fixed bottom-24 sm:bottom-6 right-6 lg:bottom-10 lg:right-10 z-[50] w-14 h-14 sm:w-16 sm:h-16 bg-bali-ocean text-white rounded-full shadow-2xl hover:shadow-[0_8px_30px_rgba(43,158,179,0.6)] flex items-center justify-center transition-all hover:scale-105 active:scale-95 border-2 border-white/20"
+        >
+          <Plus size={28} />
+        </button>
+      )}
+
+      {/* Mobile Bottom Navigation */}
+      <div className="sm:hidden">
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      </div>
     </main>
   );
 }
