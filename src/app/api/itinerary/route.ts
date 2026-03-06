@@ -1,28 +1,36 @@
 import { NextResponse } from 'next/server';
-import { kv } from '@vercel/kv';
-import initialData from '@/data/initialItinerary.json';
+import { PrismaClient } from '@prisma/client';
 
-const KV_ITINERARY_KEY = 'bali_itinerary_2026';
+const prisma = new PrismaClient();
 
+// In a real app, this ID would come from a URL parameter (e.g. /api/itinerary/[tripId])
+// For the scope of this migration, we'll fetch the first trip found (our seeded Bali trip)
 export async function GET() {
   try {
-    // Attempt to fetch from KV Database
-    let itinerary = await kv.get(KV_ITINERARY_KEY);
+    const trip = await prisma.trip.findFirst({
+      include: {
+        days: {
+          include: {
+            locations: {
+              orderBy: { createdAt: 'asc' }
+            }
+          },
+          orderBy: { dayNumber: 'asc' }
+        },
+        expenses: {
+          orderBy: { createdAt: 'asc' }
+        }
+      }
+    });
 
-    // If database is empty (first run), seed it with our JSON
-    if (!itinerary) {
-      console.log("No data found in KV Database. Seeding with initialItinerary.json...");
-      await kv.set(KV_ITINERARY_KEY, initialData);
-      itinerary = initialData;
+    if (!trip) {
+      return NextResponse.json({ error: "No Trips found in database." }, { status: 404 });
     }
 
-    return NextResponse.json(itinerary);
+    return NextResponse.json(trip);
   } catch (error) {
-    console.error('Error reading from KV Database:', error);
-    
-    // Fallback securely to initial data if KV fails (e.g. env vars not set locally yet)
-    console.warn("Falling back to local initialItinerary.json. Ensure KV_REST_API_URL and KV_REST_API_TOKEN are set.");
-    return NextResponse.json(initialData);
+    console.error('Error reading from Prisma Database:', error);
+    return NextResponse.json({ error: "Database Connection Error" }, { status: 500 });
   }
 }
 
@@ -30,12 +38,60 @@ export async function POST(request: Request) {
   try {
     const newItinerary = await request.json();
 
-    // Save directly to KV Database
-    await kv.set(KV_ITINERARY_KEY, newItinerary);
+    // 1. We must handle the relational updates. Since the frontend sends the "entire" updated itinerary object
+    // replacing the entire nested structure is simplest via delete & create (or a massive nested upsert).
+    // For simplicity in this demo, we can just delete the old arrays and create the new ones, or use Prisma nested writes.
 
-    return NextResponse.json({ success: true, message: 'Itinerary saved to Vercel KV successfully' });
+    // A robust way to "replace" the days/locations/expenses for a specific trip:
+    const tripId = newItinerary.id;
+
+    // We do this in a transaction to ensure no data loss
+    await prisma.$transaction(async (tx) => {
+      // Delete old relations
+      await tx.dayPlan.deleteMany({ where: { tripId } });
+      await tx.expense.deleteMany({ where: { tripId } });
+
+      // Insert new relations
+      await tx.trip.update({
+        where: { id: tripId },
+        data: {
+          title: newItinerary.title,
+          days: {
+            create: newItinerary.days.map((day: any) => ({
+              id: day.id,
+              dayNumber: day.dayNumber,
+              title: day.title,
+              locations: {
+                create: day.locations.map((loc: any) => ({
+                  id: loc.id,
+                  name: loc.name,
+                  description: loc.description || null,
+                  lat: loc.lat,
+                  lng: loc.lng,
+                  completed: loc.completed || false,
+                  tag: loc.tag || null,
+                  mapsUrl: loc.mapsUrl || null,
+                })),
+              },
+            })),
+          },
+          expenses: {
+            create: (newItinerary.expenses || []).map((exp: any) => ({
+              id: exp.id,
+              amount: exp.amount,
+              description: exp.description,
+              paidBy: exp.paidBy,
+              date: new Date(exp.date),
+              category: exp.category || null,
+            })),
+          },
+        },
+      });
+    });
+
+    return NextResponse.json({ success: true, message: 'Itinerary saved to Postgres successfully' });
   } catch (error) {
-    console.error('Error writing to KV Database:', error);
+    console.error('Error writing to Prisma Database:', error);
     return NextResponse.json({ error: 'Failed to save itinerary' }, { status: 500 });
   }
 }
