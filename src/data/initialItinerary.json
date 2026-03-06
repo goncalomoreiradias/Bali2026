@@ -1,0 +1,170 @@
+{
+  "days": [
+    {
+      "id": "day-1",
+      "dayNumber": 1,
+      "title": "UBUD (Centro Cultural de Bali)",
+      "locations": [
+        { "id": "loc-1-1", "name": "Palácio de Ubud", "description": "Residência oficial; entrada gratuita", "lat": -8.5069, "lng": 115.2625 },
+        { "id": "loc-1-2", "name": "Mercado de Arte de Ubud", "description": "Em frente ao Palácio", "lat": -8.5074, "lng": 115.2627 },
+        { "id": "loc-1-3", "name": "Taman Saraswati", "description": "Templo da água (entrada paga +/- 2€)", "lat": -8.5065, "lng": 115.2612 },
+        { "id": "loc-1-4", "name": "Campos de Arroz de Kajeng", "description": "Almoço no Warung Sweet Orange", "lat": -8.4981, "lng": 115.2599 },
+        { "id": "loc-1-5", "name": "Jalan Gootama", "description": "Caminhar pela rua", "lat": -8.5097, "lng": 115.2646 },
+        { "id": "loc-1-6", "name": "Sun Sun Warung", "description": "Jantar (necessário reserva por Whatsapp)", "lat": -8.5098, "lng": 115.2687 }
+      ]
+    },
+    {
+      "id": "day-2",
+      "dayNumber": 2,
+      "title": "UBUD (Natureza e Arrozais)",
+      "locations": [
+        { "id": "loc-2-1", "name": "Campuhan Ridge Walk", "description": "Ao amanhecer é o melhor", "lat": -8.5036, "lng": 115.2536 },
+        { "id": "loc-2-2", "name": "Sacred Monkey Forest Sanctuary", "description": "Floresta dos Macacos; entrada paga, cuidado com os macacos", "lat": -8.5186, "lng": 115.2591 },
+        { "id": "loc-2-3", "name": "Campos de Arroz de Tegallalang", "description": "Entrada paga para o Balanço de Bali; almoço num Warung com vista", "lat": -8.4344, "lng": 115.2792 },
+        { "id": "loc-2-4", "name": "Pura Gunung Kawi", "description": "Templo antigo", "lat": -8.4239, "lng": 115.3113 },
+        { "id": "loc-2-5", "name": "Tirta Empul", "description": "Templo da água sagrada para o ritual de purificação; entrada paga", "lat": -8.4149, "lng": 115.3159 }
+      ]
+    },
+    {
+      "id": "day-3",
+      "dayNumber": 3,
+      "title": "Cataratas perto de UBUD",
+      "locations": [
+        { "id": "loc-3-1", "name": "Tegenungan Waterfall", "description": "Cascata popular", "lat": -8.5755, "lng": 115.2897 },
+        { "id": "loc-3-2", "name": "Tibumana Waterfall", "description": "Cascata relaxante", "lat": -8.4682, "lng": 115.3341 },
+        { "id": "loc-3-3", "name": "Kanto Lampo Waterfall", "description": "Cascata fotogénica", "lat": -8.5323, "lng": 115.3312 },
+        { "id": "loc-3-4", "name": "Goa Gajah", "description": "Caverna do Elefante", "lat": -8.5234, "lng": 115.2862 }
+      ]
+    },
+    {
+      "id": "day-4",
+      "dayNumber": 4,
+      "title": "Excursão Este (Portões do Céu e Templos)",
+      "locations": [
+        { "id": "loc-4-1", "name": "Pura Lempuyang Luhur", "description": "Portões do céu (entrada paga, inclui foto)", "lat": -8.3916, "lng": 115.6293 },
+        { "id": "loc-4-2", "name": "Tirtagangga", "description": "Palácio da Água (entrada paga)", "lat": -8.4116, "lng": 115.5878 },
+        { "id": "loc-4-3", "name": "Pura Besakih", "description": "Templo Mãe (entrada paga)", "lat": -8.3743, "lng": 115.4502 },
+        { "id": "loc-4-4", "name": "Amed / Sidemen", "description": "Sugestão extra: Japanese Shipwreck, Coral Garden e a aldeia de Sidemen", "lat": -8.3323, "lng": 115.6565 }
+      ]
+    },
+    {
+      "id": "day-5",
+      "dayNumber": 5,
+      "title": "UBUD para MUNDUK",
+      "locations": [
+        { "id": "loc-5-1", "name": "Cascata Leke Leke", "description": "Entrada paga", "lat": -8.3585, "lng": 115.1950 },
+        { "id": "loc-5-2", "name": "Cascata Nung Nung", "description": "+500 degraus, entrada paga", "lat": -8.3283, "lng": 115.2289 },
+        { "id": "loc-5-3", "name": "Pura Ulun Danu Beratan", "description": "Templo no lago Bratan; entrada paga", "lat": -8.2754, "lng": 115.1663 },
+        { "id": "loc-5-4", "name": "Portão de Bali Handara", "description": "Paragem de foto", "lat": -8.2638, "lng": 115.1583 },
+        { "id": "loc-5-5", "name": "Twin Lakes Viewpoint", "description": "Miradouro dos Lagos Gémeos", "lat": -8.2444, "lng": 115.1011 },
+        { "id": "loc-5-6", "name": "Munduk", "description": "Dormir em Munduk", "lat": -8.2612, "lng": 115.0601 }
+      ]
+    },
+    {
+      "id": "day-6",
+      "dayNumber": 6,
+      "title": "MUNDUK e Tanah Lot",
+      "locations": [
+        { "id": "loc-6-1", "name": "Banyumala Twin Waterfalls", "description": "Cascatas gémeas", "lat": -8.2325, "lng": 115.1226 },
+        { "id": "loc-6-2", "name": "Munduk Waterfall", "description": "Red Coral Waterfall", "lat": -8.2613, "lng": 115.0673 },
+        { "id": "loc-6-3", "name": "Campos de Arroz de Jatiluwih", "description": "Património da UNESCO; entrada paga", "lat": -8.3697, "lng": 115.1325 },
+        { "id": "loc-6-4", "name": "Templo Tanah Lot", "description": "Pôr do sol; entrada paga", "lat": -8.6212, "lng": 115.0868 }
+      ]
+    },
+    {
+      "id": "day-7",
+      "dayNumber": 7,
+      "title": "MUNDUK para SANUR e NUSA LEMBONGAN",
+      "locations": [
+        { "id": "loc-7-1", "name": "Sanur Harbor", "description": "Barco no Sanur Harbor (compra de bilhete online ou no porto)", "lat": -8.6738, "lng": 115.2638 },
+        { "id": "loc-7-2", "name": "Nusa Lembongan", "description": "Dormir na Nusa Lembongan", "lat": -8.6780, "lng": 115.4497 },
+        { "id": "loc-7-3", "name": "Jungutbatu", "description": "Almoço na praia principal", "lat": -8.6678, "lng": 115.4452 },
+        { "id": "loc-7-4", "name": "Dream Beach", "description": "Praia de sonho", "lat": -8.6942, "lng": 115.4326 },
+        { "id": "loc-7-5", "name": "Devil's Tears", "description": "Formações rochosas", "lat": -8.6938, "lng": 115.4297 },
+        { "id": "loc-7-6", "name": "Panorama Point", "description": "Miradouro", "lat": -8.6757, "lng": 115.4485 }
+      ]
+    },
+    {
+      "id": "day-8",
+      "dayNumber": 8,
+      "title": "NUSA LEMBONGAN",
+      "locations": [
+        { "id": "loc-8-1", "name": "Mangrove Forest", "description": "Floresta de mangues para snorkling", "lat": -8.6601, "lng": 115.4646 },
+        { "id": "loc-8-2", "name": "Mushroom Bay", "description": "Relaxar em Mushroom Bay", "lat": -8.6826, "lng": 115.4372 }
+      ]
+    },
+    {
+      "id": "day-9",
+      "dayNumber": 9,
+      "title": "NUSA LEMBONGAN para NUSA CENINGAN",
+      "locations": [
+        { "id": "loc-9-1", "name": "Yellow Bridge", "description": "Atravessar a pé, bike ou mota", "lat": -8.6937, "lng": 115.4526 },
+        { "id": "loc-9-2", "name": "Song Tepo Beach", "description": "Praia Ceningan", "lat": -8.7001, "lng": 115.4542 },
+        { "id": "loc-9-3", "name": "Blue Lagoon", "description": "Apenas vista", "lat": -8.7088, "lng": 115.4447 },
+        { "id": "loc-9-4", "name": "Secret Point Beach", "description": "Saltos para o mar", "lat": -8.7075, "lng": 115.4431 },
+        { "id": "loc-9-5", "name": "Secret Beach", "description": "Praia secreta", "lat": -8.7107, "lng": 115.4516 },
+        { "id": "loc-9-6", "name": "Viagem para Nusa Penida", "description": "No final do dia (de barco)", "lat": -8.6751, "lng": 115.5350 }
+      ]
+    },
+    {
+      "id": "day-10",
+      "dayNumber": 10,
+      "title": "NUSA PENIDA",
+      "locations": [
+        { "id": "loc-10-1", "name": "Pura Giri Putri", "description": "Templo na caverna (entrada paga)", "lat": -8.7061, "lng": 115.5891 },
+        { "id": "loc-10-2", "name": "Thousand Islands Viewpoint", "description": "Miradouro das 1000 ilhas", "lat": -8.7909, "lng": 115.6176 },
+        { "id": "loc-10-3", "name": "Diamond Beach", "description": "Praia famosa (entrada paga)", "lat": -8.7925, "lng": 115.6186 },
+        { "id": "loc-10-4", "name": "Atuh Beach", "description": "Acesso próximo a Diamond View", "lat": -8.7891, "lng": 115.6208 },
+        { "id": "loc-10-5", "name": "Kelingking Beach", "description": "Praia T-Rex", "lat": -8.7508, "lng": 115.4746 },
+        { "id": "loc-10-6", "name": "Angel's Billabong", "description": "Piscina natural rochosa", "lat": -8.7303, "lng": 115.4485 },
+        { "id": "loc-10-7", "name": "Broken Beach", "description": "Formação rochosa espetacular em arco", "lat": -8.7317, "lng": 115.4468 },
+        { "id": "loc-10-8", "name": "Crystal Bay", "description": "Pôr do sol", "lat": -8.7145, "lng": 115.4589 }
+      ]
+    },
+    {
+      "id": "day-11",
+      "dayNumber": 11,
+      "title": "NUSA PENIDA para GILI TRAWANGAN",
+      "locations": [
+        { "id": "loc-11-1", "name": "Buyuk Harbor", "description": "Porto em Nusa Penida; almoço nos arredores", "lat": -8.6751, "lng": 115.5350 },
+        { "id": "loc-11-2", "name": "Praia das Tartarugas (Gili T)", "description": "Mergulho (marginal norte)", "lat": -8.3444, "lng": 116.0351 },
+        { "id": "loc-11-3", "name": "Party Island Bares", "description": "Pôr do sol nos bares de praia", "lat": -8.3512, "lng": 116.0378 }
+      ]
+    },
+    {
+      "id": "day-12",
+      "dayNumber": 12,
+      "title": "GILI TRAWANGAN",
+      "locations": [
+        { "id": "loc-12-1", "name": "Gili Trawangan Island", "description": "Alugar bike e percorrer a ilha", "lat": -8.3508, "lng": 116.0331 },
+        { "id": "loc-12-2", "name": "The Nest (Escultura Subaquática)", "description": "Passeio de barco para ver corais (Gili Meno)", "lat": -8.3518, "lng": 116.0506 },
+        { "id": "loc-12-3", "name": "Sunset Beach", "description": "Pôr do sol", "lat": -8.3534, "lng": 116.0264 }
+      ]
+    },
+    {
+      "id": "day-13",
+      "dayNumber": 13,
+      "title": "GILI TRAWANGAN para GILI AIR",
+      "locations": [
+        { "id": "loc-13-1", "name": "Gili Air (Norte/Oeste)", "description": "Barco +/- 30 min. Alugar bike para praias", "lat": -8.3541, "lng": 116.0827 },
+        { "id": "loc-13-2", "name": "Gili Air (Leste)", "description": "Snorkling no lado leste", "lat": -8.3615, "lng": 116.0872 }
+      ]
+    },
+    {
+      "id": "day-14",
+      "dayNumber": 14,
+      "title": "GILI AIR",
+      "locations": [
+        { "id": "loc-14-1", "name": "Gili Air Island", "description": "Relaxar na ilha", "lat": -8.3571, "lng": 116.0827 }
+      ]
+    },
+    {
+      "id": "day-15",
+      "dayNumber": 15,
+      "title": "GILI AIR para BALI",
+      "locations": [
+        { "id": "loc-15-1", "name": "Regresso a Bali", "description": "Barco de regresso (+/- 3h)", "lat": -8.6738, "lng": 115.2638 }
+      ]
+    }
+  ]
+}
