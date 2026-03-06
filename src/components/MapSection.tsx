@@ -6,14 +6,29 @@ import "leaflet/dist/leaflet.css";
 import { DayPlan } from "@/types";
 
 // Dynamically import react-leaflet components to avoid SSR issues
-const MapContainer = dynamic(() => import("react-leaflet").then(mod => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then(mod => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then(mod => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import("react-leaflet").then(mod => mod.Popup), { ssr: false });
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 
 interface MapSectionProps {
     days: DayPlan[];
     selectedDayId?: string | null;
+}
+
+// Inner component to handle automatic map bounds fitting
+function MapBounds({ locations, L }: { locations: any[], L: any }) { // Changed Location[] to any[] for flexibility, assuming it has lat/lng
+    const map = useMap();
+
+    useEffect(() => {
+        if (locations.length > 0 && L && map) {
+            try {
+                const bounds = L.latLngBounds(locations.map(loc => [loc.lat, loc.lng]));
+                map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+            } catch (e) {
+                console.error("Error fitting bounds", e);
+            }
+        }
+    }, [locations, map, L]);
+
+    return null;
 }
 
 export default function MapSection({ days, selectedDayId }: MapSectionProps) {
@@ -60,6 +75,7 @@ export default function MapSection({ days, selectedDayId }: MapSectionProps) {
                 style={{ height: "100%", width: "100%", zIndex: 1 }}
                 zoomControl={false}
             >
+                <MapBounds locations={locationsToRender} L={L} />
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
@@ -71,7 +87,7 @@ export default function MapSection({ days, selectedDayId }: MapSectionProps) {
                                 <h4 className="font-bold text-[--color-bali-ocean] m-0 mb-1">{loc.name}</h4>
                                 <p className="text-xs text-gray-600 m-0">{loc.description}</p>
                                 <a
-                                    href={`https://maps.google.com/?q=${loc.lat},${loc.lng}`}
+                                    href={loc.mapsUrl || `https://maps.google.com/?q=${encodeURIComponent(loc.name + " Bali")}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="mt-2 inline-block text-xs font-semibold text-[--color-bali-terra] hover:underline"
