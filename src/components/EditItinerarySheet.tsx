@@ -59,7 +59,7 @@ export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: Edi
                     className="bg-white dark:bg-gray-900 w-full max-w-lg max-h-[90vh] sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
                 >
                     {/* Header */}
-                    <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-[--color-bali-sage] to-[--color-bali-ocean] text-white">
+                    <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-bali-sage to-bali-ocean text-white">
                         <h2 className="text-xl font-bold">Edit Day {day.dayNumber}</h2>
                         <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition">
                             <X size={20} />
@@ -76,7 +76,7 @@ export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: Edi
                                 type="text"
                                 value={editedDay.title}
                                 onChange={(e) => setEditedDay({ ...editedDay, title: e.target.value })}
-                                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-[--color-bali-sage] outline-none transition"
+                                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-bali-sage outline-none transition"
                             />
                         </div>
 
@@ -85,7 +85,7 @@ export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: Edi
                                 <h3 className="font-semibold text-gray-800 dark:text-gray-200">Locations ({locations.length})</h3>
                                 <button
                                     onClick={addLocation}
-                                    className="text-sm font-medium text-[--color-bali-sage] flex items-center gap-1 hover:text-[--color-bali-ocean] transition"
+                                    className="text-sm font-medium text-bali-sage flex items-center gap-1 hover:text-bali-ocean transition"
                                 >
                                     <Plus size={16} /> Add Stop
                                 </button>
@@ -106,18 +106,40 @@ export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: Edi
                                                 <GripVertical size={16} />
                                             </div>
                                             <div className="flex-1 space-y-3">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Location Name"
-                                                    value={loc.name}
-                                                    onChange={(e) => handleLocationChange(loc.id, "name", e.target.value)}
-                                                    className="w-full bg-white dark:bg-gray-900 px-3 py-2 rounded-lg border-none focus:ring-1 focus:ring-gray-300 outline-none shadow-sm font-medium"
-                                                />
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Location Name"
+                                                        value={loc.name}
+                                                        onChange={(e) => handleLocationChange(loc.id, "name", e.target.value)}
+                                                        className="flex-1 bg-white dark:bg-gray-900 px-3 py-2 rounded-lg border-none focus:ring-1 focus:ring-gray-300 outline-none shadow-sm font-medium"
+                                                    />
+                                                    <select
+                                                        value={loc.tag || ""}
+                                                        onChange={(e) => handleLocationChange(loc.id, "tag", e.target.value)}
+                                                        className="bg-white dark:bg-gray-900 px-3 py-2 rounded-lg border-none focus:ring-1 focus:ring-gray-300 outline-none shadow-sm text-sm"
+                                                    >
+                                                        <option value="">No Tag</option>
+                                                        <option value="Must Go">Must Go</option>
+                                                        <option value="Opcional">Opcional</option>
+                                                        <option value="Food">Food</option>
+                                                        <option value="Photo Op">Photo Op</option>
+                                                    </select>
+                                                </div>
+
                                                 <input
                                                     type="text"
                                                     placeholder="Description (Optional)"
                                                     value={loc.description || ""}
                                                     onChange={(e) => handleLocationChange(loc.id, "description", e.target.value)}
+                                                    className="w-full bg-white dark:bg-gray-900 px-3 py-2 rounded-lg border-none focus:ring-1 focus:ring-gray-300 outline-none shadow-sm text-sm"
+                                                />
+
+                                                <input
+                                                    type="text"
+                                                    placeholder="Specific Maps URL (Optional)"
+                                                    value={loc.mapsUrl || ""}
+                                                    onChange={(e) => handleLocationChange(loc.id, "mapsUrl", e.target.value)}
                                                     className="w-full bg-white dark:bg-gray-900 px-3 py-2 rounded-lg border-none focus:ring-1 focus:ring-gray-300 outline-none shadow-sm text-sm"
                                                 />
 
@@ -153,7 +175,7 @@ export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: Edi
                     <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
                         <button
                             onClick={handleSave}
-                            className="w-full py-4 bg-[--color-bali-sage] hover:bg-[--color-bali-ocean] text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
+                            className="w-full py-4 bg-bali-sage hover:bg-bali-ocean text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
                         >
                             <Save size={20} />
                             Save Changes

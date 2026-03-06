@@ -1,40 +1,41 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { kv } from '@vercel/kv';
+import initialData from '@/data/initialItinerary.json';
 
-// Define the file path for our persistent data
-const dataFilePath = path.join(process.cwd(), 'src/data/customItinerary.json');
-const initialDataFilePath = path.join(process.cwd(), 'src/data/initialItinerary.json');
+const KV_ITINERARY_KEY = 'bali_itinerary_2026';
 
 export async function GET() {
-    try {
-        let data;
-        try {
-            // Try to read custom data first
-            const fileContents = await fs.readFile(dataFilePath, 'utf8');
-            data = JSON.parse(fileContents);
-            if (Object.keys(data).length === 0) throw new Error("Empty custom data");
-        } catch {
-            // Fallback to initial seed data
-            const initialContents = await fs.readFile(initialDataFilePath, 'utf8');
-            data = JSON.parse(initialContents);
-            // Initialize the custom file
-            await fs.writeFile(dataFilePath, initialContents, 'utf8');
-        }
-        return NextResponse.json(data);
-    } catch (error) {
-        console.error('Error reading itinerary:', error);
-        return NextResponse.json({ error: 'Failed to read itinerary' }, { status: 500 });
+  try {
+    // Attempt to fetch from KV Database
+    let itinerary = await kv.get(KV_ITINERARY_KEY);
+
+    // If database is empty (first run), seed it with our JSON
+    if (!itinerary) {
+      console.log("No data found in KV Database. Seeding with initialItinerary.json...");
+      await kv.set(KV_ITINERARY_KEY, initialData);
+      itinerary = initialData;
     }
+
+    return NextResponse.json(itinerary);
+  } catch (error) {
+    console.error('Error reading from KV Database:', error);
+    
+    // Fallback securely to initial data if KV fails (e.g. env vars not set locally yet)
+    console.warn("Falling back to local initialItinerary.json. Ensure KV_REST_API_URL and KV_REST_API_TOKEN are set.");
+    return NextResponse.json(initialData);
+  }
 }
 
-export async function PUT(request: Request) {
-    try {
-        const data = await request.json();
-        await fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), 'utf8');
-        return NextResponse.json({ success: true, message: 'Itinerary saved successfully.' });
-    } catch (error) {
-        console.error('Error saving itinerary:', error);
-        return NextResponse.json({ error: 'Failed to save itinerary' }, { status: 500 });
-    }
+export async function POST(request: Request) {
+  try {
+    const newItinerary = await request.json();
+
+    // Save directly to KV Database
+    await kv.set(KV_ITINERARY_KEY, newItinerary);
+
+    return NextResponse.json({ success: true, message: 'Itinerary saved to Vercel KV successfully' });
+  } catch (error) {
+    console.error('Error writing to KV Database:', error);
+    return NextResponse.json({ error: 'Failed to save itinerary' }, { status: 500 });
+  }
 }

@@ -28,43 +28,49 @@ export default function DayCard({ day, onEditDay, onToggleComplete }: DayCardPro
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
-            className="glass-card mb-6 overflow-hidden relative"
+            className="glass-card mb-8 overflow-hidden relative shadow-xl hover:shadow-2xl transition-shadow border border-white/40 dark:border-white/10"
         >
-            <div className="bg-gradient-to-r from-[--color-bali-sage] to-[--color-bali-ocean] p-4 text-white flex justify-between items-center">
+            <div className="bg-gradient-to-r from-bali-sage to-bali-ocean p-5 text-white flex justify-between items-center z-10 relative">
                 <div>
-                    <h2 className="text-xl font-bold font-inter tracking-tight">
+                    <h2 className="text-2xl font-bold font-inter tracking-tight flex items-center gap-2">
                         Day {day.dayNumber}
                     </h2>
-                    <p className="text-sm opacity-90 font-medium">{day.title}</p>
+                    <p className="text-sm opacity-90 font-medium mt-1">{day.title}</p>
                 </div>
                 <button
-                    onClick={() => onEditDay(day)}
-                    className="p-2 rounded-full hover:bg-white/20 transition-colors"
+                    onClick={(e) => { e.stopPropagation(); onEditDay(day); }}
+                    className="p-3 rounded-full hover:bg-white/20 transition-colors backdrop-blur-md bg-white/10"
                     aria-label="Edit Day"
                 >
                     <Edit2 size={18} />
                 </button>
             </div>
 
-            <div className="p-4 space-y-4">
+            <div className="p-5 space-y-6 relative z-10">
                 {day.locations.map((loc, index) => (
                     <motion.div
                         key={loc.id}
                         variants={itemVariants}
-                        className="flex items-start gap-4 p-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
+                        onClick={() => onEditDay(day)}
+                        className="flex items-start gap-4 p-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors group cursor-pointer border border-transparent hover:border-black/5 dark:hover:border-white/10"
                     >
                         <button
-                            onClick={() => onToggleComplete(day.id, loc.id)}
-                            className={`mt-1 flex-shrink-0 transition-colors ${loc.completed ? 'text-[--color-bali-sage]' : 'text-gray-400 hover:text-[--color-bali-terra]'}`}
+                            onClick={(e) => { e.stopPropagation(); onToggleComplete(day.id, loc.id); }}
+                            className={`mt-1 flex-shrink-0 transition-colors z-20 relative bg-white dark:bg-gray-900 rounded-full pb-0.5 ${loc.completed ? 'text-bali-sage' : 'text-gray-300 hover:text-bali-terra'}`}
                         >
-                            <CheckCircle size={20} />
+                            <CheckCircle size={24} className="bg-white dark:bg-gray-900 rounded-full" />
                         </button>
 
                         <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                                <h3 className={`font-semibold ${loc.completed ? 'text-gray-500 line-through' : 'text-foreground'}`}>
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <h3 className={`font-semibold text-lg ${loc.completed ? 'text-gray-500 line-through' : 'text-foreground group-hover:text-bali-ocean transition-colors'}`}>
                                     {loc.name}
                                 </h3>
+                                {loc.tag && (
+                                    <span className="px-2.5 py-1 bg-bali-terra/10 text-bali-terra text-[10px] uppercase font-bold tracking-wider rounded-md border border-bali-terra/20">
+                                        {loc.tag}
+                                    </span>
+                                )}
                             </div>
                             {loc.description && (
                                 <p className={`text-sm mt-1 ${loc.completed ? 'text-gray-400' : 'text-gray-600 dark:text-gray-300'}`}>
@@ -74,20 +80,21 @@ export default function DayCard({ day, onEditDay, onToggleComplete }: DayCardPro
                         </div>
 
                         <a
-                            href={`https://maps.google.com/?q=${loc.lat},${loc.lng}`}
+                            href={loc.mapsUrl || `https://maps.google.com/?q=${encodeURIComponent(loc.name + " Bali")}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 text-gray-400 hover:text-[--color-bali-ocean] dark:hover:text-blue-400 bg-white dark:bg-gray-800 rounded-full shadow-sm hover:shadow-md transition-all active:scale-95 flex-shrink-0"
+                            onClick={(e) => e.stopPropagation()}
+                            className="p-3 text-gray-400 hover:text-bali-ocean dark:hover:text-blue-400 bg-white dark:bg-gray-800 rounded-full shadow-md hover:shadow-lg transition-all active:scale-95 flex-shrink-0 border border-gray-100 dark:border-gray-700 z-20"
                             title="Open in Google Maps"
                         >
-                            <Navigation size={18} />
+                            <Navigation size={20} />
                         </a>
                     </motion.div>
                 ))}
             </div>
 
-            {/* Visual timeline connector */}
-            <div className="absolute left-[31px] top-[95px] bottom-6 w-0.5 bg-gray-200 dark:bg-gray-700 z-[-1]"></div>
+            {/* Visual timeline connector - Fixed positioning to eliminate gap */}
+            <div className="absolute left-[39px] top-[80px] bottom-[30px] w-[2px] bg-gray-200 dark:bg-gray-700 z-[5]"></div>
         </motion.div>
     );
 }

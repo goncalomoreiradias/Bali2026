@@ -5,6 +5,8 @@ export interface Location {
   lat: number;
   lng: number;
   completed?: boolean;
+  tag?: string;
+  mapsUrl?: string;
 }
 
 export interface DayPlan {
