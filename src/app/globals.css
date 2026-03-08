@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bali-sand: #F4F1DE;
-  --color-bali-terra: #E07A5F;
-  --color-bali-sage: #81B29A;
-  --color-bali-ocean: #3D405B;
-  --color-bali-dark: #2F3640;
-  
+  --color-brand-bg: #F8F9FA;
+  --color-brand-primary: #111827;
+  --color-brand-secondary: #4F46E5;
+  --color-brand-accent: #10B981;
+  --color-brand-dark: #000000;
+
   --color-glass-bg: rgba(255, 255, 255, 0.75);
   --color-glass-border: rgba(255, 255, 255, 0.4);
 }
@@ -47,7 +47,7 @@
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
   }
-  
+
   .glass-card {
     background: var(--glass-background);
     backdrop-filter: blur(12px);
@@ -69,7 +69,8 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(129, 178, 154, 0.5); /* bali-sage */
+  background: rgba(129, 178, 154, 0.5);
+  /* bali-sage */
   border-radius: 10px;
 }
 

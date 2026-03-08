@@ -61,7 +61,7 @@ export default function AddLocationSheet({ isOpen, onClose, days, onAdd }: AddLo
                     className="bg-white dark:bg-gray-900 w-full max-w-md max-h-[90vh] sm:rounded-2xl rounded-t-3xl shadow-2xl flex flex-col overflow-hidden"
                 >
                     {/* Header */}
-                    <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-bali-terra to-[#C06A50] text-white">
+                    <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-brand-primary to-brand-secondary text-white">
                         <h2 className="text-xl font-bold flex items-center gap-2">
                             <MapPin size={22} /> Add New Activity
                         </h2>
@@ -79,7 +79,7 @@ export default function AddLocationSheet({ isOpen, onClose, days, onAdd }: AddLo
                                 placeholder="e.g. Potato Head Beach Club"
                                 value={location.name}
                                 onChange={(e) => setLocation({ ...location, name: e.target.value })}
-                                className="w-full bg-gray-50 dark:bg-gray-800 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 focus:border-bali-terra outline-none transition-colors"
+                                className="w-full bg-gray-50 dark:bg-gray-800 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 focus:border-brand-primary outline-none transition-colors"
                             />
                         </div>
 
@@ -88,7 +88,7 @@ export default function AddLocationSheet({ isOpen, onClose, days, onAdd }: AddLo
                             <select
                                 value={selectedDayId}
                                 onChange={(e) => setSelectedDayId(e.target.value)}
-                                className="w-full bg-gray-50 dark:bg-gray-800 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 focus:border-bali-terra outline-none transition-colors"
+                                className="w-full bg-gray-50 dark:bg-gray-800 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 focus:border-brand-primary outline-none transition-colors"
                             >
                                 {days.map(d => (
                                     <option key={d.id} value={d.id}>Day {d.dayNumber} - {d.title}</option>
@@ -138,7 +138,7 @@ export default function AddLocationSheet({ isOpen, onClose, days, onAdd }: AddLo
                     <div className="p-5 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
                         <button
                             onClick={handleSave}
-                            className="w-full py-4 bg-bali-terra hover:bg-[#C06A50] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
+                            className="w-full py-4 bg-brand-primary hover:bg-brand-secondary text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
                             <Plus size={20} />
                             Add Activity

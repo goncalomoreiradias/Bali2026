@@ -54,7 +54,7 @@ export default function AddExpenseSheet({ isOpen, onClose, participants, current
                     className="bg-white dark:bg-gray-900 w-full max-w-md max-h-[90vh] sm:rounded-2xl rounded-t-3xl shadow-2xl flex flex-col overflow-hidden"
                 >
                     {/* Header */}
-                    <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-bali-ocean to-blue-600 text-white">
+                    <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-brand-primary to-brand-secondary text-white">
                         <h2 className="text-xl font-bold flex items-center gap-2">
                             <Receipt size={22} /> Nova Despesa
                         </h2>
@@ -72,7 +72,7 @@ export default function AddExpenseSheet({ isOpen, onClose, participants, current
                                 placeholder="Ex: Jantar no Sweet Orange"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                className="w-full bg-gray-50 dark:bg-gray-800 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 focus:border-bali-ocean outline-none transition-colors"
+                                className="w-full bg-gray-50 dark:bg-gray-800 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 focus:border-brand-primary outline-none transition-colors"
                                 autoFocus
                             />
                         </div>
@@ -100,7 +100,7 @@ export default function AddExpenseSheet({ isOpen, onClose, participants, current
                                 <select
                                     value={paidBy}
                                     onChange={(e) => setPaidBy(e.target.value)}
-                                    className="w-full px-4 py-3 bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-bali-ocean outline-none transition"
+                                    className="w-full px-4 py-3 bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none transition"
                                 >
                                     {participants.map(person => (
                                         <option key={person} value={person}>{person} {person === currentUser ? "(Tu)" : ""}</option>
@@ -124,7 +124,7 @@ export default function AddExpenseSheet({ isOpen, onClose, participants, current
                     <div className="p-5 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
                         <button
                             onClick={handleSave}
-                            className="w-full py-4 bg-bali-ocean hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
+                            className="w-full py-4 bg-brand-primary hover:bg-brand-secondary text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
                             <Plus size={20} />
                             Guardar Despesa

@@ -84,13 +84,13 @@ export default function MapSection({ days, selectedDayId }: MapSectionProps) {
                     <Marker key={loc.id} position={[loc.lat, loc.lng]}>
                         <Popup className="font-sans">
                             <div className="p-1">
-                                <h4 className="font-bold text-[--color-bali-ocean] m-0 mb-1">{loc.name}</h4>
+                                <h4 className="font-bold text-brand-primary m-0 mb-1">{loc.name}</h4>
                                 <p className="text-xs text-gray-600 m-0">{loc.description}</p>
                                 <a
-                                    href={loc.mapsUrl || `https://maps.google.com/?q=${encodeURIComponent(loc.name + " Bali")}`}
+                                    href={loc.mapsUrl || `https://maps.google.com/?q=${encodeURIComponent(loc.name)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="mt-2 inline-block text-xs font-semibold text-[--color-bali-terra] hover:underline"
+                                    className="mt-2 inline-block text-xs font-semibold text-brand-secondary hover:underline"
                                 >
                                     Open in Maps
                                 </a>

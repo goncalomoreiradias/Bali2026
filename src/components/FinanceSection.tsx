@@ -40,7 +40,7 @@ export default function FinanceSection({ itinerary, onSave, currentUser }: Finan
         <div className="flex flex-col gap-6 lg:gap-8 max-w-2xl mx-auto w-full pb-32">
             {/* Top Summary Cards */}
             <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gradient-to-br from-bali-ocean to-blue-600 rounded-2xl p-5 text-white shadow-xl shadow-blue-900/10">
+                <div className="bg-gradient-to-br from-brand-primary to-brand-secondary rounded-2xl p-5 text-white shadow-xl shadow-brand-primary/10">
                     <div className="flex items-center gap-2 text-white/80 mb-2">
                         <Calculator size={18} />
                         <span className="text-sm font-semibold uppercase tracking-wider">Total</span>
@@ -53,7 +53,7 @@ export default function FinanceSection({ itinerary, onSave, currentUser }: Finan
                         <Users size={18} />
                         <span className="text-sm font-semibold uppercase tracking-wider">Por Pessoa</span>
                     </div>
-                    <h2 className="text-2xl font-bold font-inter tracking-tight text-bali-sage">
+                    <h2 className="text-2xl font-bold font-inter tracking-tight text-brand-accent">
                         €{fairShare.toFixed(2)}
                     </h2>
                     {totalPeople > 1 && <p className="text-xs text-gray-400 mt-1">A dividir por {totalPeople}</p>}
@@ -64,7 +64,7 @@ export default function FinanceSection({ itinerary, onSave, currentUser }: Finan
             {participants.length > 0 && (
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
                     <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
-                        <User size={18} className="text-bali-terra" /> Quem deve a quem?
+                        <User size={18} className="text-brand-secondary" /> Quem deve a quem?
                     </h3>
                     <div className="space-y-4">
                         {participants.map(person => {
@@ -77,7 +77,7 @@ export default function FinanceSection({ itinerary, onSave, currentUser }: Finan
 
                             return (
                                 <div key={person} className="flex justify-between items-center">
-                                    <span className={`font-medium ${isMe ? 'text-bali-ocean font-bold' : 'text-gray-700 dark:text-gray-300'}`}>
+                                    <span className={`font-medium ${isMe ? 'text-brand-primary font-bold' : 'text-gray-700 dark:text-gray-300'}`}>
                                         {person} {isMe && "(Tu)"}
                                     </span>
                                     <div className="text-right">
@@ -96,7 +96,7 @@ export default function FinanceSection({ itinerary, onSave, currentUser }: Finan
             {/* Transaction List */}
             <div>
                 <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-4 px-1 flex items-center gap-2">
-                    <Receipt size={18} className="text-bali-ocean" /> Lista de Despesas
+                    <Receipt size={18} className="text-brand-primary" /> Lista de Despesas
                 </h3>
 
                 {expenses.length === 0 ? (
@@ -116,7 +116,7 @@ export default function FinanceSection({ itinerary, onSave, currentUser }: Finan
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <span className="font-bold text-lg text-bali-ocean">€{exp.amount.toFixed(2)}</span>
+                                    <span className="font-bold text-lg text-brand-primary">€{exp.amount.toFixed(2)}</span>
                                     <button
                                         onClick={() => handleDelete(exp.id)}
                                         className="text-gray-300 hover:text-red-400 transition lg:opacity-0 lg:group-hover:opacity-100"

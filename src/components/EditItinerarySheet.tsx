@@ -48,7 +48,7 @@ function SortableLocationItem({ loc, handleLocationChange, removeLocation }: Sor
         <div
             ref={setNodeRef}
             style={style}
-            className={`p-4 bg-gray-50 dark:bg-gray-800 rounded-xl relative group border ${isDragging ? 'border-bali-ocean shadow-lg' : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700'} transition`}
+            className={`p-4 bg-gray-50 dark:bg-gray-800 rounded-xl relative group border ${isDragging ? 'border-brand-primary shadow-lg' : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700'} transition`}
         >
             <button
                 onClick={() => removeLocation(loc.id)}
@@ -61,7 +61,7 @@ function SortableLocationItem({ loc, handleLocationChange, removeLocation }: Sor
                 <div
                     {...attributes}
                     {...listeners}
-                    className="mt-2 text-gray-400 cursor-grab active:cursor-grabbing hover:text-bali-ocean"
+                    className="mt-2 text-gray-400 cursor-grab active:cursor-grabbing hover:text-brand-primary"
                 >
                     <GripVertical size={16} />
                 </div>
@@ -207,7 +207,7 @@ export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: Edi
                     className="bg-white dark:bg-gray-900 w-full max-w-lg max-h-[90vh] sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
                 >
                     {/* Header */}
-                    <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-bali-sage to-bali-ocean text-white">
+                    <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-brand-secondary to-brand-primary text-white">
                         <h2 className="text-xl font-bold">Edit Day {day.dayNumber}</h2>
                         <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition">
                             <X size={20} />
@@ -224,7 +224,7 @@ export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: Edi
                                 type="text"
                                 value={editedDay.title}
                                 onChange={(e) => setEditedDay({ ...editedDay, title: e.target.value })}
-                                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-bali-sage outline-none transition"
+                                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-brand-secondary outline-none transition"
                             />
                         </div>
 
@@ -233,7 +233,7 @@ export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: Edi
                                 <h3 className="font-semibold text-gray-800 dark:text-gray-200">Locations ({locations.length})</h3>
                                 <button
                                     onClick={addLocation}
-                                    className="text-sm font-medium text-bali-sage flex items-center gap-1 hover:text-bali-ocean transition"
+                                    className="text-sm font-medium text-brand-secondary flex items-center gap-1 hover:text-brand-primary transition"
                                 >
                                     <Plus size={16} /> Add Stop
                                 </button>
@@ -267,7 +267,7 @@ export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: Edi
                     <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
                         <button
                             onClick={handleSave}
-                            className="w-full py-4 bg-bali-sage hover:bg-bali-ocean text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
+                            className="w-full py-4 bg-brand-primary hover:bg-brand-secondary text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
                         >
                             <Save size={20} />
                             Save Changes
