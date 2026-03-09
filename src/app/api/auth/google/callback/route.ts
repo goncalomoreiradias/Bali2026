@@ -68,9 +68,14 @@ export async function GET(req: Request) {
         // 5. Redirect back to Application
         return NextResponse.redirect(`${url.origin}/`);
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Google OAuth Exchange error:", error);
         const url = new URL(req.url);
-        return NextResponse.redirect(`${url.origin}/login?error=Failed+to+authenticate+with+Google`);
+
+        // Pass the actual system error so we can read it on the login page in prod
+        const errMessage = error?.message || "Failed+to+authenticate+with+Google";
+        const encodedError = encodeURIComponent(errMessage);
+
+        return NextResponse.redirect(`${url.origin}/login?error=${encodedError}`);
     }
 }
