@@ -15,11 +15,12 @@ export default function FinanceSection({ itinerary, onSave, currentUser }: Finan
     const participants = itinerary.participants || [currentUser];
 
     // Quick summary calculations
-    const totalSpent = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const totalSpent = expenses.reduce((sum, exp) => sum + (exp?.amount || 0), 0);
 
     // Calculate who paid what
     const paidByTotals = expenses.reduce((acc, exp) => {
-        acc[exp.paidBy] = (acc[exp.paidBy] || 0) + exp.amount;
+        if (!exp || !exp.paidBy) return acc;
+        acc[exp.paidBy] = (acc[exp.paidBy] || 0) + (exp.amount || 0);
         return acc;
     }, {} as Record<string, number>);
 
@@ -106,26 +107,31 @@ export default function FinanceSection({ itinerary, onSave, currentUser }: Finan
                     </div>
                 ) : (
                     <div className="space-y-3">
-                        {[...expenses].reverse().map((exp) => (
-                            <div key={exp.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 flex justify-between items-center shadow-sm border border-gray-100 dark:border-gray-700 group hover:border-gray-200 transition">
-                                <div className="flex-1">
-                                    <h4 className="font-semibold text-gray-800 dark:text-gray-100">{exp.description}</h4>
-                                    <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                        <span className="font-medium bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-sm">{exp.paidBy}</span>
-                                        <span>• {new Date(exp.date).toLocaleDateString()}</span>
-                                    </p>
+                        {[...expenses].reverse().map((exp) => {
+                            if (!exp) return null;
+                            const expDate = exp.date ? new Date(exp.date).toLocaleDateString() : 'Sem data';
+
+                            return (
+                                <div key={exp.id || Math.random().toString()} className="bg-white dark:bg-gray-800 rounded-xl p-4 flex justify-between items-center shadow-sm border border-gray-100 dark:border-gray-700 group hover:border-gray-200 transition">
+                                    <div className="flex-1">
+                                        <h4 className="font-semibold text-gray-800 dark:text-gray-100">{exp.description || 'Despesa'}</h4>
+                                        <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                                            <span className="font-medium bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-sm">{exp.paidBy || 'Desconhecido'}</span>
+                                            <span>• {expDate}</span>
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <span className="font-bold text-lg text-brand-primary">€{(exp.amount || 0).toFixed(2)}</span>
+                                        <button
+                                            onClick={() => handleDelete(exp.id)}
+                                            className="text-gray-300 hover:text-red-400 transition lg:opacity-0 lg:group-hover:opacity-100"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <span className="font-bold text-lg text-brand-primary">€{exp.amount.toFixed(2)}</span>
-                                    <button
-                                        onClick={() => handleDelete(exp.id)}
-                                        className="text-gray-300 hover:text-red-400 transition lg:opacity-0 lg:group-hover:opacity-100"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>

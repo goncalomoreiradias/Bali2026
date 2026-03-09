@@ -26,6 +26,16 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Invalid coupon code" }, { status: 404 });
         }
 
+        // Check if coupon is deactivated
+        if (!coupon.isActive) {
+            return NextResponse.json({ error: "This coupon has been deactivated" }, { status: 400 });
+        }
+
+        // Check if coupon hasn't started yet
+        if (coupon.startsAt && new Date() < new Date(coupon.startsAt)) {
+            return NextResponse.json({ error: "This coupon is not active yet" }, { status: 400 });
+        }
+
         if (coupon.usesLeft <= 0 || (coupon.expiresAt && new Date() > new Date(coupon.expiresAt))) {
             return NextResponse.json({ error: "Coupon is expired or has reached its usage limit" }, { status: 400 });
         }

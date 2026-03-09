@@ -59,7 +59,7 @@ export default function RegisterPage() {
 
 
     return (
-        <div className="min-h-screen bg-brand-bg dark:bg-gray-950 relative flex flex-col items-center justify-center p-4">
+        <div className="min-h-screen bg-brand-bg dark:bg-gray-950 px-6 sm:px-0 relative flex flex-col items-center justify-center p-4">
             {/* Decorative Blur Orbs */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-brand-secondary/20 rounded-full blur-[100px] pointer-events-none translate-x-1/2 -translate-y-1/2" />
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-brand-primary/20 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 translate-y-1/2" />
@@ -78,7 +78,7 @@ export default function RegisterPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="w-full max-w-md"
             >
-                <div className="glass-card p-10 sm:rounded-[2.5rem]">
+                <div className="glass-card p-8 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem]">
                     <div className="text-center mb-8">
                         <h1 className="text-4xl font-extrabold font-outfit text-brand-dark dark:text-white tracking-tight mb-3">
                             {t("auth.register_title")}

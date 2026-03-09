@@ -20,7 +20,8 @@
     --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   }
 
-  @media (prefers-color-scheme: dark) {
+  /* Force Light Mode on Mobile: Only apply dark mode to screens 640px and larger */
+  @media (prefers-color-scheme: dark) and (min-width: 640px) {
     :root {
       --background: #1A202C;
       --foreground: #F7FAFC;

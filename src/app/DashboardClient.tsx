@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { Trip } from "@/types";
 import { motion } from "framer-motion";
-import { Loader2, Plus, Plane, MapPin, Calendar, Users } from "lucide-react";
+import { Loader2, Plus, Plane, MapPin, Calendar, Users, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import LanguageToggle from "@/components/LanguageToggle";
 import { useRouter } from "next/navigation";
+import AIPlannerModal from "@/components/AIPlannerModal";
+import UpgradeModal from "@/components/UpgradeModal";
 
 interface Props {
     session: { userId: string; role: string } | any;
@@ -21,6 +23,9 @@ export default function DashboardClient({ session }: Props) {
     // const [isAuthenticated, setIsAuthenticated] = useState(false); // Removed, handled by session prop
     // const [userName, setUserName] = useState(""); // Removed, handled by session prop
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isAIPlannerOpen, setIsAIPlannerOpen] = useState(false);
+    const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+    const [userPlan, setUserPlan] = useState<string>("FREE");
 
     // New Trip Form State
     const [newTripTitle, setNewTripTitle] = useState("");
@@ -31,14 +36,14 @@ export default function DashboardClient({ session }: Props) {
     // const { t } = useI18n(); // Already declared above
 
     useEffect(() => {
-        // Basic auth check from previous implementation - Removed, handled by session prop
-        // const authStatus = sessionStorage.getItem("bali_auth");
-        // const storedName = sessionStorage.getItem("bali_username");
-        // if (authStatus === "true" && storedName) {
-        //     setIsAuthenticated(true);
-        //     setUserName(storedName);
-        // }
         fetchTrips();
+        // Fetch user plan for AI gating
+        fetch("/api/auth/session")
+            .then(res => res.json())
+            .then(data => {
+                if (data?.session?.plan) setUserPlan(data.session.plan);
+            })
+            .catch(() => { });
     }, []);
 
     const fetchTrips = async () => {
@@ -138,7 +143,7 @@ export default function DashboardClient({ session }: Props) {
     return (
         <main className="min-h-screen bg-brand-bg relative pb-24">
             {/* Premium Header */}
-            <header className="sticky top-0 z-40 glass dark:bg-gray-950/80 dark:border-white/5 border-b border-black/5 pt-12 pb-6 px-6 sm:px-12 shadow-sm">
+            <header className="sticky top-0 z-40 glass dark:bg-gray-950/80 dark:border-white/5 border-b border-black/5 pt-16 pb-6 px-8 sm:px-12 shadow-sm">
                 <div className="max-w-7xl mx-auto flex justify-between items-end">
                     <div>
                         <motion.p
@@ -160,6 +165,12 @@ export default function DashboardClient({ session }: Props) {
                     <div className="flex flex-col sm:flex-row items-end gap-3 sm:gap-4 md:items-center">
                         <LanguageToggle />
                         <button
+                            onClick={() => userPlan === "FREE" ? setIsUpgradeOpen(true) : setIsAIPlannerOpen(true)}
+                            className="hidden sm:flex px-6 py-3 bg-gradient-to-r from-brand-primary to-brand-secondary hover:shadow-xl text-white font-semibold rounded-2xl shadow-lg shadow-brand-primary/20 transition-all active:scale-[0.98] items-center gap-2"
+                        >
+                            <Sparkles size={20} /> Planear com AI
+                        </button>
+                        <button
                             onClick={() => setIsCreateModalOpen(true)}
                             className="hidden sm:flex px-6 py-3 bg-brand-primary hover:bg-brand-secondary text-white font-semibold rounded-2xl shadow-lg shadow-brand-primary/20 transition-all active:scale-[0.98] items-center gap-2"
                         >
@@ -170,7 +181,7 @@ export default function DashboardClient({ session }: Props) {
             </header>
 
             {/* Main Content Area */}
-            <div className="max-w-7xl mx-auto px-6 sm:px-12 py-12">
+            <div className="max-w-7xl mx-auto px-8 sm:px-12 py-12">
                 {loading ? (
                     <div className="flex justify-center items-center h-64">
                         <Loader2 size={40} className="text-brand-primary animate-spin" />
@@ -236,6 +247,13 @@ export default function DashboardClient({ session }: Props) {
             </div>
 
             {/* Mobile FAB */}
+            {/* Mobile FABs */}
+            <button
+                onClick={() => userPlan === "FREE" ? setIsUpgradeOpen(true) : setIsAIPlannerOpen(true)}
+                className="sm:hidden fixed bottom-8 left-8 z-[50] w-16 h-16 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-full shadow-2xl shadow-brand-primary/40 flex items-center justify-center transition-all hover:scale-105 active:scale-95 border border-white/20"
+            >
+                <Sparkles size={28} />
+            </button>
             <button
                 onClick={() => setIsCreateModalOpen(true)}
                 className="sm:hidden fixed bottom-8 right-8 z-[50] w-16 h-16 bg-brand-primary text-white rounded-full shadow-2xl shadow-brand-primary/40 flex items-center justify-center transition-all hover:scale-105 active:scale-95 border border-white/20"
@@ -318,6 +336,20 @@ export default function DashboardClient({ session }: Props) {
                     </motion.div>
                 </div>
             )}
+
+            {/* AI Planner Modal */}
+            <AIPlannerModal isOpen={isAIPlannerOpen} onClose={() => setIsAIPlannerOpen(false)} />
+
+            {/* Upgrade Modal */}
+            <UpgradeModal
+                isOpen={isUpgradeOpen}
+                onClose={() => setIsUpgradeOpen(false)}
+                onUpgraded={() => {
+                    setUserPlan("SINGLE_TRIP");
+                    setIsUpgradeOpen(false);
+                    setIsAIPlannerOpen(true);
+                }}
+            />
         </main>
     );
 }

@@ -47,7 +47,9 @@ model Coupon {
   code         String   @unique
   planGranted  PlanTier
   usesLeft     Int      @default(1)
+  startsAt     DateTime?  // Coupon only valid after this date
   expiresAt    DateTime?
+  isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   
   // Who created it

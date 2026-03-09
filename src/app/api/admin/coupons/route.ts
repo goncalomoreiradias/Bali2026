@@ -14,6 +14,23 @@ function generateRandomCode() {
     return code;
 }
 
+export async function GET() {
+    try {
+        const session = await getSession();
+        if (!session || session.role !== "ADMIN") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const coupons = await prisma.coupon.findMany({
+            orderBy: { createdAt: "desc" },
+        });
+
+        return NextResponse.json({ coupons });
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to fetch coupons" }, { status: 500 });
+    }
+}
+
 export async function POST(request: Request) {
     try {
         const session = await getSession();
@@ -22,7 +39,7 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { planGranted, usesLeft, expiresAt } = body;
+        const { planGranted, usesLeft, expiresAt, startsAt } = body;
 
         if (!planGranted || !Object.keys(PlanTier).includes(planGranted)) {
             return NextResponse.json({ error: "Invalid Plan Tier" }, { status: 400 });
@@ -35,6 +52,7 @@ export async function POST(request: Request) {
                 code,
                 planGranted,
                 usesLeft: parseInt(usesLeft) || 1,
+                startsAt: startsAt ? new Date(startsAt) : null,
                 expiresAt: expiresAt ? new Date(expiresAt) : null,
                 createdBy: session.userId as string
             }
