@@ -138,7 +138,7 @@ export default function DashboardClient({ session }: Props) {
     return (
         <main className="min-h-screen bg-brand-bg relative pb-24">
             {/* Premium Header */}
-            <header className="sticky top-0 z-40 glass border-b border-black/5 dark:border-white/5 pt-12 pb-6 px-6 sm:px-12 shadow-sm">
+            <header className="sticky top-0 z-40 glass dark:bg-gray-950/80 dark:border-white/5 border-b border-black/5 pt-12 pb-6 px-6 sm:px-12 shadow-sm">
                 <div className="max-w-7xl mx-auto flex justify-between items-end">
                     <div>
                         <motion.p
@@ -146,7 +146,7 @@ export default function DashboardClient({ session }: Props) {
                             animate={{ opacity: 1, x: 0 }}
                             className="text-sm font-semibold text-brand-secondary tracking-widest uppercase mb-1"
                         >
-                            {t("dash.hello")}, {session.userId}
+                            {t("dash.hello")}, {session.name || "Viajante"}
                         </motion.p>
                         <motion.h1
                             initial={{ opacity: 0, x: -20 }}
@@ -179,7 +179,7 @@ export default function DashboardClient({ session }: Props) {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-center py-20 px-6 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-3xl"
+                        className="text-center py-20 px-6 border-2 border-dashed border-gray-300 dark:border-gray-800 rounded-3xl"
                     >
                         <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
                             <MapPin size={40} className="text-gray-400" />

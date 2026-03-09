@@ -28,8 +28,8 @@ export async function getSession() {
     return await verifyToken(session);
 }
 
-export async function setSession(userId: string, role: string) {
-    const token = await signToken({ userId, role });
+export async function setSession(userId: string, role: string, name?: string) {
+    const token = await signToken({ userId, role, name });
     const cookieStore = await cookies();
     cookieStore.set("bali_session", token, {
         httpOnly: true,

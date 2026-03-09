@@ -8,9 +8,8 @@ import { useI18n } from "@/lib/i18n";
 
 export default function LandingPage() {
     const { t } = useI18n();
-
     return (
-        <div className="min-h-screen bg-brand-bg relative overflow-hidden font-outfit selection:bg-brand-primary/30">
+        <div className="min-h-screen bg-brand-bg dark:bg-gray-950 relative overflow-hidden font-outfit selection:bg-brand-primary/30">
             {/* Dynamic Background Blurs */}
             <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-primary/10 rounded-full blur-[150px] pointer-events-none translate-x-1/3 -translate-y-1/3" />
             <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-brand-secondary/10 rounded-full blur-[120px] pointer-events-none -translate-x-1/3 translate-y-1/3" />

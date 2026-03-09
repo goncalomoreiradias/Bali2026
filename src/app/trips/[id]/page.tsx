@@ -33,8 +33,17 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"itinerary" | "finance">("itinerary");
   const [copiedLink, setCopiedLink] = useState(false);
-  const userName = "You"; // Temporary mock until session state is natively hydrated to the context
+  const [userName, setUserName] = useState("Várias"); // Default until loaded
 
+  // Fetch session to get actual name
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then(res => res.json())
+      .then(data => {
+        if (data?.session?.name) setUserName(data.session.name);
+      })
+      .catch(() => { });
+  }, []);
   // Edit State
   const [editingDay, setEditingDay] = useState<DayPlan | null>(null);
   const [selectedDayId, setSelectedDayId] = useState<string | null>(null);
@@ -144,45 +153,47 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
   return (
     <main className="min-h-screen bg-brand-bg relative pb-24 lg:pb-0">
       {/* Header */}
-      <header className="relative z-10 p-6 pt-12 text-white bg-gradient-to-b from-black/80 via-black/40 to-transparent">
-        <div className="flex items-center justify-between mb-4">
-          <Link href="/" className="p-2 bg-black/20 backdrop-blur-md rounded-full hover:bg-black/40 transition">
-            <ArrowLeft size={24} />
-          </Link>
-          <LanguageToggle />
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-4"
-        >
-          <div>
-            <h1 className="text-4xl font-extrabold font-outfit mb-2">{itinerary.title}</h1>
-            <p className="text-lg font-medium text-white/90">
-              {itinerary.startDate && itinerary.endDate
-                ? `${format(new Date(itinerary.startDate), "dd MMM", { locale: dateLocale })} - ${format(new Date(itinerary.endDate), "dd MMM yyyy", { locale: dateLocale })}`
-                : t("common.no_dates")}
-            </p>
-            <p className="text-sm text-white/70 mt-1">{t("common.participants")}: {itinerary.participants?.map((p: any) => p.name || p.email).join(", ") || t("common.no_participants")}</p>
+      <header className="relative z-10 p-6 pt-12 text-brand-dark dark:text-white bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-sm">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <Link href="/" className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+              <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
+            </Link>
+            <LanguageToggle />
           </div>
 
-          {itinerary.inviteToken && (
-            <button
-              onClick={() => {
-                const url = `${window.location.origin}/trips/join/${itinerary.inviteToken}`;
-                navigator.clipboard.writeText(url);
-                setCopiedLink(true);
-                setTimeout(() => setCopiedLink(false), 2000);
-              }}
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur border border-white/10 rounded-xl text-white font-bold text-sm transition-all"
-            >
-              {copiedLink ? <Check size={16} className="text-emerald-400" /> : <Plus size={16} />}
-              {copiedLink ? "Link Copied!" : "Invite Collaborators"}
-            </button>
-          )}
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-4"
+          >
+            <div>
+              <h1 className="text-4xl font-extrabold font-outfit mb-2 text-brand-dark dark:text-white">{itinerary.title}</h1>
+              <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                {itinerary.startDate && itinerary.endDate
+                  ? `${format(new Date(itinerary.startDate), "dd MMM", { locale: dateLocale })} - ${format(new Date(itinerary.endDate), "dd MMM yyyy", { locale: dateLocale })}`
+                  : t("common.no_dates")}
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t("common.participants")}: {itinerary.participants?.map((p: any) => p.name || p.email).join(", ") || t("common.no_participants")}</p>
+            </div>
+
+            {itinerary.inviteToken && (
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}/trips/join/${itinerary.inviteToken}`;
+                  navigator.clipboard.writeText(url);
+                  setCopiedLink(true);
+                  setTimeout(() => setCopiedLink(false), 2000);
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-brand-primary text-white hover:bg-brand-secondary rounded-xl font-bold text-sm transition-all shadow-md"
+              >
+                {copiedLink ? <Check size={16} className="text-emerald-400" /> : <Plus size={16} />}
+                {copiedLink ? "Link Copied!" : "Invite Collaborators"}
+              </button>
+            )}
+          </motion.div>
+        </div>
       </header>
 
       {/* Main Content Area */}

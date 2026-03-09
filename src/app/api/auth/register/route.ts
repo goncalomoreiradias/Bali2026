@@ -32,7 +32,7 @@ export async function POST(req: Request) {
             }
         });
 
-        await setSession(user.id, user.role);
+        await setSession(user.id, user.role, user.name || undefined);
 
         return NextResponse.json({
             user: { id: user.id, name: user.name, email: user.email, role: user.role }
