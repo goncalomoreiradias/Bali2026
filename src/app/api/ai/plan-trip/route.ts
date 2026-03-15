@@ -4,18 +4,18 @@ import { getSession } from "@/lib/auth";
 
 const prisma = new PrismaClient();
 
-// Schema validation to ensure the AI output is usable
+// Schema validation to ensure the AI output is usable (Updated for Final Schema)
 function validateItinerary(data: any, requestedDays: number): string | null {
     if (!data || typeof data !== 'object') return "Invalid JSON structure";
-    if (!data.title || !data.description) return "Missing title or description";
-    if (!Array.isArray(data.days) || data.days.length === 0) return "Missing or empty days array";
+    if (!data.trip_name) return "Missing trip_name";
+    if (!Array.isArray(data.itinerary) || data.itinerary.length === 0) return "Missing or empty itinerary array";
     
-    // Check if we have enough days
-    if (data.days.length < Math.min(requestedDays, 1)) return `Insufficient days generated: ${data.days.length}/${requestedDays}`;
+    // Check if we have exactly the number of days requested (Zero Omissions)
+    if (data.itinerary.length !== requestedDays) return `Requested ${requestedDays} days but got ${data.itinerary.length}`;
 
-    for (const day of data.days) {
-        if (!day.locations || !Array.isArray(day.locations) || day.locations.length === 0) {
-            return `Day ${day.dayNumber || 'unknown'} has no locations`;
+    for (const day of data.itinerary) {
+        if (!day.activities || !Array.isArray(day.activities) || day.activities.length === 0) {
+            return `Day ${day.day || 'unknown'} has no activities`;
         }
     }
     return null;
@@ -81,57 +81,49 @@ export async function POST(request: Request) {
                     : "Provide detailed and engaging descriptions.";
 
                 const mapsInstruction = mapsListUrl 
-                    ? `IMPORTANT DATA SOURCE: The user provided a Google Maps List (${mapsListUrl}). You MUST analyze these locations and prioritize them. 
-                       - Treat all locations in the list as mandatory or highly preferred.
-                       - If there are too many for the timeframe, select the most relevant ones.
-                       - Group locations from this list that are in the same geographic area to optimize the route.`
+                    ? `REGRA DE CONSUMO TOTAL: O utilizador forneceu uma lista de locais / links (${mapsListUrl}). Deves garantir que 100% destes locais são integrados no roteiro. Analisa a localização e agrupa-os de forma lógica.`
                     : "";
 
-                const prompt = `You are the "Viatio AI Architect", a world-class travel engineering expert and luxury consultant specializing in high-density, high-efficiency itineraries.
+                const prompt = `És o "Viatio AI Architect", o motor de inteligência de um planeador de viagens de luxo. A tua missão é gerar roteiros de "alta densidade" e "zero omissões".
 
-OBJECTIVE: Design an elite ${numberOfDays}-day "1-shot" complete itinerary for ${destination}. 
+DETERMINISMO TEMPORAL (OBRIGATÓRIO):
+1. CONTAGEM DE DIAS: Deves gerar EXACTAMENTE ${numberOfDays} objetos de "dia". Nunca resumas. O dia 1 e o dia ${numberOfDays} devem estar completos.
+2. INTEGRIDADE HORÁRIA: Preenche o horário das 09:00 às 21:00 (mínimo). Proibido janelas vazias > 2h. Se necessário, sugere miradouros, café, paragens para fotografia ou "buffer time".
+3. REALISMO: Tempos de visita realistas (1h igrejas, 3h museus grandes). Cada atividade deve considerar a deslocação do ponto anterior.
 
-STRICT PLANNING RULES (The 1-Shot Rule):
-1. MANDATORY DENSITY: Each day MUST have at least 4-5 points of interest, covering "Morning", "Lunch", "Afternoon 1", "Afternoon 2", and "Dinner/Night" blocks.
-2. TIME REALISM: No single activity window should exceed 2h30, unless it is a major landmark (e.g., Vatican, Louvre, or a long trek).
-3. BUFFER & TRANSITIONS: Calculate logical travel times between points. Every activity MUST start with a 15-30 min "Note" regarding the transition from the previous location.
-4. GEOGRAPHIC CLUSTERING: Group activities by neighborhood or zone. Do NOT cross the city more than twice a day.
-5. ADAPTIVE LOGIC: Only provide fewer locations if the user specifically asked for "Relaxed" or if an activity is inherently long (e.g., a 6-hour hike).
-6. COMPLETE EXPERIENCE: Always include specific suggestions for breakfast/coffee and dinner to ensure a seamless "1-shot" day.
-
-DATA PROCESSING:
+REGRAS DE PLANEAMENTO:
+1. DENSIDADE: Mínimo de 4 atividades principais por dia + sugestões de refeições (pequeno-almoço e jantar).
+2. LOGÍSTICA: Agrupa locais por proximidade geográfica para minimizar deslocações inúteis.
+3. PERSONALIDADE: Profissional, inspirador e extremamente organizado.
 ${mapsInstruction}
 
-LANGUAGE & LOCALIZATION:
-- All output MUST be in ${langName}. If Portuguese, use flawless "Português de Portugal" (PT-PT).
+LÍNGUA E TOM:
+- Responde SEMPRE em Português de Portugal (pt-PT) impecável.
+- Usa termos como "Pequeno-almoço", "Comboio", "Miradouro", "Autocarro".
 
-Context:
-- Dates: ${startDate} to ${endDate}
-- Budget: ${budget ? `€${budget}` : "flexible"}
-- Style: ${travelStyle || "balanced"}
-- Travelers: ${numberOfPeople || 2}
-- Custom Requirements: ${customRequirements || "None"}
+CONTEXTO:
+- Destino: ${destination}
+- Datas: ${startDate} até ${endDate}
+- Orçamento: ${budget ? `€${budget}` : "flexível"}
+- Estilo: ${travelStyle || "equilibrado"}
+- Viajantes: ${numberOfPeople || 2}
+- Requisitos: ${customRequirements || "Nenhum"}
 
-${concisenessInstruction}
-
-Return ONLY a valid JSON object in this format:
+DEVOLVE APENAS UM OBJECTO JSON VÁLIDO SEGUINDO ESTE ESQUEMA:
 {
-  "title": "Elite Portfolio Title",
-  "description": "Sophisticated executive summary of the strategy",
-  "days": [
+  "trip_name": "Nome Elegante da Viagem",
+  "total_days": ${numberOfDays},
+  "itinerary": [
     {
-      "dayNumber": 1,
-      "title": "Daily Architectural Theme",
-      "locations": [
+      "day": 1,
+      "date": "YYYY-MM-DD",
+      "activities": [
         {
-          "name": "Location Name",
-          "timeSlot": "HH:MM - HH:MM",
-          "description": "Appealing, short insight with transportation buffer note",
-          "lat": 0.0,
-          "lng": 0.0,
+          "time": "09:00",
+          "name": "Nome da Atividade",
           "category": "Cultura|Gastronomia|Lazer|Transporte|Natureza",
-          "tag": "culture|nature|food|adventure|relaxation|nightlife|shopping",
-          "mapsUrl": "https://www.google.com/maps/search/?api=1&query=LOC+DEST"
+          "description": "Descrição apelativa e motivo da escolha (max 2 frases).",
+          "coordinates": {"lat": 0.0, "lng": 0.0}
         }
       ]
     }
@@ -220,27 +212,27 @@ Return ONLY a valid JSON object in this format:
             }, { status: 500 });
         }
 
-        // 4. Save to database
+        // 4. Save to database (Mapped to New Schema)
         const trip = await prisma.trip.create({
             data: {
-                title: finalItinerary.title || `${destination} Trip`,
-                description: finalItinerary.description || `AI-planned trip to ${destination}`,
+                title: finalItinerary.trip_name || `${destination} Trip`,
+                description: `Viatio AI Architect Itinerary for ${destination} (${numberOfDays} days)`,
                 startDate: new Date(startDate),
                 endDate: new Date(endDate),
                 ownerId: session.userId as string,
                 days: {
-                    create: finalItinerary.days.map((day: any) => ({
-                        dayNumber: day.dayNumber,
-                        title: day.title || `Day ${day.dayNumber}`,
+                    create: finalItinerary.itinerary.map((day: any) => ({
+                        dayNumber: day.day,
+                        title: `Dia ${day.day}`,
                         locations: {
-                            create: (day.locations || []).map((loc: any) => ({
-                                name: loc.name || "Unknown Location",
-                                description: loc.description || "",
-                                timeSlot: loc.timeSlot || null,
-                                lat: parseFloat(loc.lat) || 0,
-                                lng: parseFloat(loc.lng) || 0,
-                                tag: loc.tag || null,
-                                mapsUrl: loc.mapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${loc.name} ${destination}`)}`,
+                            create: (day.activities || []).map((act: any) => ({
+                                name: act.name || "Unknown Location",
+                                description: act.description || "",
+                                timeSlot: act.time || null,
+                                lat: parseFloat(act.coordinates?.lat) || 0,
+                                lng: parseFloat(act.coordinates?.lng) || 0,
+                                tag: act.category?.toLowerCase() || null,
+                                mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${act.name} ${destination}`)}`,
                             }))
                         }
                     }))
