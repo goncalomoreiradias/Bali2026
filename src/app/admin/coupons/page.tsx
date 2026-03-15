@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Key, Loader2, Copy, Check, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowLeft, Key, Loader2, Copy, Check, Sparkles, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function CouponGeneratorPage() {
     const router = useRouter();
@@ -16,6 +16,39 @@ export default function CouponGeneratorPage() {
     const [message, setMessage] = useState({ type: "", text: "" });
     const [generatedCode, setGeneratedCode] = useState("");
     const [copied, setCopied] = useState(false);
+    const [activeCoupons, setActiveCoupons] = useState<any[]>([]);
+    const [isFetching, setIsFetching] = useState(true);
+
+    // Fetch existing coupons
+    useState(() => {
+        const fetchCoupons = async () => {
+            try {
+                const res = await fetch("/api/admin/coupons");
+                const data = await res.json();
+                if (data.coupons) setActiveCoupons(data.coupons);
+            } catch (err) {
+                console.error("Failed to fetch coupons");
+            } finally {
+                setIsFetching(false);
+            }
+        };
+        fetchCoupons();
+    });
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this coupon?")) return;
+        
+        try {
+            const res = await fetch(`/api/admin/coupons?id=${id}`, {
+                method: "DELETE",
+            });
+            if (res.ok) {
+                setActiveCoupons(prev => prev.filter(c => c.id !== id));
+            }
+        } catch (err) {
+            alert("Failed to delete coupon");
+        }
+    };
 
     const handleGenerate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -194,6 +227,50 @@ export default function CouponGeneratorPage() {
                         </motion.div>
                     )}
                 </motion.div>
+            </div>
+            {/* Active Coupons List */}
+            <div className="max-w-4xl mx-auto mt-20 relative z-10">
+                <h2 className="text-2xl font-black font-outfit mb-8 text-white uppercase tracking-tight flex items-center gap-3">
+                    <div className="p-2 bg-accent-magenta/10 rounded-xl">
+                        <Key className="text-accent-magenta" size={20} />
+                    </div>
+                    Active Coupons
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <AnimatePresence>
+                        {activeCoupons.map((coupon) => (
+                            <motion.div
+                                key={coupon.id}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="glass bg-[#141820]/60 p-6 rounded-[2rem] border border-white/5 flex justify-between items-center group hover:border-white/10 transition-all"
+                            >
+                                <div>
+                                    <p className="text-lg font-black font-outfit text-accent-indigo tracking-widest uppercase">{coupon.code}</p>
+                                    <div className="flex gap-3 mt-1">
+                                        <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Uses: <span className="text-white">{coupon.usesLeft}</span></p>
+                                        <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Plan: <span className="text-accent-magenta">{coupon.planGranted}</span></p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => handleDelete(coupon.id)}
+                                    className="p-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl transition-all active:scale-90 border border-rose-500/10"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                    
+                    {activeCoupons.length === 0 && !isFetching && (
+                        <div className="col-span-2 py-12 glass bg-white/5 rounded-[2.5rem] border border-white/5 border-dashed flex flex-col items-center gap-4 text-gray-600">
+                            <Key size={32} className="opacity-20" />
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em]">No active coupons found</p>
+                        </div>
+                    )}
+                </div>
             </div>
         </main>
     );

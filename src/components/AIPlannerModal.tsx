@@ -113,7 +113,7 @@ export default function AIPlannerModal({ isOpen, onClose }: AIPlannerModalProps)
                     className="relative w-full max-w-lg glass bg-obsidian/90 sm:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col h-[95vh] sm:h-auto sm:max-h-[90vh] border border-white/10"
                 >
                     {/* Header */}
-                    <div className="shrink-0 bg-gradient-to-br from-[#D946EF] via-[#8B5CF6] to-[#6366F1] p-8 sm:p-10 relative shadow-2xl">
+                    <div className="shrink-0 bg-gradient-to-br from-[#D946EF] via-[#8B5CF6] to-[#6366F1] p-6 sm:p-8 relative shadow-2xl">
                         <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-1 bg-white/20 rounded-full sm:hidden" />
                         <button
                             onClick={onClose}
@@ -192,7 +192,7 @@ export default function AIPlannerModal({ isOpen, onClose }: AIPlannerModalProps)
                                 </div>
 
                                 {/* Date Range */}
-                                <div className="grid grid-cols-2 gap-5">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div className="space-y-3">
                                         <label className="flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] px-2">
                                             <Calendar size={12} className="text-accent-cobalt" /> INÍCIO
@@ -272,8 +272,11 @@ export default function AIPlannerModal({ isOpen, onClose }: AIPlannerModalProps)
                                             min="1"
                                             max="20"
                                             value={numberOfPeople}
-                                            onChange={(e) => setNumberOfPeople(parseInt(e.target.value) || 2)}
-                                            className="w-full bg-white/5 border border-white/10 focus:border-accent-cobalt rounded-[1.5rem] px-6 py-4.5 outline-none font-black text-white"
+                                            onChange={(e) => {
+                                                const val = parseInt(e.target.value);
+                                                if (!isNaN(val)) setNumberOfPeople(val);
+                                            }}
+                                            className="w-full bg-white/5 border border-white/10 focus:border-accent-cobalt rounded-[1.5rem] px-6 py-4.5 outline-none font-black text-white relative z-[200] cursor-text"
                                         />
                                     </div>
                                 </div>

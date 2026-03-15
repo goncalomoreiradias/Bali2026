@@ -42,7 +42,7 @@ export default function AIPlannerTrigger({ onClick }: AIPlannerTriggerProps) {
                 
                 <div className="space-y-2">
                     <h3 className="text-3xl font-black font-outfit text-white tracking-tight uppercase leading-[0.9]">
-                        Arquiteto de <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-indigo to-accent-magenta">Viagens IA</span>
+                        Arquiteto <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-indigo to-accent-magenta">AI</span>
                     </h3>
                     <p className="text-gray-400 font-medium text-sm max-w-xs">
                         Deixe que a nossa inteligência artificial desenhe o itinerário perfeito em segundos. Personalizado, bilíngue e pronto a usar.

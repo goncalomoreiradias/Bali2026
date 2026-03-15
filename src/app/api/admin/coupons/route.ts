@@ -73,3 +73,34 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Failed to generate coupon" }, { status: 500 });
     }
 }
+export async function DELETE(request: Request) {
+    try {
+        const session = await getSession();
+        if (!session || session.role !== "ADMIN") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+
+        if (!id) {
+            return NextResponse.json({ error: "Missing ID" }, { status: 400 });
+        }
+
+        await prisma.coupon.delete({
+            where: { id }
+        });
+
+        await prisma.adminLog.create({
+            data: {
+                userId: session.userId as string,
+                action: "COUPON_DELETED",
+                details: `Deleted coupon ID: ${id}`
+            }
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to delete coupon" }, { status: 500 });
+    }
+}

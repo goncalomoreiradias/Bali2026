@@ -25,6 +25,7 @@ const en = {
     "dash.descPlaceholder": "Ex: Roadtrip along the Amalfi coast",
     "dash.cancel": "Cancel",
     "dash.createBtn": "Create Trip",
+    "dash.logout": "Logout",
 
     // Finance
     "fin.total": "Total",

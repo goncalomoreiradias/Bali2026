@@ -168,7 +168,7 @@ export default function DashboardClient({ session }: Props) {
     return (
         <main className="min-h-screen bg-[#0D0D0D] relative pb-24 selection:bg-accent-cobalt selection:text-white">
             {/* Premium Header */}
-            <header className="sticky top-0 z-40 glass border-b border-white/5 pt-16 pb-12 px-8 sm:px-12 shadow-2xl">
+            <header className="sticky top-0 z-40 glass border-b border-white/5 pt-8 pb-8 px-8 sm:px-12 shadow-2xl">
                 {/* Micro-pattern overlay */}
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]" />
                 
@@ -217,23 +217,7 @@ export default function DashboardClient({ session }: Props) {
                         </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4">
-                        <button
-                            onClick={() => userPlan === "FREE" ? setIsUpgradeOpen(true) : setIsAIPlannerOpen(true)}
-                            className="px-8 py-5 bg-gradient-to-br from-[#D946EF] via-[#8B5CF6] to-[#6366F1] hover:scale-[1.05] hover:shadow-[0_25px_50px_-12px_rgba(139,92,246,0.6)] text-white font-black rounded-full transition-all active:scale-[0.96] items-center gap-3 border border-white/20 shadow-2xl group flex flex-1 sm:flex-none justify-center"
-                        >
-                            <Sparkles size={22} className="group-hover:rotate-12 transition-transform" />
-                            <span className="text-sm uppercase tracking-[0.2em]">CRIAR COM IA MÁGICA</span>
-                        </button>
-                        
-                        <button
-                            onClick={() => setIsCreateModalOpen(true)}
-                            className="px-8 py-5 bg-white text-obsidian hover:bg-gray-100 font-black rounded-full shadow-2xl transition-all active:scale-[0.96] items-center gap-3 border border-white/10 flex flex-1 sm:flex-none justify-center"
-                        >
-                            <Plus size={24} />
-                            <span className="text-sm uppercase tracking-[0.2em]">{t("dash.newTrip")}</span>
-                        </button>
-                    </div>
+                    {/* Redundant Buttons Removed as per user request (already have FABs) */}
                 </div>
             </header>
 
@@ -400,7 +384,7 @@ export default function DashboardClient({ session }: Props) {
                     onClick={handleLogout}
                     className="px-8 py-3 text-xs font-black uppercase tracking-[0.3em] text-rose-500 bg-rose-500/5 hover:bg-rose-500/10 rounded-full border border-rose-500/10 transition-all active:scale-95"
                 >
-                    Sair / Logout
+                    {t("dash.logout") || 'Logout'}
                 </button>
 
                 {session.role === "ADMIN" && (

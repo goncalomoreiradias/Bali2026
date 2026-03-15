@@ -25,6 +25,7 @@ const pt = {
     "dash.descPlaceholder": "Ex: Roadtrip pela costa amalfitana",
     "dash.cancel": "Cancelar",
     "dash.createBtn": "Criar Viagem",
+    "dash.logout": "Sair",
 
     // Finance
     "fin.total": "Total",
