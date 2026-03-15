@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, MapPin, Calendar, Wallet, Users, Compass, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,10 @@ import { useI18n } from "@/lib/i18n";
 interface AIPlannerModalProps {
     isOpen: boolean;
     onClose: () => void;
+    initialData?: {
+        destination?: string;
+        travelStyle?: string[];
+    };
 }
 
 const travelStyles = [
@@ -20,7 +24,7 @@ const travelStyles = [
     { value: "balanced", label: "⚖️ Equilibrado", labelEn: "⚖️ Balanced" },
 ];
 
-export default function AIPlannerModal({ isOpen, onClose }: AIPlannerModalProps) {
+export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlannerModalProps) {
     const router = useRouter();
     const { t, language } = useI18n();
     const [destination, setDestination] = useState("");
@@ -34,6 +38,26 @@ export default function AIPlannerModal({ isOpen, onClose }: AIPlannerModalProps)
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [phase, setPhase] = useState<"form" | "generating">("form");
+
+    // Pre-fill logic when initialData changes
+    useEffect(() => {
+        if (isOpen && initialData) {
+            if (initialData.destination) setDestination(initialData.destination);
+            if (initialData.travelStyle && initialData.travelStyle.length > 0) {
+                setTravelStyle(initialData.travelStyle);
+            }
+        } else if (!isOpen) {
+            // Reset form when closed to ensure a clean state for next time
+            setDestination("");
+            setTravelStyle(["balanced"]);
+            setStartDate("");
+            setEndDate("");
+            setBudget("");
+            setNumberOfPeople(2);
+            setCustomRequirements("");
+            setPhase("form");
+        }
+    }, [isOpen, initialData]);
 
     const validateForm = () => {
         if (!destination) return "Por favor, indica um destino.";

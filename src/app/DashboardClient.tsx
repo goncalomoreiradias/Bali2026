@@ -160,10 +160,44 @@ export default function DashboardClient({ session }: Props) {
     };
 
     const templates = [
-        { title: "Safari de Luxo", desc: "Explora o Serengeti com conforto total.", icon: "🦁", color: "from-amber-500 to-orange-600" },
-        { title: "Backpacking Europa", desc: "A rota definitiva pelas capitais europeias.", icon: "🎒", color: "from-blue-500 to-indigo-600" },
-        { title: "Escapadinha em Roma", desc: "História, massa e vinhos inesquecíveis.", icon: "🇮🇹", color: "from-rose-500 to-magenta-600" }
+        { 
+            id: 'safari', 
+            name: t("dash.template.safari.title"), 
+            desc: t("dash.template.safari.desc"), 
+            icon: "🦁", 
+            color: "from-amber-500 to-orange-600",
+            destination: "Serengeti National Park, Tanzânia",
+            travelStyle: ["adventure", "balanced"]
+        },
+        { 
+            id: 'bali', 
+            name: t("dash.template.bali.title"), 
+            desc: t("dash.template.bali.desc"), 
+            icon: "🌴", 
+            color: "from-emerald-500 to-teal-600",
+            destination: "Bali, Indonésia",
+            travelStyle: ["adventure", "relaxation"]
+        },
+        { 
+            id: 'rome', 
+            name: t("dash.template.rome.title"), 
+            desc: t("dash.template.rome.desc"), 
+            icon: "🇮🇹", 
+            color: "from-rose-500 to-magenta-600",
+            destination: "Roma, Itália",
+            travelStyle: ["culture", "foodie"]
+        }
     ];
+
+    const [currentTemplate, setCurrentTemplate] = useState<{destination: string, travelStyle: string[]} | null>(null);
+
+    const handleTemplateClick = (tpl: any) => {
+        setCurrentTemplate({
+            destination: tpl.destination,
+            travelStyle: tpl.travelStyle
+        });
+        setIsAIPlannerOpen(true);
+    };
 
     const { scrollY } = useScroll();
     
@@ -201,7 +235,7 @@ export default function DashboardClient({ session }: Props) {
                             >
                                 <span className="w-1.5 h-1.5 bg-accent-cobalt rounded-full animate-pulse" />
                                 <span className="text-[10px] font-black text-accent-cobalt tracking-[0.2em] uppercase">
-                                    {t("dash.hello")}, {session.name || "Viajante"}
+                                    {t("dash.hello")}, {session.name || t("common.viajante")}
                                 </span>
                             </motion.div>
                             
@@ -210,13 +244,13 @@ export default function DashboardClient({ session }: Props) {
                                     style={{ scale: titleScale, originX: 0 }}
                                     className="text-3xl sm:text-7xl font-black font-outfit text-white tracking-tight leading-[0.9] whitespace-nowrap"
                                 >
-                                    Viatio <span className="hidden sm:inline text-transparent bg-clip-text bg-gradient-to-r from-accent-cobalt to-accent-magenta">Dashboard</span>
+                                    Viatio <span className="hidden sm:inline text-transparent bg-clip-text bg-gradient-to-r from-accent-cobalt to-accent-magenta">{t("dash.dashboard")}</span>
                                 </motion.h1>
                                 <motion.p 
                                     style={{ opacity: subtitleOpacity }}
                                     className="text-gray-500 text-xs sm:text-lg font-medium max-w-xl mt-2 sm:mt-4 line-clamp-1 sm:line-clamp-none"
                                 >
-                                    A sua viagem definitiva, otimizada por IA.
+                                    {t("dash.optimizedAI")}
                                 </motion.p>
                             </div>
                         </div>
@@ -227,13 +261,13 @@ export default function DashboardClient({ session }: Props) {
                                     onClick={() => setViewMode("personal")}
                                     className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === "personal" ? "bg-white text-obsidian shadow-xl" : "text-gray-500 hover:text-white"}`}
                                 >
-                                    Pessoais
+                                    {t("dash.personal")}
                                 </button>
                                 <button 
                                     onClick={() => setViewMode("group")}
                                     className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === "group" ? "bg-white text-obsidian shadow-xl" : "text-gray-500 hover:text-white"}`}
                                 >
-                                    Grupo
+                                    {t("dash.group")}
                                 </button>
                             </div>
                             <LanguageToggle />
@@ -260,32 +294,33 @@ export default function DashboardClient({ session }: Props) {
                             </div>
                             <h3 className="text-3xl font-black text-white mb-4 uppercase tracking-tight">{t("dash.noTrips")}</h3>
                             <p className="text-gray-500 mb-10 max-w-md mx-auto font-medium">
-                                Parece que ainda não tens planos para a tua próxima aventura. Começa agora ou inspira-te com um dos nossos templates!
+                                {t("dash.noTripsDesc")}
                             </p>
                             <button
                                 onClick={() => setIsCreateModalOpen(true)}
                                 className="px-10 py-5 bg-accent-cobalt text-white font-black rounded-full shadow-2xl shadow-accent-cobalt/40 transition-all active:scale-95 uppercase tracking-widest text-xs border border-white/20"
                             >
-                                Criar Primeira Viagem
+                                {t("dash.createFirstTrip")}
                             </button>
                         </motion.div>
 
                         {/* Sales Templates */}
                         <div className="space-y-8">
-                            <h4 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.4em] text-center">Templates em Destaque</h4>
+                            <h4 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.4em] text-center">{t("dash.featuredTemplates")}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {templates.map((tpl, i) => (
                                     <motion.div
-                                        key={tpl.title}
+                                        key={tpl.id}
+                                        onClick={() => handleTemplateClick(tpl)}
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: i * 0.1 }}
-                                        className="bg-[#1A1A1A] rounded-[2rem] p-8 border border-white/5 group hover:border-white/20 transition-all cursor-pointer"
+                                        className="bg-[#1A1A1A] rounded-[2rem] p-8 border border-white/5 group hover:border-white/20 transition-all cursor-pointer shadow-2xl hover:shadow-accent-cobalt/5"
                                     >
                                         <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${tpl.color} flex items-center justify-center text-2xl mb-6 shadow-xl`}>
                                             {tpl.icon}
                                         </div>
-                                        <h5 className="text-xl font-black text-white mb-2 tracking-tight group-hover:text-accent-cobalt transition-colors">{tpl.title}</h5>
+                                        <h5 className="text-xl font-black text-white mb-2 tracking-tight group-hover:text-accent-cobalt transition-colors">{tpl.name}</h5>
                                         <p className="text-sm text-gray-500 font-medium leading-relaxed">{tpl.desc}</p>
                                     </motion.div>
                                 ))}
@@ -330,7 +365,7 @@ export default function DashboardClient({ session }: Props) {
                                                         </h2>
                                                         <div className="flex items-center gap-2">
                                                             <Calendar size={12} className="text-gray-600" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-600">Updated Recently</span>
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-600">{t("dash.updatedRecently")}</span>
                                                         </div>
                                                     </div>
                                                     <button 
@@ -348,7 +383,7 @@ export default function DashboardClient({ session }: Props) {
                                                 {/* Progress Bar with Clamp for fluid spacing */}
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between items-end">
-                                                        <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Progress</span>
+                                                        <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{t("dash.progress")}</span>
                                                         <span className="text-[9px] font-black text-accent-cobalt">{prog}%</span>
                                                     </div>
                                                     <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
@@ -378,13 +413,13 @@ export default function DashboardClient({ session }: Props) {
                                                         ))
                                                     ) : (
                                                         <div className="w-8 h-8 rounded-full bg-accent-cobalt border-2 border-[#1A1A1A] flex items-center justify-center text-[9px] font-black text-white">
-                                                            ME
+                                                            {t("fin.you")}
                                                         </div>
                                                     )}
                                                 </div>
                                                 
                                                 <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-accent-cobalt group-hover:translate-x-1 transition-transform">
-                                                    Open Details <ArrowRight size={12} />
+                                                    {t("dash.openDetails")} <ArrowRight size={12} />
                                                 </div>
                                             </div>
                                         </motion.div>
@@ -405,7 +440,7 @@ export default function DashboardClient({ session }: Props) {
                                                     className="absolute top-20 right-8 z-50 w-48 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl p-2 backdrop-blur-3xl"
                                                 >
                                                     <button className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
-                                                        <Edit2 size={16} /> Edit Info
+                                                        <Edit2 size={16} /> {t("dash.editInfo")}
                                                     </button>
                                                     <button 
                                                         className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all"
@@ -415,7 +450,7 @@ export default function DashboardClient({ session }: Props) {
                                                             setActiveTripMenu(null);
                                                         }}
                                                     >
-                                                        <Trash2 size={16} /> Delete Trip
+                                                        <Trash2 size={16} /> {t("dash.deleteTrip")}
                                                     </button>
                                                 </motion.div>
                                             </>
@@ -459,7 +494,7 @@ export default function DashboardClient({ session }: Props) {
                         onClick={() => router.push("/admin")}
                         className="px-6 py-2 text-sm font-semibold text-brand-secondary bg-brand-secondary/10 hover:bg-brand-secondary/20 rounded-full transition-colors"
                     >
-                        Admin Dashboard
+                        {t("dash.adminDashboard")}
                     </button>
                 )}
             </div>
@@ -478,17 +513,17 @@ export default function DashboardClient({ session }: Props) {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         className="glass bg-obsidian/95 relative sm:rounded-[2.5rem] rounded-[2rem] p-10 max-w-md w-full shadow-2xl border border-white/10"
                     >
-                        <h2 className="text-3xl font-black font-outfit text-white mb-8 tracking-tight uppercase leading-none">Novo Destino</h2>
+                        <h2 className="text-3xl font-black font-outfit text-white mb-8 tracking-tight uppercase leading-none">{t("dash.newDestination")}</h2>
 
                         <form onSubmit={handleCreateTrip} className="space-y-8">
                             <div className="space-y-3">
                                 <label className="flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] px-2 leading-none">
-                                    Onde vamos?
+                                    {t("dash.whereTo")}
                                 </label>
                                 <input
                                     type="text"
                                     required
-                                    placeholder="Ex: Bali, Indonésia"
+                                    placeholder={t("ai.placeholder.destination")}
                                     value={newTripTitle}
                                     onChange={(e) => setNewTripTitle(e.target.value)}
                                     className="w-full px-6 py-4.5 bg-white/5 border border-white/10 rounded-full focus:border-accent-cobalt outline-none transition-all font-black text-white placeholder:text-gray-800 text-lg tracking-tight"
@@ -497,10 +532,10 @@ export default function DashboardClient({ session }: Props) {
 
                             <div className="space-y-3">
                                 <label className="flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] px-2 leading-none">
-                                    Notas Curtas (Opcional)
+                                    {t("dash.shortNotes")}
                                 </label>
                                 <textarea
-                                    placeholder="Breve descrição da aventura..."
+                                    placeholder={t("dash.shortNotesPlaceholder")}
                                     value={newTripDesc}
                                     onChange={(e) => setNewTripDesc(e.target.value)}
                                     className="w-full px-6 py-4.5 bg-white/5 border border-white/10 rounded-[2rem] focus:border-accent-cobalt outline-none transition-all min-h-[120px] resize-none font-medium text-white placeholder:text-gray-800"
@@ -521,7 +556,7 @@ export default function DashboardClient({ session }: Props) {
                                     disabled={isCreating}
                                     className="flex-1 py-4.5 bg-gradient-to-br from-accent-cobalt to-accent-indigo text-white font-black rounded-full shadow-[0_20px_40px_-10px_rgba(46,91,255,0.4)] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] border border-white/20 active:scale-95"
                                 >
-                                    {isCreating ? <Loader2 size={18} className="animate-spin" /> : "Criar Viagem"}
+                                    {isCreating ? <Loader2 size={18} className="animate-spin" /> : t("dash.createTrip")}
                                 </button>
                             </div>
                         </form>
@@ -530,7 +565,14 @@ export default function DashboardClient({ session }: Props) {
             )}
 
             {/* AI Planner Modal */}
-            <AIPlannerModal isOpen={isAIPlannerOpen} onClose={() => setIsAIPlannerOpen(false)} />
+            <AIPlannerModal 
+                isOpen={isAIPlannerOpen} 
+                onClose={() => {
+                    setIsAIPlannerOpen(false);
+                    setCurrentTemplate(null);
+                }} 
+                initialData={currentTemplate || undefined} 
+            />
 
             {/* Upgrade Modal */}
             <UpgradeModal

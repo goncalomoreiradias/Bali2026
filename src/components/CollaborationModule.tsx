@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { UserPlus, Shield, Info } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 interface Participant {
     id: string;
@@ -16,6 +17,7 @@ interface CollaborationModuleProps {
 }
 
 export default function CollaborationModule({ participants, onInvite }: CollaborationModuleProps) {
+    const { t } = useI18n();
     return (
         <div className="flex items-center gap-6 bg-[#141820]/80 p-4 rounded-full border border-white/5 shadow-2xl backdrop-blur-xl group hover:border-accent-cobalt/30 transition-all">
             <div className="flex -space-x-3 px-2">
@@ -57,7 +59,7 @@ export default function CollaborationModule({ participants, onInvite }: Collabor
                 className="flex items-center gap-2 px-6 py-2 bg-accent-cobalt text-white rounded-full font-black uppercase tracking-widest text-[9px] hover:shadow-[0_10px_20px_-5px_alpha(46,91,255,0.4)] transition-all active:scale-95"
             >
                 <UserPlus size={14} />
-                Convidar
+                {t("collab.invite")}
             </button>
         </div>
     );

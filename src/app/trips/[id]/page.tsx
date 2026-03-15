@@ -23,7 +23,7 @@ import CollaborationModule from "@/components/CollaborationModule";
 
 const MapSection = dynamic(() => import("@/components/MapSection"), {
   ssr: false,
-  loading: () => <div className="h-full w-full bg-gray-100 dark:bg-gray-800 animate-pulse flex items-center justify-center">Loading map...</div>
+  loading: () => <div className="h-full w-full bg-gray-100 dark:bg-gray-800 animate-pulse flex items-center justify-center">Viatio...</div>
 });
 
 type ViewMode = "list" | "map";
@@ -143,7 +143,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
   };
 
   const handleDeleteTrip = async () => {
-      if (!confirm("Tens a certeza que queres eliminar esta viagem? Esta ação é irreversível.")) return;
+    if (!confirm(t("trip.deleteConfirmation"))) return;
       try {
           const res = await fetch(`/api/trips/${tripId}`, { method: "DELETE" });
           if (res.ok) router.push("/");
@@ -311,8 +311,8 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                 }}
                 className="hidden md:flex items-center gap-3 px-8 py-4 bg-white text-obsidian hover:bg-gray-100 rounded-full font-black text-xs uppercase tracking-widest transition-all shadow-2xl active:scale-95 border border-white/10"
               >
-                {copiedLink ? <Check size={18} className="text-emerald-500" /> : <Plus size={18} className="text-accent-cobalt" />}
-                {copiedLink ? "Link Copied!" : "Invite Collaborators"}
+                {copiedLink ? t("trip.linkCopied") : <Plus size={18} className="text-accent-cobalt" />}
+                {copiedLink ? t("trip.linkCopied") : t("trip.inviteCollaborators")}
               </button>
             )}
           </motion.div>
@@ -352,7 +352,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                       : "bg-obsidian text-gray-400 hover:text-white border border-white/10"
                       }`}
                   >
-                    Day {day.dayNumber}
+                    {t("nav.day")} {day.dayNumber}
                   </button>
                 ))}
               </div>
@@ -374,7 +374,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                     : "bg-white/5 text-gray-400 hover:text-white border border-white/10"
                     }`}
                 >
-                  All Days
+                  {t("common.all_days")}
                 </button>
                 {itinerary.days.map((day: DayPlan) => (
                   <button
@@ -385,7 +385,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                       : "bg-white/5 text-gray-400 hover:text-white border border-white/10"
                       }`}
                   >
-                    Day {day.dayNumber}
+                    {t("nav.day")} {day.dayNumber}
                   </button>
                 ))}
               </div>
@@ -484,7 +484,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                     className="w-full bg-slate-900 rounded-t-[2.5rem] border-t border-white/10 p-8 pb-12 space-y-6 shadow-2xl"
                   >
                       <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-black uppercase tracking-widest text-white italic">Gestão da Viagem</h3>
+                          <h3 className="text-lg font-black uppercase tracking-widest text-white italic">{t("trip.management")}</h3>
                           <button onClick={() => setIsManagementMenuOpen(false)} className="p-2 bg-white/5 rounded-full"><X size={20}/></button>
                       </div>
                       
@@ -496,7 +496,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                               <div className="w-10 h-10 bg-accent-cobalt/20 rounded-xl flex items-center justify-center text-accent-cobalt">
                                   <Edit2 size={20} />
                               </div>
-                              <span className="font-bold text-gray-300">Editar Nome</span>
+                              <span className="font-bold text-gray-300">{t("trip.editName")}</span>
                           </button>
 
                           <button 
@@ -506,7 +506,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                               <div className="w-10 h-10 bg-accent-indigo/20 rounded-xl flex items-center justify-center text-accent-indigo">
                                   <Copy size={20} />
                               </div>
-                              <span className="font-bold text-gray-300">Duplicar Roteiro</span>
+                              <span className="font-bold text-gray-300">{t("trip.duplicate")}</span>
                           </button>
 
                           <button 
@@ -516,7 +516,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                               <div className="w-10 h-10 bg-rose-500/20 rounded-xl flex items-center justify-center text-rose-500">
                                   <Trash2 size={20} />
                               </div>
-                              <span className="font-bold text-rose-400">Eliminar Viagem</span>
+                              <span className="font-bold text-rose-400">{t("trip.delete")}</span>
                           </button>
                       </div>
                   </motion.div>
