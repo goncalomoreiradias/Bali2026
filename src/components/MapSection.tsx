@@ -42,6 +42,88 @@ function MapBounds({ locations, L }: { locations: any[], L: any }) {
     return null;
 }
 
+// Dedicated component for markers to safely use hooks
+function MapMarkers({ locations, L }: { locations: any[], L: any }) {
+    const map = useMap();
+    const [zoom, setZoom] = useState(map.getZoom());
+
+    // Update markers when zoom ends for dynamic scaling
+    useEffect(() => {
+        const onZoom = () => setZoom(map.getZoom());
+        map.on("zoomend", onZoom);
+        return () => { map.off("zoomend", onZoom); };
+    }, [map]);
+
+    const getIcon = (tag?: string) => {
+        const t = tag?.toLowerCase();
+        if (t?.includes("food") || t?.includes("restaurante")) return <Utensils size={14} className="text-white" />;
+        if (t?.includes("photo") || t?.includes("foto")) return <Camera size={14} className="text-white" />;
+        if (t?.includes("hotel") || t?.includes("dormir")) return <Hotel size={14} className="text-white" />;
+        if (t?.includes("must")) return <Star size={14} className="text-white" />;
+        return <MapPin size={14} className="text-white" />;
+    };
+
+    return (
+        <>
+            {locations.map((loc, idx) => {
+                const scale = zoom > 14 ? 1.2 : zoom < 10 ? 0.7 : 1;
+                const size = 24 * scale;
+
+                const iconHtml = renderToStaticMarkup(
+                    <div className="relative group flex items-center justify-center transition-all duration-300" style={{ transform: `scale(${scale})` }}>
+                        <div 
+                            className="bg-obsidian text-white rounded-full border-2 border-white/90 shadow-2xl flex items-center justify-center relative z-10 transition-all group-hover:bg-accent-cobalt group-hover:border-white"
+                            style={{ width: `${size}px`, height: `${size}px` }}
+                        >
+                            <div style={{ transform: `scale(${scale * 0.85})` }}>
+                                {getIcon(loc.tag)}
+                            </div>
+                        </div>
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-1 bg-black/40 blur-[2px] rounded-full z-0 group-hover:opacity-0 transition-opacity"></div>
+                    </div>
+                );
+
+                const customIcon = L.divIcon({
+                    className: 'custom-pin-icon',
+                    html: iconHtml,
+                    iconSize: [size, size],
+                    iconAnchor: [size/2, size],
+                    popupAnchor: [0, -size]
+                });
+
+                return (
+                    <Marker 
+                        key={`${loc.id}-${idx}`} 
+                        position={[loc.lat, loc.lng]}
+                        icon={customIcon}
+                    >
+                        <Popup className="premium-popup">
+                            <div className="p-4 min-w-[200px] bg-obsidian border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-cobalt to-accent-indigo" />
+                                <h4 className="font-black text-white m-0 mb-2 font-outfit text-base tracking-tight leading-tight">{loc.name}</h4>
+                                <p className="text-xs text-gray-400 m-0 leading-relaxed line-clamp-3 font-medium">{loc.description}</p>
+                                <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                                    <a
+                                        href={loc.mapsUrl || `https://maps.google.com/?q=${encodeURIComponent(loc.name)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-accent-cobalt hover:text-white transition-colors"
+                                    >
+                                        Ver no Maps →
+                                    </a>
+                                    <div className="px-2 py-1 bg-white/5 rounded-md text-[8px] font-black text-gray-500 uppercase tracking-widest">
+                                        {loc.tag || 'Visit'}
+                                    </div>
+                                </div>
+                            </div>
+                        </Popup>
+                    </Marker>
+                );
+            })}
+        </>
+    );
+}
+
 export default function MapSection({ days, selectedDayId }: MapSectionProps) {
     const [L, setL] = useState<any>(null);
 
@@ -94,74 +176,7 @@ export default function MapSection({ days, selectedDayId }: MapSectionProps) {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
                     url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
                 />
-                {locationsToRender.map((loc, idx) => {
-                    const getIcon = (tag?: string) => {
-                        const t = tag?.toLowerCase();
-                        if (t?.includes("food") || t?.includes("restaurante")) return <Utensils size={14} className="text-white" />;
-                        if (t?.includes("photo") || t?.includes("foto")) return <Camera size={14} className="text-white" />;
-                        if (t?.includes("hotel") || t?.includes("dormir")) return <Hotel size={14} className="text-white" />;
-                        if (t?.includes("must")) return <Star size={14} className="text-white" />;
-                        return <MapPin size={14} className="text-white" />;
-                    };
-
-                    // Dynamic Scaling based on zoom level logic
-                    const zoom = useMap().getZoom();
-                    const scale = zoom > 14 ? 1.2 : zoom < 10 ? 0.7 : 1;
-                    const size = 24 * scale;
-
-                    const iconHtml = renderToStaticMarkup(
-                        <div className="relative group flex items-center justify-center transition-all duration-300" style={{ transform: `scale(${scale})` }}>
-                            {/* Minimalism: Black/White sleek Apple-style dots */}
-                            <div 
-                                className="bg-obsidian text-white rounded-full border-2 border-white/90 shadow-2xl flex items-center justify-center relative z-10 transition-all group-hover:bg-accent-cobalt group-hover:border-white"
-                                style={{ width: `${size}px`, height: `${size}px` }}
-                            >
-                                <div style={{ transform: `scale(${scale * 0.85})` }}>
-                                    {getIcon(loc.tag)}
-                                </div>
-                            </div>
-                            {/* Shadow leaf */}
-                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-1 bg-black/40 blur-[2px] rounded-full z-0 group-hover:opacity-0 transition-opacity"></div>
-                        </div>
-                    );
-
-                    const customIcon = L.divIcon({
-                        className: 'custom-pin-icon',
-                        html: iconHtml,
-                        iconSize: [size, size],
-                        iconAnchor: [size/2, size],
-                        popupAnchor: [0, -size]
-                    });
-
-                    return (
-                        <Marker 
-                            key={`${loc.id}-${idx}`} 
-                            position={[loc.lat, loc.lng]}
-                            icon={customIcon}
-                        >
-                            <Popup className="premium-popup">
-                                <div className="p-4 min-w-[200px] bg-obsidian border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
-                                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-cobalt to-accent-indigo" />
-                                    <h4 className="font-black text-white m-0 mb-2 font-outfit text-base tracking-tight leading-tight">{loc.name}</h4>
-                                    <p className="text-xs text-gray-400 m-0 leading-relaxed line-clamp-3 font-medium">{loc.description}</p>
-                                    <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                                        <a
-                                            href={loc.mapsUrl || `https://maps.google.com/?q=${encodeURIComponent(loc.name)}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-accent-cobalt hover:text-white transition-colors"
-                                        >
-                                            Ver no Maps →
-                                        </a>
-                                        <div className="px-2 py-1 bg-white/5 rounded-md text-[8px] font-black text-gray-500 uppercase tracking-widest">
-                                            {loc.tag || 'Visit'}
-                                        </div>
-                                    </div>
-                                </div>
-                            </Popup>
-                        </Marker>
-                    );
-                })}
+                <MapMarkers locations={locationsToRender} L={L} />
             </MapContainer>
 
             {/* Subtle overlay for branding */}
