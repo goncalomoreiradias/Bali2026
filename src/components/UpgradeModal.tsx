@@ -101,8 +101,8 @@ export default function UpgradeModal({ isOpen, onClose, onUpgraded }: UpgradeMod
                                     <Sparkles size={18} className="text-amber-500" />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-black text-white tracking-tight uppercase">Itinerários Mágicos</p>
-                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Gerados por AI com locais reais</p>
+                                    <p className="text-sm font-black text-text-primary tracking-tight uppercase">Itinerários Mágicos</p>
+                                    <p className="text-[10px] text-text-secondary font-bold uppercase tracking-widest mt-0.5">Gerados por AI com locais reais</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/5 group hover:border-amber-500/30 transition-all">
@@ -110,15 +110,15 @@ export default function UpgradeModal({ isOpen, onClose, onUpgraded }: UpgradeMod
                                     <Key size={18} className="text-amber-500" />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-black text-white tracking-tight uppercase">Exploração Total</p>
-                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">GPS e Links Google Maps incluídos</p>
+                                    <p className="text-sm font-black text-text-primary tracking-tight uppercase">Exploração Total</p>
+                                    <p className="text-[10px] text-text-secondary font-bold uppercase tracking-widest mt-0.5">GPS e Links Google Maps incluídos</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Coupon form */}
                         <div className="space-y-6">
-                            <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] px-2 flex items-center gap-2">
+                            <h3 className="text-[10px] font-black text-text-secondary uppercase tracking-[0.3em] px-2 flex items-center gap-2">
                                 <Key size={14} className="text-amber-500" /> TENS UM CÓDIGO?
                             </h3>
                             <form onSubmit={handleRedeem} className="flex gap-3">
@@ -128,7 +128,7 @@ export default function UpgradeModal({ isOpen, onClose, onUpgraded }: UpgradeMod
                                     required
                                     value={couponCode}
                                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                                    className="flex-grow bg-white/5 border border-white/10 focus:border-amber-500 rounded-full px-6 py-4 outline-none font-mono font-black uppercase tracking-widest transition-all text-sm text-white placeholder:text-gray-800"
+                                    className="flex-grow bg-white/5 border border-white/10 focus:border-amber-500 rounded-full px-6 py-4 outline-none font-mono font-black uppercase tracking-widest transition-all text-sm text-text-primary placeholder:text-text-dim"
                                 />
                                 <button
                                     type="submit"
@@ -156,14 +156,14 @@ export default function UpgradeModal({ isOpen, onClose, onUpgraded }: UpgradeMod
                         {/* Divider */}
                         <div className="flex items-center gap-6">
                             <div className="flex-grow h-px bg-white/5" />
-                            <span className="text-[8px] text-gray-700 font-black tracking-[0.4em] uppercase">OU</span>
+                            <span className="text-[8px] text-text-dim font-black tracking-[0.4em] uppercase">OU</span>
                             <div className="flex-grow h-px bg-white/5" />
                         </div>
 
                         {/* View Plans button */}
                         <button
                             onClick={() => { onClose(); router.push("/pricing"); }}
-                            className="w-full py-5 bg-white/5 text-white font-black rounded-full flex items-center justify-center gap-3 hover:bg-white/10 transition-all border border-white/5 active:scale-[0.98] uppercase tracking-[0.2em] text-xs"
+                            className="w-full py-5 bg-white/5 text-text-primary font-black rounded-full flex items-center justify-center gap-3 hover:bg-white/10 transition-all border border-white/5 active:scale-[0.98] uppercase tracking-[0.2em] text-xs"
                         >
                             VER PLANOS <ArrowRight size={18} className="text-amber-500" />
                         </button>

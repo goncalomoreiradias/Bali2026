@@ -160,8 +160,8 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
                                 <Sparkles className="text-white animate-pulse" size={20} />
                             </div>
                             <div className="space-y-0">
-                                <h2 className="text-lg sm:text-xl font-black text-white font-outfit tracking-tighter uppercase whitespace-normal leading-none">{t("ai.title")}</h2>
-                                <p className="text-white/60 text-[8px] font-black uppercase tracking-[0.2em]">{t("ai.subtitle")}</p>
+                                <h2 className="text-lg sm:text-xl font-black text-text-primary font-outfit tracking-tighter uppercase whitespace-normal leading-none">{t("ai.title")}</h2>
+                                <p className="text-text-secondary text-[8px] font-black uppercase tracking-[0.2em]">{t("ai.subtitle")}</p>
                             </div>
                         </div>
                     </div>
@@ -181,10 +181,10 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
                                     <div className="absolute inset-0 bg-accent-cobalt/30 blur-[40px] rounded-full animate-pulse" />
                                     <Sparkles size={80} className="text-accent-indigo relative z-10 drop-shadow-[0_0_20px_rgba(99,102,241,0.8)]" />
                                 </motion.div>
-                                <h3 className="text-2xl sm:text-3xl font-black text-white mb-4 font-outfit tracking-tight leading-tight uppercase tracking-widest px-4">
+                                <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-4 font-outfit tracking-tight leading-tight uppercase px-4">
                                     {t("ai.generating")}
                                 </h3>
-                                <p className="text-gray-400 text-[10px] sm:text-sm max-w-xs leading-relaxed font-black uppercase tracking-[0.15em] opacity-80">
+                                <p className="text-text-secondary text-[10px] sm:text-sm max-w-xs leading-relaxed font-black uppercase tracking-[0.15em]">
                                     {t("ai.generatingDesc")}
                                 </p>
                                 <div className="mt-12 w-full max-w-xs sm:max-w-sm">
@@ -212,7 +212,7 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
 
                                 {/* Destination */}
                                 <div className="space-y-3">
-                                    <label className="flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] px-2">
+                                    <label className="flex items-center gap-2 text-[10px] font-black text-text-secondary uppercase tracking-[0.3em] px-2 leading-none">
                                         <MapPin size={12} className="text-accent-cobalt" /> {t("ai.destination")}
                                     </label>
                                     <input
@@ -220,37 +220,37 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
                                         placeholder={t("ai.placeholder.destination")}
                                         value={destination}
                                         onChange={(e) => setDestination(e.target.value)}
-                                        className="w-full bg-white/[0.07] border border-white/10 focus:border-accent-cobalt focus:shadow-[0_0_25px_rgba(46,91,255,0.15)] rounded-2xl px-5 py-4.5 outline-none font-black transition-all text-white placeholder:text-gray-700 text-[14px] max-w-full"
+                                        className="w-full bg-white/[0.07] border border-white/12 focus:border-accent-cobalt focus:shadow-[0_0_30px_rgba(59,130,246,0.15)] rounded-2xl px-6 py-5 outline-none font-black transition-all text-text-primary placeholder:text-text-dim text-[15px] max-w-full"
                                     />
                                 </div>
 
                                 {/* Date Range - Liquid Grid */}
                                 <div className="grid grid-cols-1 xs:grid-cols-2 gap-5">
                                     <div className="space-y-2.5">
-                                        <label className="flex items-center gap-2 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">
+                                        <label className="flex items-center gap-2 text-[9px] font-black text-text-secondary uppercase tracking-[0.2em] px-1 leading-none">
                                             <Calendar size={10} className="text-accent-cobalt" /> {t("ai.start")}
                                         </label>
                                         <div className="relative group">
-                                            <Calendar size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none group-focus-within:text-accent-cobalt transition-colors" />
+                                            <Calendar size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none group-focus-within:text-accent-cobalt transition-colors" />
                                             <input
                                                 type="date"
                                                 value={startDate}
                                                 onChange={(e) => setStartDate(e.target.value)}
-                                                className="w-full bg-white/5 border border-white/10 focus:border-accent-cobalt rounded-2xl pl-12 pr-4 py-4 outline-none font-black transition-all text-white text-[13px] appearance-none"
+                                                className="w-full bg-white/5 border border-white/12 focus:border-accent-cobalt rounded-2xl pl-12 pr-4 py-4.5 outline-none font-black transition-all text-text-primary text-[14px] appearance-none"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label className="flex items-center gap-2 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">
+                                        <label className="flex items-center gap-2 text-[9px] font-black text-text-secondary uppercase tracking-[0.2em] px-1 leading-none">
                                             <Calendar size={10} className="text-accent-indigo" /> {t("ai.end")}
                                         </label>
                                         <div className="relative group">
-                                            <Calendar size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none group-focus-within:text-accent-indigo transition-colors" />
+                                            <Calendar size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none group-focus-within:text-accent-indigo transition-colors" />
                                             <input
                                                 type="date"
                                                 value={endDate}
                                                 onChange={(e) => setEndDate(e.target.value)}
-                                                className="w-full bg-white/5 border border-white/10 focus:border-accent-indigo rounded-2xl pl-12 pr-4 py-4 outline-none font-black transition-all text-white text-[13px] appearance-none"
+                                                className="w-full bg-white/5 border border-white/12 focus:border-accent-indigo rounded-2xl pl-12 pr-4 py-4.5 outline-none font-black transition-all text-text-primary text-[14px] appearance-none"
                                             />
                                         </div>
                                     </div>
@@ -259,26 +259,26 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
                                 {/* Budget & People - Liquid Grid */}
                                 <div className="grid grid-cols-1 xs:grid-cols-2 gap-5">
                                     <div className="space-y-2.5">
-                                        <label className="flex items-center gap-2 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">
+                                        <label className="flex items-center gap-2 text-[9px] font-black text-text-secondary uppercase tracking-[0.2em] px-1 leading-none">
                                             <Wallet size={10} className="text-emerald-500" /> {t("ai.budget")}
                                         </label>
                                         <div className="relative group">
-                                            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-600 font-black text-xs group-focus-within:text-emerald-500 transition-colors">€</span>
+                                            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-text-muted font-black text-xs group-focus-within:text-emerald-500 transition-colors">€</span>
                                             <input
                                                 type="number"
                                                 placeholder={t("ai.placeholder.budget")}
                                                 value={budget}
                                                 onChange={(e) => setBudget(e.target.value)}
-                                                className="w-full bg-white/5 border border-white/10 focus:border-accent-cobalt rounded-2xl pl-12 pr-4 py-4 outline-none font-black text-white text-[13px] placeholder:text-gray-800"
+                                                className="w-full bg-white/5 border border-white/12 focus:border-accent-cobalt rounded-2xl pl-12 pr-4 py-4.5 outline-none font-black text-text-primary text-[14px] placeholder:text-text-dim"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label className="flex items-center gap-2 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">
+                                        <label className="flex items-center gap-2 text-[9px] font-black text-text-secondary uppercase tracking-[0.2em] px-1 leading-none">
                                             <Users size={10} className="text-accent-cobalt" /> {t("ai.guests")}
                                         </label>
                                         <div className="relative group">
-                                            <Users size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none group-focus-within:text-accent-cobalt transition-colors" />
+                                            <Users size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none group-focus-within:text-accent-cobalt transition-colors" />
                                             <input
                                                 type="number"
                                                 min="1"
@@ -293,7 +293,7 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
                                                         if (!isNaN(parsed)) setNumberOfPeople(parsed);
                                                     }
                                                 }}
-                                                className="w-full bg-white/[0.07] border border-white/10 focus:border-accent-cobalt rounded-2xl pl-12 pr-4 py-4 outline-none font-black text-white text-[14px] appearance-none"
+                                                className="w-full bg-white/[0.07] border border-white/12 focus:border-accent-cobalt rounded-2xl pl-12 pr-4 py-4.5 outline-none font-black text-text-primary text-[14px] appearance-none"
                                             />
                                         </div>
                                     </div>
@@ -315,7 +315,7 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
 
                                 {/* Travel Style - Horizontal Smooth Slider */}
                                 <div className="space-y-4">
-                                    <label className="flex items-center gap-2 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] px-1">
+                                    <label className="flex items-center gap-2 text-[9px] font-black text-text-secondary uppercase tracking-[0.2em] px-1">
                                         <Compass size={10} className="text-fuchsia-500" /> {t("ai.travelStyle")}
                                     </label>
                                     <div className="flex gap-2.5 overflow-x-auto pb-4 pt-1 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory">
@@ -330,9 +330,9 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
                                                             : [...prev, style.value]
                                                     );
                                                 }}
-                                                className={`shrink-0 py-2.5 px-4 rounded-xl text-[10px] font-black tracking-wider uppercase transition-all border whitespace-nowrap ${travelStyle.includes(style.value)
-                                                    ? "bg-accent-cobalt text-white border-accent-cobalt shadow-[0_10px_20px_-5px_rgba(46,91,255,0.4)] scale-105"
-                                                    : "bg-white/5 text-gray-500 border-white/5 hover:border-white/10"
+                                                className={`shrink-0 py-3 px-5 rounded-xl text-[10px] font-black tracking-wider uppercase transition-all border whitespace-nowrap ${travelStyle.includes(style.value)
+                                                    ? "bg-accent-cobalt text-white border-accent-cobalt shadow-[0_10px_25px_-5px_rgba(59,130,246,0.4)] scale-105"
+                                                    : "bg-white/5 text-text-muted border-white/10 hover:border-white/20 hover:text-text-primary"
                                                     }`}
                                             >
                                                 {language === 'en' ? style.labelEn : style.label}
@@ -343,15 +343,15 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
 
                                 {/* Custom Requirements */}
                                 <div className="space-y-4">
-                                    <label className="flex items-center gap-2 text-[9px] font-black text-amber-500 uppercase tracking-[0.2em] px-1">
-                                        <Compass size={10} /> {t("ai.customNeeds")}
+                                    <label className="flex items-center gap-2 text-[9px] font-black text-text-secondary uppercase tracking-[0.2em] px-1">
+                                        <Compass size={10} className="text-amber-500" /> {t("ai.customNeeds")}
                                     </label>
                                     <textarea
                                         placeholder={t("ai.placeholder.needs")}
                                         value={customRequirements}
                                         onChange={(e) => setCustomRequirements(e.target.value)}
                                         rows={3}
-                                        className="w-full bg-white/5 border border-white/10 focus:border-amber-500 rounded-2xl px-5 py-4.5 outline-none font-bold transition-all text-white resize-none text-[13px] placeholder:text-gray-700"
+                                        className="w-full bg-white/5 border border-white/12 focus:border-amber-500 rounded-2xl px-6 py-5 outline-none font-bold transition-all text-text-primary resize-none text-[14px] placeholder:text-text-dim"
                                     />
                                 </div>
                             </form>

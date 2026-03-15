@@ -99,10 +99,10 @@ export default function LoginPage() {
                         <div className="inline-flex items-center justify-center w-16 h-16 bg-white/5 border border-white/10 rounded-3xl mb-8 group-hover:scale-110 transition-transform">
                             <Sparkles className="text-accent-cobalt" size={32} />
                         </div>
-                        <h1 className="text-4xl font-black font-outfit text-white tracking-tight mb-3 uppercase leading-none">
+                        <h1 className="text-4xl font-black font-outfit text-text-primary tracking-tight mb-3 uppercase leading-none">
                             {t("auth.login_title")}
                         </h1>
-                        <p className="text-gray-500 font-medium tracking-tight">{t("auth.login_subtitle")}</p>
+                        <p className="text-text-secondary font-medium tracking-tight">{t("auth.login_subtitle")}</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
@@ -134,14 +134,14 @@ export default function LoginPage() {
                         </div>
 
                         <div className="relative flex items-center py-2">
-                            <div className="flex-grow border-t border-white/5"></div>
-                            <span className="flex-shrink-0 mx-6 text-gray-700 text-[10px] font-black uppercase tracking-[0.3em]">ou e-mail</span>
-                            <div className="flex-grow border-t border-white/5"></div>
+                            <div className="flex-grow border-t border-white/10"></div>
+                            <span className="flex-shrink-0 mx-6 text-text-dim text-[10px] font-black uppercase tracking-[0.3em]">ou e-mail</span>
+                            <div className="flex-grow border-t border-white/10"></div>
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                             <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-7 flex items-center pointer-events-none text-gray-700 group-focus-within:text-accent-cobalt transition-colors">
+                                <div className="absolute inset-y-0 left-0 pl-7 flex items-center pointer-events-none text-text-muted group-focus-within:text-accent-cobalt transition-colors">
                                     <Mail size={18} />
                                 </div>
                                 <input
@@ -150,12 +150,12 @@ export default function LoginPage() {
                                     placeholder={t("auth.email")}
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 focus:border-accent-cobalt rounded-full pl-16 pr-8 py-4.5 outline-none font-black text-white placeholder:text-gray-800 text-sm tracking-tight transition-all"
+                                    className="w-full bg-white/5 border border-white/10 focus:border-accent-cobalt rounded-full pl-16 pr-8 py-4.5 outline-none font-black text-text-primary placeholder:text-text-dim text-sm tracking-tight transition-all"
                                 />
                             </div>
 
                             <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-7 flex items-center pointer-events-none text-gray-700 group-focus-within:text-accent-cobalt transition-colors">
+                                <div className="absolute inset-y-0 left-0 pl-7 flex items-center pointer-events-none text-text-muted group-focus-within:text-accent-cobalt transition-colors">
                                     <Lock size={18} />
                                 </div>
                                 <input
@@ -164,7 +164,7 @@ export default function LoginPage() {
                                     placeholder={t("auth.password")}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 focus:border-accent-cobalt rounded-full pl-16 pr-8 py-4.5 outline-none font-black text-white placeholder:text-gray-800 text-sm tracking-tight transition-all"
+                                    className="w-full bg-white/5 border border-white/10 focus:border-accent-cobalt rounded-full pl-16 pr-8 py-4.5 outline-none font-black text-text-primary placeholder:text-text-dim text-sm tracking-tight transition-all"
                                 />
                             </div>
                         </div>
@@ -182,7 +182,7 @@ export default function LoginPage() {
                         </button>
                     </form>
 
-                    <p className="mt-12 text-center text-gray-500 font-black text-[10px] uppercase tracking-[0.2em] relative z-10">
+                    <p className="mt-12 text-center text-text-muted font-black text-[10px] uppercase tracking-[0.2em] relative z-10">
                         {t("auth.no_account")}{" "}
                         <Link href="/register" className="text-accent-cobalt hover:text-white transition-colors">
                             {t("auth.signup_link")}

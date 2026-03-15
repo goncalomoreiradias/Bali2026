@@ -248,7 +248,7 @@ export default function DashboardClient({ session }: Props) {
                                 </motion.h1>
                                 <motion.p 
                                     style={{ opacity: subtitleOpacity }}
-                                    className="text-gray-500 text-xs sm:text-lg font-medium max-w-xl mt-2 sm:mt-4 line-clamp-1 sm:line-clamp-none"
+                                    className="text-text-secondary text-xs sm:text-lg font-medium max-w-xl mt-2 sm:mt-4 line-clamp-1 sm:line-clamp-none"
                                 >
                                     {t("dash.optimizedAI")}
                                 </motion.p>
@@ -259,13 +259,13 @@ export default function DashboardClient({ session }: Props) {
                             <div className="neumorphic-inset p-1 rounded-2xl flex items-center gap-0.5 bg-black/20 flex-1 md:flex-none">
                                 <button 
                                     onClick={() => setViewMode("personal")}
-                                    className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === "personal" ? "bg-white text-obsidian shadow-xl" : "text-gray-500 hover:text-white"}`}
+                                    className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === "personal" ? "bg-white text-obsidian shadow-xl" : "text-text-muted hover:text-white"}`}
                                 >
                                     {t("dash.personal")}
                                 </button>
                                 <button 
                                     onClick={() => setViewMode("group")}
-                                    className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === "group" ? "bg-white text-obsidian shadow-xl" : "text-gray-500 hover:text-white"}`}
+                                    className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === "group" ? "bg-white text-obsidian shadow-xl" : "text-text-muted hover:text-white"}`}
                                 >
                                     {t("dash.group")}
                                 </button>
@@ -292,8 +292,8 @@ export default function DashboardClient({ session }: Props) {
                             <div className="w-24 h-24 bg-accent-cobalt/10 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
                                 <Plane size={48} className="text-accent-cobalt" />
                             </div>
-                            <h3 className="text-3xl font-black text-white mb-4 uppercase tracking-tight">{t("dash.noTrips")}</h3>
-                            <p className="text-gray-500 mb-10 max-w-md mx-auto font-medium">
+                            <h3 className="text-3xl font-black text-text-primary mb-4 uppercase tracking-tight">{t("dash.noTrips")}</h3>
+                            <p className="text-text-secondary mb-10 max-w-md mx-auto font-medium">
                                 {t("dash.noTripsDesc")}
                             </p>
                             <button
@@ -306,7 +306,7 @@ export default function DashboardClient({ session }: Props) {
 
                         {/* Sales Templates */}
                         <div className="space-y-8">
-                            <h4 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.4em] text-center">{t("dash.featuredTemplates")}</h4>
+                            <h4 className="text-[10px] font-black text-text-muted uppercase tracking-[0.4em] text-center">{t("dash.featuredTemplates")}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {templates.map((tpl, i) => (
                                     <motion.div
@@ -320,8 +320,8 @@ export default function DashboardClient({ session }: Props) {
                                         <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${tpl.color} flex items-center justify-center text-2xl mb-6 shadow-xl`}>
                                             {tpl.icon}
                                         </div>
-                                        <h5 className="text-xl font-black text-white mb-2 tracking-tight group-hover:text-accent-cobalt transition-colors">{tpl.name}</h5>
-                                        <p className="text-sm text-gray-500 font-medium leading-relaxed">{tpl.desc}</p>
+                                        <h5 className="text-xl font-black text-text-primary mb-2 tracking-tight group-hover:text-accent-cobalt transition-colors">{tpl.name}</h5>
+                                        <p className="text-sm text-text-secondary font-medium leading-relaxed">{tpl.desc}</p>
                                     </motion.div>
                                 ))}
                             </div>
@@ -360,12 +360,12 @@ export default function DashboardClient({ session }: Props) {
                                             <div className="relative z-10 flex-1 space-y-6">
                                                 <div className="flex justify-between items-start gap-4">
                                                     <div className="space-y-2">
-                                                        <h2 className="text-2xl md:text-3xl font-black font-outfit text-white leading-tight group-hover:text-accent-cobalt transition-colors duration-300 tracking-tight line-clamp-2">
+                                                        <h2 className="text-2xl md:text-3xl font-black font-outfit text-text-primary leading-tight group-hover:text-accent-cobalt transition-colors duration-300 tracking-tight line-clamp-2">
                                                             {trip.title}
                                                         </h2>
                                                         <div className="flex items-center gap-2">
-                                                            <Calendar size={12} className="text-gray-600" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-600">{t("dash.updatedRecently")}</span>
+                                                            <Calendar size={12} className="text-text-muted" />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">{t("dash.updatedRecently")}</span>
                                                         </div>
                                                     </div>
                                                     <button 
@@ -374,7 +374,7 @@ export default function DashboardClient({ session }: Props) {
                                                             e.stopPropagation();
                                                             setActiveTripMenu(activeTripMenu === trip.id ? null : trip.id);
                                                         }}
-                                                        className="p-2 hover:bg-white/5 rounded-xl text-gray-500 hover:text-white transition-all relative z-20"
+                                                        className="p-2 hover:bg-white/5 rounded-xl text-text-secondary hover:text-white transition-all relative z-20"
                                                     >
                                                         <MoreVertical size={20} />
                                                     </button>
@@ -383,7 +383,7 @@ export default function DashboardClient({ session }: Props) {
                                                 {/* Progress Bar with Clamp for fluid spacing */}
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between items-end">
-                                                        <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{t("dash.progress")}</span>
+                                                        <span className="text-[9px] font-black uppercase tracking-widest text-text-muted">{t("dash.progress")}</span>
                                                         <span className="text-[9px] font-black text-accent-cobalt">{prog}%</span>
                                                     </div>
                                                     <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
@@ -396,7 +396,7 @@ export default function DashboardClient({ session }: Props) {
                                                 </div>
 
                                                 {trip.description && (
-                                                    <p className="text-gray-500 text-xs font-medium leading-relaxed line-clamp-2 pr-4">
+                                                    <p className="text-text-secondary text-xs font-medium leading-relaxed line-clamp-2 pr-4">
                                                         {trip.description}
                                                     </p>
                                                 )}

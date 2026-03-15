@@ -43,7 +43,7 @@ export default function Navigation({ activeTab, onTabChange, onAddClick }: Navig
         onClick={() => onTabChange("finance")}
         className={`flex flex-col sm:flex-row items-center gap-2 px-8 sm:px-6 py-2.5 sm:py-3 rounded-2xl sm:rounded-full transition-all flex-1 sm:flex-none justify-center relative group active:scale-90 ${activeTab === "finance"
           ? "text-white bg-accent-indigo shadow-[0_10px_30px_-5px_rgba(99,102,241,0.6)]"
-          : "text-gray-500 hover:text-white font-bold"
+          : "text-text-muted hover:text-white font-bold"
           }`}
       >
         <Wallet size={22} className={`sm:w-5 sm:h-5 transition-transform ${activeTab === "finance" ? "scale-110 -rotate-3" : "group-hover:-rotate-6"}`} />

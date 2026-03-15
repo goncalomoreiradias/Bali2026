@@ -34,17 +34,17 @@ export default function AIPlannerTrigger({ onClick }: AIPlannerTriggerProps) {
             />
 
             {/* Content Overlay */}
-            <div className="relative glass bg-black/40 backdrop-blur-xl px-10 py-12 flex flex-col items-center text-center gap-6">
+            <div className="relative glass bg-black/60 backdrop-blur-3xl px-10 py-12 flex flex-col items-center text-center gap-6">
                 <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center border border-white/10 shadow-2xl relative">
                     <Sparkles size={32} className="text-white animate-pulse" />
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent-magenta rounded-full shadow-[0_0_10px_#D946EF]" />
                 </div>
                 
-                <div className="space-y-2">
-                    <h3 className="text-3xl font-black font-outfit text-white tracking-tight uppercase leading-[0.9]">
+                <div className="space-y-4">
+                    <h3 className="text-3xl font-black font-outfit text-text-primary tracking-tight uppercase leading-[0.9]">
                         Arquiteto <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-indigo to-accent-magenta">AI</span>
                     </h3>
-                    <p className="text-gray-400 font-medium text-sm max-w-xs">
+                    <p className="text-text-secondary font-medium text-sm max-w-xs leading-relaxed">
                         Deixe que a nossa inteligência artificial desenhe o itinerário perfeito em segundos. Personalizado, bilíngue e pronto a usar.
                     </p>
                 </div>

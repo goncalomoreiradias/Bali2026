@@ -1,50 +1,63 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-primary: #2E5BFF;
-  --color-brand-secondary: #6366F1;
+  --color-brand-primary: #3B82F6;
+  --color-brand-secondary: #818CF8;
   --color-brand-accent: #10B981;
-  --color-obsidian: #0A0D14;
-  --color-charcoal-light: #141820;
-  --color-accent-cobalt: #2E5BFF;
-  --color-accent-indigo: #6366F1;
-  --color-accent-magenta: #D946EF;
-  --color-accent-emerald: #10B981;
-  --color-accent-amber: #F59E0B;
+  --color-obsidian: #05070A;
+  --color-charcoal-light: #0D1117;
+  --color-accent-cobalt: var(--accent-cobalt);
+  --color-accent-indigo: var(--accent-indigo);
+  --color-accent-magenta: var(--accent-magenta);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-dim: var(--text-dim);
   --font-serif: var(--font-playfair);
 }
 
 @layer base {
   :root {
-    /* High Fidelity Dark Mode as Default */
-    --background: #0A0D14; /* Deep Obsidian Blue */
+    /* High Fidelity Dark Mode - Refined for Contrast */
+    --background: #05070A; /* Deeper Black for more depth */
     --foreground: #FFFFFF;
     
-    --widget-bg: #141820;
-    --widget-border: rgba(255, 255, 255, 0.05);
+    --widget-bg: #0D1117;
+    --widget-border: rgba(255, 255, 255, 0.1); /* Increased visibility */
     
-    --accent-cobalt: #2E5BFF;
-    --accent-indigo: #6366F1;
-    --accent-magenta: #D946EF;
+    --accent-cobalt: #3B82F6; /* Brighter Cobalt */
+    --accent-indigo: #818CF8; /* Brighter Indigo */
+    --accent-magenta: #F0ABFC; /* Brighter Magenta */
     
-    --feedback-coral: #F43F5E;
-    --feedback-emerald: #064E3B;
+    --text-primary: #FFFFFF;
+    --text-secondary: #CBD5E1; /* High contrast muted text */
+    --text-muted: #94A3B8; /* Secondary muted text */
+    --text-dim: #64748B; /* Tertiary muted text */
     
-    --glass-background: rgba(20, 24, 32, 0.6);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
+    --feedback-coral: #FB7185;
+    --feedback-emerald: #10B981;
+    
+    --glass-background: rgba(13, 17, 23, 0.75); /* Darker for better text backing */
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.6);
   }
 
-  /* Light mode fallback (though user wants dark as focus) */
+  /* Light mode refined */
   @media (prefers-color-scheme: light) {
     :root {
-      --background: #F8F9FA;
-      --foreground: #0A0D14;
+      --background: #F1F5F9;
+      --foreground: #020617;
       --widget-bg: #FFFFFF;
-      --widget-border: rgba(0, 0, 0, 0.05);
-      --glass-background: rgba(255, 255, 255, 0.85);
-      --glass-border: rgba(0, 0, 0, 0.08);
-      --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+      --widget-border: rgba(15, 23, 42, 0.08);
+      
+      --text-primary: #020617;
+      --text-secondary: #334155;
+      --text-muted: #64748B;
+      --text-dim: #94A3B8;
+      
+      --glass-background: rgba(255, 255, 255, 0.9);
+      --glass-border: rgba(15, 23, 42, 0.1);
+      --glass-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.15);
     }
   }
 

@@ -218,7 +218,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                 {/* Management Ellipsis */}
                 <button 
                     onClick={() => setIsManagementMenuOpen(true)}
-                    className="p-2 md:p-3 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 transition-all text-gray-400 hover:text-white"
+                    className="p-2 md:p-3 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 transition-all text-text-secondary hover:text-white"
                 >
                     <MoreVertical size={20} />
                 </button>
@@ -248,11 +248,11 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                     <div className="flex items-center gap-3">
                         <h1 
                             onClick={() => setIsEditingTitle(true)}
-                            className="text-2xl sm:text-6xl font-black font-outfit text-white tracking-tight leading-tight cursor-pointer hover:text-accent-cobalt transition-colors"
+                            className="text-2xl sm:text-6xl font-black font-outfit text-text-primary tracking-tight leading-tight cursor-pointer hover:text-accent-cobalt transition-colors"
                         >
                             {itinerary.title}
                         </h1>
-                        <Edit2 size={16} className="text-white/20 group-hover:text-accent-cobalt transition-colors md:w-5 md:h-5" />
+                        <Edit2 size={16} className="text-text-muted group-hover:text-accent-cobalt transition-colors md:w-5 md:h-5" />
                     </div>
                 )}
               </div>
@@ -338,7 +338,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                   onClick={() => setSelectedDayId(null)}
                   className={`flex-shrink-0 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all shadow-xl ${selectedDayId === null
                     ? "bg-accent-cobalt text-white shadow-accent-cobalt/40 scale-105"
-                    : "bg-obsidian text-gray-400 hover:text-white border border-white/10"
+                    : "bg-obsidian text-text-muted hover:text-white border border-white/10"
                     }`}
                 >
                   {t("common.all_days")}
@@ -371,7 +371,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                   onClick={() => setSelectedDayId(null)}
                   className={`flex-shrink-0 px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-[0.2em] transition-all shadow-2xl ${selectedDayId === null
                     ? "bg-accent-cobalt text-white shadow-accent-cobalt/40 translate-y-[-2px]"
-                    : "bg-white/5 text-gray-400 hover:text-white border border-white/10"
+                    : "bg-white/5 text-text-muted hover:text-white border border-white/10"
                     }`}
                 >
                   {t("common.all_days")}
