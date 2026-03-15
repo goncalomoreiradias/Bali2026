@@ -104,31 +104,19 @@ export default function AIPlannerModal({ isOpen, onClose }: AIPlannerModalProps)
                 {/* Backdrop */}
                 <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
 
-                {/* Modal Content */}
+                {/* Modal Content - Anchored Bottom Sheet */}
                 <motion.div
                     initial={{ y: "100%" }}
                     animate={{ y: 0 }}
                     exit={{ y: "100%" }}
                     transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                    drag="y"
-                    dragConstraints={{ top: 0 }}
-                    dragElastic={0.2}
                     onDragStart={() => {
                         document.body.style.overflow = "hidden";
                     }}
-                    onDragEnd={(_, info) => {
-                        if (info.offset.y > 150) {
-                            document.body.style.overflow = "auto";
-                            onClose();
-                        }
-                    }}
-                    className="relative w-full max-w-full sm:max-w-lg glass bg-slate-900 sm:rounded-[3rem] rounded-t-[2.5rem] shadow-2xl overflow-hidden flex flex-col h-[92vh] sm:h-auto sm:max-h-[85vh] border-t border-x border-white/10 sm:border touch-action-pan-y"
+                    className="fixed bottom-0 left-0 right-0 w-full max-w-full sm:max-w-lg sm:left-1/2 sm:-translate-x-1/2 glass bg-slate-900 sm:rounded-[3rem] rounded-t-[2.5rem] shadow-2xl overflow-hidden flex flex-col h-[90dvh] sm:h-auto sm:max-h-[85vh] border-t border-x border-white/10 sm:border z-[9999]"
                 >
-                    {/* Drag Handle Indicator */}
-                    <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-white/20 rounded-full sm:hidden z-[110]" />
-                    
-                    {/* Sticky Header */}
-                    <div className="shrink-0 bg-gradient-to-br from-[#D946EF] via-[#8B5CF6] to-[#6366F1] p-6 sm:p-7 relative shadow-xl overflow-hidden sticky top-0 z-[100] backdrop-blur-xl border-b border-white/10">
+                    {/* Compact Sticky Header */}
+                    <div className="shrink-0 bg-gradient-to-br from-[#D946EF] via-[#8B5CF6] to-[#6366F1] p-5 sm:p-6 relative shadow-xl overflow-hidden sticky top-0 z-[100] backdrop-blur-xl border-b border-white/10 touch-action-none">
                         {/* Decorative glow */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl -rotate-45 translate-x-12 -translate-y-12" />
                         
@@ -138,23 +126,23 @@ export default function AIPlannerModal({ isOpen, onClose }: AIPlannerModalProps)
                                 onClose();
                             }}
                             disabled={loading}
-                            className="absolute top-5 right-5 p-2.5 bg-white/10 backdrop-blur-xl rounded-full hover:bg-white/20 transition-all text-white disabled:opacity-50 border border-white/20 z-20 active:scale-95 group"
+                            className="absolute top-4 right-5 p-2 bg-white/10 backdrop-blur-xl rounded-full hover:bg-white/20 transition-all text-white disabled:opacity-50 border border-white/20 z-20 active:scale-95 group"
                         >
-                            <X size={18} className="group-hover:rotate-90 transition-transform" />
+                            <X size={16} className="group-hover:rotate-90 transition-transform" />
                         </button>
                         
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-white/10 backdrop-blur-2xl rounded-2xl flex items-center justify-center shadow-inner border border-white/10">
-                                <Sparkles className="text-white animate-pulse" size={24} />
+                        <div className="flex items-center gap-3.5">
+                            <div className="w-10 h-10 bg-white/10 backdrop-blur-2xl rounded-xl flex items-center justify-center shadow-inner border border-white/10">
+                                <Sparkles className="text-white animate-pulse" size={20} />
                             </div>
-                            <div className="space-y-0.5">
-                                <h2 className="text-xl sm:text-2xl font-black text-white font-outfit tracking-tighter uppercase whitespace-normal leading-none">{t("ai.title")}</h2>
-                                <p className="text-white/60 text-[9px] font-black uppercase tracking-[0.2em]">{t("ai.subtitle")}</p>
+                            <div className="space-y-0">
+                                <h2 className="text-lg sm:text-xl font-black text-white font-outfit tracking-tighter uppercase whitespace-normal leading-none">{t("ai.title")}</h2>
+                                <p className="text-white/60 text-[8px] font-black uppercase tracking-[0.2em]">{t("ai.subtitle")}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto hide-scrollbar">
+                    <div className="flex-1 overflow-y-auto scrollbar-hide">
                         {phase === "generating" ? (
                             <div className="px-[5%] py-10 sm:py-16 flex flex-col items-center justify-center min-h-[450px] text-center bg-obsidian">
                                 <motion.div
