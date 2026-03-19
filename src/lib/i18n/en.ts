@@ -157,6 +157,8 @@ const en = {
     "collab.invite": "Invite",
     "common.no_days": "No days planned",
     "trip.addFirstDay": "Add First Day",
+    "trip.addLocation": "Add Location",
+    "trip.setDates": "Set Dates",
 };
 
 export default en;

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Trip, DayPlan, Location as TripLocation, Expense } from "@/types";
 import DayCard from "@/components/DayCard";
 import EditItinerarySheet from "@/components/EditItinerarySheet";
-import { ArrowLeft, Map as MapIcon, Loader2, Plus, Check, Users, MoreVertical, Edit2, Copy, Trash2, X } from "lucide-react";
+import { ArrowLeft, Map as MapIcon, Loader2, Plus, Check, Users, MoreVertical, Edit2, Copy, Trash2, X, Calendar } from "lucide-react";
 import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
 import AddLocationSheet from "@/components/AddLocationSheet";
 import AddExpenseSheet from "@/components/AddExpenseSheet";
@@ -172,6 +172,41 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
     setIsEditingDesc(false);
   };
 
+  const handleUpdateDates = async (start: string, end: string) => {
+    if (!itinerary) return;
+    
+    // Calculate number of days
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    let newDays = [...itinerary.days];
+    
+    // If we have more days now, add them
+    if (diffDays > newDays.length) {
+        for (let i = newDays.length + 1; i <= diffDays; i++) {
+            newDays.push({
+                id: `day-${Date.now()}-${i}`,
+                dayNumber: i,
+                title: `${t("nav.day")} ${i}`,
+                locations: [],
+                tripId: tripId,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+        }
+    }
+
+    const updated = { 
+        ...itinerary, 
+        startDate: start, 
+        endDate: end,
+        days: newDays
+    };
+    await saveItinerary(updated);
+  };
+
   const handleDeleteTrip = async () => {
     if (!confirm(t("trip.deleteConfirmation"))) return;
       try {
@@ -305,6 +340,22 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
             </div>
             
             <div className="flex items-center gap-3">
+                <div className="hidden md:flex items-center gap-2">
+                    <button 
+                        onClick={() => setIsAIPlannerOpen(true)}
+                        className="flex items-center gap-2 px-6 py-2.5 bg-accent text-canvas rounded-full border border-accent/20 transition-all text-[11px] font-black uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95"
+                    >
+                        <Sparkles size={16} className="animate-pulse" />
+                        <span>AI ARCHITECT</span>
+                    </button>
+                    <button 
+                         onClick={() => itinerary?.days.length > 0 ? setIsAddLocationOpen(true) : handleAddDay()}
+                         className="flex items-center gap-2 px-6 py-2.5 bg-surface hover:bg-stroke text-text-high rounded-full border border-stroke transition-all text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95"
+                    >
+                        <Plus size={16} />
+                        <span>{t("trip.addLocation") || "Adicionar"}</span>
+                    </button>
+                </div>
                 <div className="hidden md:block">
                     <LanguageToggle />
                 </div>
@@ -317,7 +368,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                 </button>
                 <button 
                     onClick={() => setIsAIPlannerOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-full border border-accent/20 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md"
+                    className="md:hidden flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-full border border-accent/20 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md"
                 >
                     <Sparkles size={14} className="animate-pulse" />
                     <span>AI</span>
@@ -357,12 +408,26 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-4 md:gap-6">
-                <p className="px-4 py-1.5 md:px-5 md:py-2 bg-accent/10 text-accent rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] border border-accent/20 shadow-lg backdrop-blur-md">
-                    {itinerary.startDate && itinerary.endDate
-                    ? `${format(new Date(itinerary.startDate), "dd MMM", { locale: dateLocale })} - ${format(new Date(itinerary.endDate), "dd MMM yyyy", { locale: dateLocale })}`
-                    : t("common.no_dates")}
-                </p>
+               <div className="flex flex-wrap items-center gap-4 md:gap-6">
+                <div className="relative group/dates">
+                     <button 
+                        onClick={() => {
+                            const start = prompt("Data Início (YYYY-MM-DD):", itinerary.startDate || "");
+                            const end = prompt("Data Fim (YYYY-MM-DD):", itinerary.endDate || "");
+                            if (start && end) handleUpdateDates(start, end);
+                        }}
+                        className="flex items-center gap-2 pr-4 pl-1 py-1 bg-accent/10 hover:bg-accent/20 text-accent rounded-xl border border-accent/20 transition-all shadow-lg backdrop-blur-md"
+                     >
+                        <div className="p-2 bg-accent rounded-lg text-canvas">
+                            <Calendar size={14} />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                            {itinerary.startDate && itinerary.endDate
+                            ? `${format(new Date(itinerary.startDate), "dd MMM", { locale: dateLocale })} - ${format(new Date(itinerary.endDate), "dd MMM yyyy", { locale: dateLocale })}`
+                            : t("trip.setDates") || "DEFINIR DATAS"}
+                        </span>
+                     </button>
+                </div>
                 
                 <div className="flex items-center gap-2">
                     <div className="scale-75 md:scale-90 origin-left">
@@ -528,6 +593,20 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                   >
                     + {t("trip.addFirstDay") || "Adicionar Primeiro Dia"}
                   </button>
+                </div>
+              )}
+
+              {itinerary.days.length > 0 && (
+                <div className="mt-10 flex justify-center">
+                    <button 
+                        onClick={handleAddDay}
+                        className="group flex flex-col items-center gap-4 py-8 px-20 border-2 border-dashed border-stroke hover:border-accent/40 rounded-[3rem] transition-all bg-surface/20"
+                    >
+                        <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center text-accent group-hover:scale-110 transition-transform">
+                            <Plus size={24} />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-medium group-hover:text-accent transition-colors">ADICIONAR DIA {itinerary.days.length + 1}</span>
+                    </button>
                 </div>
               )}
             </>

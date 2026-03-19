@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus, Save, Trash2, GripVertical } from "lucide-react";
+import { X, Plus, Save, Trash2, GripVertical, Map as MapIcon, Calendar } from "lucide-react";
 import { DayPlan, Location } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -51,108 +51,143 @@ function SortableLocationItem({ loc, allDays, currentDayId, handleLocationChange
         <div
             ref={setNodeRef}
             style={style}
-            className={`p-6 bg-canvas rounded-[2rem] relative group border-[2px] ${isDragging ? 'border-accent shadow-2xl z-50 scale-105' : 'border-stroke hover:border-accent/30'} transition-all`}
+            className={`group bg-surface/40 hover:bg-surface/60 rounded-[2.5rem] border-2 transition-all p-6 relative ${isDragging ? 'border-accent shadow-2xl scale-[1.02] z-50' : 'border-stroke hover:border-accent/20'}`}
         >
-            <button
-                onClick={() => removeLocation(loc.id)}
-                className="absolute -top-3 -right-3 bg-red-500/10 text-red-500 p-2.5 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-xl z-20 hover:bg-red-500 hover:text-white border border-red-500/20 active:scale-90"
-            >
-                <Trash2 size={16} />
-            </button>
-
-            <div className="flex gap-2 mb-3">
+            <div className="flex gap-4">
+                {/* Drag Handle & Content Container */}
                 <div
                     {...attributes}
                     {...listeners}
-                    className="mt-2 text-gray-400 cursor-grab active:cursor-grabbing hover:text-brand-primary"
+                    className="mt-1 text-text-medium/30 cursor-grab active:cursor-grabbing hover:text-accent transition-colors py-2"
                 >
-                    <GripVertical size={16} />
+                    <GripVertical size={20} />
                 </div>
-                <div className="flex-1 space-y-4">
-                    <div className="flex gap-3">
-                        <input
-                            type="text"
-                            placeholder="Nome do Local"
-                            value={loc.name}
-                            onChange={(e) => handleLocationChange(loc.id, "name", e.target.value)}
-                            className="input-surface flex-1 px-4 py-3 text-sm"
-                        />
-                        <input
-                            type="text"
-                            placeholder="Horário (ex: 09:00 - 11:00)"
-                            value={loc.timeSlot || ""}
-                            onChange={(e) => handleLocationChange(loc.id, "timeSlot", e.target.value)}
-                            className="input-surface w-32 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-accent"
-                        />
-                        <select
-                            value={loc.tag || ""}
-                            onChange={(e) => handleLocationChange(loc.id, "tag", e.target.value)}
-                            className="input-surface px-4 py-3 text-[10px] uppercase font-black tracking-widest min-w-[100px] text-center appearance-none"
-                        >
-                            <option value="" className="bg-surface">Sem Tag</option>
-                            <option value="Must Go" className="bg-surface">Must Go</option>
-                            <option value="Opcional" className="bg-surface">Opcional</option>
-                            <option value="Food" className="bg-surface">Food</option>
-                            <option value="Photo Op" className="bg-surface">Photo Op</option>
-                        </select>
-                    </div>
 
-                    <textarea
-                        placeholder="Descrição (Opcional)"
-                        value={loc.description || ""}
-                        onChange={(e) => handleLocationChange(loc.id, "description", e.target.value)}
-                        rows={2}
-                        className="input-surface w-full px-4 py-3 text-sm font-medium resize-none shadow-none"
-                    />
-
-                    <input
-                        type="text"
-                        placeholder="Google Maps URL (Opcional)"
-                        value={loc.mapsUrl || ""}
-                        onChange={(e) => handleLocationChange(loc.id, "mapsUrl", e.target.value)}
-                        className="input-surface w-full px-4 py-3 text-[10px] font-bold"
-                    />
-
-                    <div className="flex gap-4">
-                        <div className="flex-1 space-y-1">
-                            <label className="text-[9px] uppercase text-text-medium font-black tracking-widest px-1">Latitude</label>
+                <div className="flex-1 space-y-6">
+                    {/* Primary Row: Name & Options */}
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex-1">
                             <input
-                                type="number"
-                                step="any"
-                                value={loc.lat || 0}
-                                onChange={(e) => handleLocationChange(loc.id, "lat", parseFloat(e.target.value))}
-                                className="input-surface w-full px-4 py-3 text-xs font-mono"
+                                type="text"
+                                placeholder="Nome do Local (ex: Templo Uluwatu)"
+                                value={loc.name}
+                                onChange={(e) => handleLocationChange(loc.id, "name", e.target.value)}
+                                className="w-full bg-transparent border-none text-xl font-black font-outfit text-text-high placeholder:text-text-medium/20 focus:ring-0 p-0"
                             />
                         </div>
-                        <div className="flex-1 space-y-1">
-                            <label className="text-[9px] uppercase text-text-medium font-black tracking-widest px-1">Longitude</label>
-                            <input
-                                type="number"
-                                step="any"
-                                value={loc.lng || 0}
-                                onChange={(e) => handleLocationChange(loc.id, "lng", parseFloat(e.target.value))}
-                                className="input-surface w-full px-4 py-3 text-xs font-mono"
-                            />
+                        <div className="flex gap-2 h-fit">
+                            <div className="relative group/time">
+                                <input
+                                    type="text"
+                                    placeholder="09:00"
+                                    value={loc.timeSlot || ""}
+                                    onChange={(e) => handleLocationChange(loc.id, "timeSlot", e.target.value)}
+                                    className="bg-canvas/50 border border-stroke rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest text-accent w-28 text-center focus:border-accent outline-none"
+                                />
+                                <span className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover/time:opacity-100 transition-opacity text-[8px] font-black text-text-medium uppercase tracking-[0.2em] whitespace-nowrap bg-surface px-2 py-1 rounded-md border border-stroke shadow-lg">Horário</span>
+                            </div>
+                            
+                            <div className="relative group/tag">
+                                <select
+                                    value={loc.tag || ""}
+                                    onChange={(e) => handleLocationChange(loc.id, "tag", e.target.value)}
+                                    className="bg-canvas/50 border border-stroke rounded-xl px-4 py-2 text-[10px] uppercase font-black tracking-widest text-text-high outline-none focus:border-accent cursor-pointer appearance-none min-w-[100px] text-center"
+                                >
+                                    <option value="" className="bg-surface">Sem Tag</option>
+                                    <option value="Must Go" className="bg-surface">⭐ Must Go</option>
+                                    <option value="Opcional" className="bg-surface">📍 Opcional</option>
+                                    <option value="Food" className="bg-surface">🍱 Food</option>
+                                    <option value="Photo" className="bg-surface">📸 Photo</option>
+                                </select>
+                                <span className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover/tag:opacity-100 transition-opacity text-[8px] font-black text-text-medium uppercase tracking-[0.2em] whitespace-nowrap bg-surface px-2 py-1 rounded-md border border-stroke shadow-lg">Categoria</span>
+                            </div>
                         </div>
                     </div>
 
+                    {/* Secondary Row: Description */}
+                    <div className="relative">
+                        <textarea
+                            placeholder="Adiciona uma breve nota sobre este local..."
+                            value={loc.description || ""}
+                            onChange={(e) => handleLocationChange(loc.id, "description", e.target.value)}
+                            rows={1}
+                            className="w-full bg-transparent border-none text-sm font-medium text-text-medium placeholder:text-text-medium/30 focus:ring-0 p-0 resize-none min-h-[1.5rem]"
+                            onInput={(e) => {
+                                const target = e.target as HTMLTextAreaElement;
+                                target.style.height = 'auto';
+                                target.style.height = target.scrollHeight + 'px';
+                            }}
+                        />
+                    </div>
+
+                    {/* Tertiary Row: Links & Coordinates */}
+                    <div className="flex flex-col md:flex-row gap-4 pt-4 border-t border-stroke/50">
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 bg-canvas/30 rounded-xl px-4 py-2 border border-stroke/50 group/maps">
+                                <MapIcon size={14} className="text-text-medium group-focus-within/maps:text-accent transition-colors" />
+                                <input
+                                    type="text"
+                                    placeholder="Link do Google Maps"
+                                    value={loc.mapsUrl || ""}
+                                    onChange={(e) => handleLocationChange(loc.id, "mapsUrl", e.target.value)}
+                                    className="flex-1 bg-transparent border-none text-[10px] font-bold text-text-medium placeholder:text-text-medium/20 focus:ring-0 p-0"
+                                />
+                            </div>
+                        </div>
+                        
+                        <div className="flex gap-2">
+                             <div className="flex items-center gap-2 bg-canvas/30 rounded-xl px-4 py-2 border border-stroke/50">
+                                <span className="text-[9px] font-black text-text-medium/50 uppercase">Lat</span>
+                                <input
+                                    type="number"
+                                    step="any"
+                                    value={loc.lat || 0}
+                                    onChange={(e) => handleLocationChange(loc.id, "lat", parseFloat(e.target.value))}
+                                    className="w-16 bg-transparent border-none text-[10px] font-mono font-bold text-text-medium focus:ring-0 p-0"
+                                />
+                            </div>
+                             <div className="flex items-center gap-2 bg-canvas/30 rounded-xl px-4 py-2 border border-stroke/50">
+                                <span className="text-[9px] font-black text-text-medium/50 uppercase">Lng</span>
+                                <input
+                                    type="number"
+                                    step="any"
+                                    value={loc.lng || 0}
+                                    onChange={(e) => handleLocationChange(loc.id, "lng", parseFloat(e.target.value))}
+                                    className="w-16 bg-transparent border-none text-[10px] font-mono font-bold text-text-medium focus:ring-0 p-0"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Move to Day Trigger */}
                     {allDays.length > 1 && (
-                        <div className="pt-2 border-t border-stroke mt-4">
-                            <label className="text-[9px] uppercase text-text-medium font-black tracking-widest px-1 mb-2 block">Mover para Dia</label>
-                            <select
-                                value={currentDayId}
-                                onChange={(e) => onMoveLocation?.(loc.id, e.target.value)}
-                                className="input-surface w-full px-4 py-3 text-[10px] font-black uppercase tracking-widest text-accent appearance-none cursor-pointer"
-                            >
+                        <div className="flex items-center gap-3 pt-4 border-t border-stroke/50">
+                            <span className="text-[9px] font-black text-text-medium uppercase tracking-widest whitespace-nowrap">Mover local para:</span>
+                            <div className="flex-1 flex gap-2 overflow-x-auto py-1 hide-scrollbar">
                                 {allDays.map(d => (
-                                    <option key={d.id} value={d.id} className="bg-surface">
-                                        Dia {d.dayNumber} - {d.title}
-                                    </option>
+                                    <button
+                                        key={d.id}
+                                        type="button"
+                                        onClick={() => onMoveLocation?.(loc.id, d.id)}
+                                        className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${d.id === currentDayId ? 'bg-accent text-canvas border-accent' : 'bg-surface border border-stroke text-text-medium hover:text-text-high'}`}
+                                        disabled={d.id === currentDayId}
+                                    >
+                                        Dia {d.dayNumber}
+                                    </button>
                                 ))}
-                            </select>
+                            </div>
                         </div>
                     )}
                 </div>
+
+                {/* Remove Action */}
+                <button
+                    onClick={() => removeLocation(loc.id)}
+                    className="p-3 text-text-medium/30 hover:text-rose-500 hover:bg-rose-500/10 rounded-2xl transition-all self-start"
+                    aria-label="Remove Location"
+                >
+                    <Trash2 size={20} />
+                </button>
             </div>
         </div>
     );

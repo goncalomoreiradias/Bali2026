@@ -157,6 +157,8 @@ const pt = {
     "collab.invite": "Convidar",
     "common.no_days": "Sem dias planeados",
     "trip.addFirstDay": "Adicionar Primeiro Dia",
+    "trip.addLocation": "Adicionar Local",
+    "trip.setDates": "Definir Datas",
 };
 
 export default pt;

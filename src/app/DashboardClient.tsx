@@ -207,7 +207,8 @@ export default function DashboardClient({ session }: Props) {
     const titleScale = useTransform(scrollY, [0, 100], [1, 0.7]);
     const titleOpacity = useTransform(scrollY, [0, 100], [1, 0]);
     const subtitleOpacity = useTransform(scrollY, [0, 80], [1, 0]);
-    const headerBg = useTransform(scrollY, [0, 50], ["rgba(13, 13, 13, 0)", "rgba(13, 13, 13, 0.8)"]);
+    const headerBg = useTransform(scrollY, [0, 50], ["rgba(13, 13, 13, 0)", "rgba(13, 13, 13, 0.95)"]);
+    const headerBorder = useTransform(scrollY, [0, 50], ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 0.1)"]);
 
     const [activeTripMenu, setActiveTripMenu] = useState<string | null>(null);
 
@@ -215,11 +216,11 @@ export default function DashboardClient({ session }: Props) {
         <main className="min-h-screen bg-canvas relative pb-24 selection:bg-accent/20 selection:text-accent">
             {/* Premium Dynamic Header */}
             <motion.header 
-                style={{ height: headerHeight, backgroundColor: headerBg }}
-                className="sticky top-0 z-40 backdrop-blur-md border-b border-stroke overflow-hidden transition-colors"
+                style={{ backgroundColor: headerBg, borderColor: headerBorder }}
+                className="sticky top-0 z-40 backdrop-blur-xl border-b overflow-hidden transition-all duration-500"
             >
                 {/* Micro-pattern overlay */}
-                <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(var(--text-high)_1px,transparent_1px)] [background-size:20px_20px]" />
+                <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(var(--text-high)_1px,transparent_1px)] [background-size:20px_20px]" />
                 
                 <motion.div 
                     style={{ padding: headerPadding }}
@@ -241,36 +242,55 @@ export default function DashboardClient({ session }: Props) {
                             
                             <div className="relative">
                                 <motion.h1
-                                    style={{ scale: titleScale, originX: 0 }}
-                                    className="text-3xl sm:text-7xl font-black font-outfit text-text-high tracking-tight leading-[0.9] whitespace-nowrap"
+                                    className="text-3xl sm:text-6xl font-black font-outfit text-text-high tracking-tight leading-[0.9] whitespace-nowrap"
                                 >
                                     Viatio <span className="hidden sm:inline text-transparent bg-clip-text bg-gradient-to-r from-accent to-text-medium">{t("dash.dashboard")}</span>
                                 </motion.h1>
                                 <motion.p 
                                     style={{ opacity: subtitleOpacity }}
-                                    className="text-text-medium text-xs sm:text-lg font-medium max-w-xl mt-2 sm:mt-4 line-clamp-1 sm:line-clamp-none"
+                                    className="hidden sm:block text-text-medium text-lg font-medium max-w-xl mt-4"
                                 >
                                     {t("dash.optimizedAI")}
                                 </motion.p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end mt-2 md:mt-0">
-                            <div className="bg-surface/50 border border-stroke p-1 rounded-2xl flex items-center gap-0.5 flex-1 md:flex-none">
+                        <div className="flex items-center gap-4 w-full md:w-auto justify-end mt-2 md:mt-0">
+                            {/* Desktop Quick Actions */}
+                            <div className="hidden md:flex items-center gap-2">
+                                <button 
+                                    onClick={() => userPlan === "FREE" ? setIsUpgradeOpen(true) : setIsAIPlannerOpen(true)}
+                                    className="flex items-center gap-2 px-6 py-2.5 bg-accent text-canvas rounded-full border border-accent/20 transition-all text-[11px] font-black uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95"
+                                >
+                                    <Sparkles size={16} className="animate-pulse" />
+                                    <span>AI ARCHITECT</span>
+                                </button>
+                                <button 
+                                    onClick={() => setIsCreateModalOpen(true)}
+                                    className="flex items-center gap-2 px-6 py-2.5 bg-surface hover:bg-stroke text-text-high rounded-full border border-stroke transition-all text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95"
+                                >
+                                    <Plus size={16} />
+                                    <span>{t("dash.newTrip")}</span>
+                                </button>
+                            </div>
+
+                            <div className="bg-surface/50 border border-stroke p-1 rounded-2xl flex items-center gap-0.5">
                                 <button 
                                     onClick={() => setViewMode("personal")}
-                                    className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === "personal" ? "bg-accent text-canvas shadow-xl" : "text-text-medium hover:text-text-high"}`}
+                                    className={`px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === "personal" ? "bg-accent text-canvas shadow-xl" : "text-text-medium hover:text-text-high"}`}
                                 >
                                     {t("dash.personal")}
                                 </button>
                                 <button 
                                     onClick={() => setViewMode("group")}
-                                    className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === "group" ? "bg-accent text-canvas shadow-xl" : "text-text-medium hover:text-text-high"}`}
+                                    className={`px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === "group" ? "bg-accent text-canvas shadow-xl" : "text-text-medium hover:text-text-high"}`}
                                 >
                                     {t("dash.group")}
                                 </button>
                             </div>
-                            <LanguageToggle />
+                            <div className="hidden sm:block">
+                                <LanguageToggle />
+                            </div>
                         </div>
                     </div>
                 </motion.div>
