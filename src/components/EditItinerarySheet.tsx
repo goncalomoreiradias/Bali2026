@@ -213,6 +213,27 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
     const [editedDay, setEditedDay] = useState<DayPlan>({ ...day });
     const [locations, setLocations] = useState<Location[]>([...day.locations]);
     const [showBucketList, setShowBucketList] = useState(false);
+    const [isResolving, setIsResolving] = useState(false);
+
+    /**
+     * Resolves a short URL (goo.gl, maps.app) to its full form via our API.
+     */
+    const resolveShortUrl = async (url: string): Promise<string> => {
+        const isShort = url.includes("goo.gl") || url.includes("maps.app") || url.includes("bit.ly");
+        if (!isShort) return url;
+        
+        try {
+            const res = await fetch("/api/resolve-url", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url })
+            });
+            const data = await res.json();
+            return data.resolvedUrl || url;
+        } catch {
+            return url;
+        }
+    };
 
     const handleLocationChange = (id: string, field: keyof Location, value: any) => {
         setLocations(locs =>
@@ -226,6 +247,19 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
                         if (coords) {
                             updated.lat = coords.lat;
                             updated.lng = coords.lng;
+                        } else {
+                            // If it's a short URL, resolve it async
+                            const isShort = value.includes("goo.gl") || value.includes("maps.app");
+                            if (isShort) {
+                                resolveShortUrl(value).then(resolved => {
+                                    const resolvedCoords = extractCoordsFromUrl(resolved);
+                                    if (resolvedCoords) {
+                                        setLocations(prev => prev.map(l => 
+                                            l.id === id ? { ...l, lat: resolvedCoords.lat, lng: resolvedCoords.lng } : l
+                                        ));
+                                    }
+                                });
+                            }
                         }
                     }
                     
@@ -276,17 +310,31 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
         setLocations(locs => locs.filter(loc => loc.id !== id));
     };
 
-    const handleSave = () => {
-        // Re-extract coordinates from all URLs before saving to ensure persistence
-        const finalLocations = locations.map(loc => {
-            if (loc.mapsUrl) {
-                const coords = extractCoordsFromUrl(loc.mapsUrl);
-                if (coords) {
-                    return { ...loc, lat: coords.lat, lng: coords.lng, timeSlot: loc.timeSlot };
+    const handleSave = async () => {
+        setIsResolving(true);
+
+        // Resolve all short URLs and re-extract coordinates before saving
+        const finalLocations = await Promise.all(
+            locations.map(async (loc) => {
+                if (loc.mapsUrl) {
+                    // First try direct extraction
+                    let coords = extractCoordsFromUrl(loc.mapsUrl);
+                    
+                    // If direct extraction fails, resolve the URL first
+                    if (!coords) {
+                        const resolvedUrl = await resolveShortUrl(loc.mapsUrl);
+                        coords = extractCoordsFromUrl(resolvedUrl);
+                    }
+                    
+                    if (coords) {
+                        return { ...loc, lat: coords.lat, lng: coords.lng, timeSlot: loc.timeSlot };
+                    }
                 }
-            }
-            return { ...loc, timeSlot: loc.timeSlot };
-        });
+                return { ...loc, timeSlot: loc.timeSlot };
+            })
+        );
+
+        setIsResolving(false);
 
         onSave({
             ...editedDay,
@@ -482,10 +530,20 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
                     <div className="p-8 border-t border-stroke bg-surface pb-10 shadow-2xl">
                         <button
                             onClick={handleSave}
-                            className="w-full btn-primary py-5 text-base"
+                            disabled={isResolving}
+                            className={`w-full btn-primary py-5 text-base ${isResolving ? 'opacity-70 cursor-wait' : ''}`}
                         >
-                            <Save size={22} />
-                            GUARDAR ALTERAÇÕES
+                            {isResolving ? (
+                                <>
+                                    <span className="w-5 h-5 border-2 border-canvas/30 border-t-canvas rounded-full animate-spin" />
+                                    A PROCESSAR MAPAS...
+                                </>
+                            ) : (
+                                <>
+                                    <Save size={22} />
+                                    GUARDAR ALTERAÇÕES
+                                </>
+                            )}
                         </button>
                     </div>
                 </motion.div>
