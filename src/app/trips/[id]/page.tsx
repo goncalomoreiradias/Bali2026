@@ -328,162 +328,88 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
 
   return (
     <main className="min-h-screen bg-canvas relative pb-24 lg:pb-0 selection:bg-accent/20 selection:text-accent">
-      {/* Header - Compact for Mobile */}
-      <header className="relative z-10 bg-surface/50 backdrop-blur-md border-b border-stroke md:pt-10 md:pb-8 pt-8 pb-6 px-6 sm:px-12 shadow-2xl">
+      {/* Header - Compact Single Row */}
+      <header className="relative z-10 bg-surface/50 backdrop-blur-md border-b border-stroke pt-4 pb-4 px-4 sm:px-8 shadow-2xl">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(var(--text-high)_1px,transparent_1px)] [background-size:20px_20px]" />
         
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex items-center justify-between mb-4 md:mb-6">
-            <div className="flex items-center gap-4">
-                <Link href="/" className="group p-2 md:p-3 bg-surface/50 hover:bg-surface rounded-full transition-all border border-stroke active:scale-95">
-                  <ArrowLeft size={20} className="text-text-high md:w-6 md:h-6 group-hover:-translate-x-1 transition-transform" />
-                </Link>
-                <div className="md:hidden">
-                    <LanguageToggle />
-                </div>
-            </div>
-            <DatePickerModal 
-                isOpen={isDatePickerOpen}
-                onClose={() => {
-                    setIsDatePickerOpen(false);
-                }}
-                onSave={(start, end) => handleUpdateDates(start, end)}
-                initialStart={itinerary.startDate ? new Date(itinerary.startDate).toISOString().split('T')[0] : ""}
-                initialEnd={itinerary.endDate ? new Date(itinerary.endDate).toISOString().split('T')[0] : ""}
-            />
+        <DatePickerModal 
+            isOpen={isDatePickerOpen}
+            onClose={() => setIsDatePickerOpen(false)}
+            onSave={(start, end) => handleUpdateDates(start, end)}
+            initialStart={itinerary.startDate ? new Date(itinerary.startDate).toISOString().split('T')[0] : ""}
+            initialEnd={itinerary.endDate ? new Date(itinerary.endDate).toISOString().split('T')[0] : ""}
+        />
+        {isAnySheetOpen && <div className="fixed inset-0 z-40 bg-black/5" />}
 
-            {isAnySheetOpen && <div className="fixed inset-0 z-40 bg-black/5" />}
-            
-            <div className="flex items-center gap-3">
-                <div className="hidden md:flex items-center gap-2">
-                    <button 
-                        onClick={() => setIsAIPlannerOpen(true)}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-accent text-canvas rounded-full border border-accent/20 transition-all text-[11px] font-black uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95"
-                    >
-                        <Sparkles size={16} className="animate-pulse" />
-                        <span>AI ARCHITECT</span>
-                    </button>
-                    <button 
-                         onClick={() => {
-                            setIsDatePickerOpen(true);
-                        }}
-                         className="flex items-center gap-2 px-6 py-2.5 bg-surface hover:bg-stroke text-text-high rounded-full border border-stroke transition-all text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95"
-                    >
-                        <Calendar size={16} />
-                        <span>{itinerary.startDate && itinerary.endDate ? `${format(new Date(itinerary.startDate), "dd MMM", { locale: dateLocale })} - ${format(new Date(itinerary.endDate), "dd MMM yyyy", { locale: dateLocale })}` : t("trip.setDates")}</span>
-                    </button>
-                </div>
-                <div className="hidden md:block">
-                    <LanguageToggle />
-                </div>
-                {/* Management Ellipsis */}
-                <button 
-                    onClick={() => setIsManagementMenuOpen(true)}
-                    className="p-2 md:p-3 bg-surface/50 hover:bg-surface rounded-full border border-stroke transition-all text-text-medium hover:text-text-high"
-                >
-                    <MoreVertical size={20} />
-                </button>
-                <button 
-                    onClick={() => setIsAIPlannerOpen(true)}
-                    className="md:hidden flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-full border border-accent/20 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md"
-                >
-                    <Sparkles size={14} className="animate-pulse" />
-                    <span>AI</span>
-                </button>
-            </div>
+        <div className="max-w-7xl mx-auto relative z-10 flex items-center gap-3 md:gap-4">
+          {/* Back Button */}
+          <Link href="/" className="group p-2 bg-surface/50 hover:bg-surface rounded-full transition-all border border-stroke active:scale-95 flex-shrink-0">
+            <ArrowLeft size={18} className="text-text-high group-hover:-translate-x-1 transition-transform" />
+          </Link>
+
+          {/* Title - Editable Inline */}
+          <div className="flex-1 min-w-0 group cursor-pointer" onClick={() => !isEditingTitle && setIsEditingTitle(true)}>
+            {isEditingTitle ? (
+              <input
+                autoFocus
+                value={editedTitle}
+                onChange={(e) => setEditedTitle(e.target.value)}
+                onBlur={handleUpdateTitle}
+                onKeyDown={(e) => e.key === "Enter" && handleUpdateTitle()}
+                onClick={(e) => e.stopPropagation()}
+                className="text-lg md:text-2xl font-black font-outfit text-text-high bg-canvas/50 border-b-2 border-accent outline-none w-full px-2 py-1 rounded-t-lg"
+              />
+            ) : (
+              <div className="flex items-center gap-2 min-w-0">
+                <h1 className="text-lg md:text-2xl font-black font-outfit text-text-high tracking-tight leading-tight truncate hover:text-accent transition-colors">
+                  {itinerary.title}
+                </h1>
+                <Edit2 size={12} className="text-text-medium/50 group-hover:text-accent transition-colors flex-shrink-0" />
+              </div>
+            )}
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="flex flex-col md:flex-row md:items-end justify-between gap-6"
+          {/* Date Pill */}
+          <button 
+            onClick={() => setIsDatePickerOpen(true)}
+            className="hidden md:flex items-center gap-2 px-4 py-2 bg-canvas hover:bg-stroke text-text-high rounded-full border border-stroke transition-all text-[10px] font-black uppercase tracking-widest active:scale-95 flex-shrink-0"
           >
-            <div className="space-y-4 md:space-y-3 flex-1">
-              <div className="group relative">
-                {isEditingTitle ? (
-                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-                        <input
-                            autoFocus
-                            value={editedTitle}
-                            onChange={(e) => setEditedTitle(e.target.value)}
-                            onBlur={handleUpdateTitle}
-                            onKeyDown={(e) => e.key === "Enter" && handleUpdateTitle()}
-                            className="text-2xl sm:text-6xl font-black font-outfit text-white bg-white/5 border-b-2 border-accent-cobalt outline-none w-full px-2 py-1 rounded-t-lg"
-                        />
-                    </motion.div>
-                ) : (
-                 <div className="flex items-center gap-3">
-                        <h1 
-                            onClick={() => setIsEditingTitle(true)}
-                            className="text-2xl sm:text-6xl font-black font-outfit text-text-high tracking-tight leading-tight cursor-pointer hover:text-accent transition-colors"
-                        >
-                            {itinerary.title}
-                        </h1>
-                        <Edit2 size={16} className="text-text-medium group-hover:text-accent transition-colors md:w-5 md:h-5" />
-                    </div>
-                )}
-              </div>
+            <Calendar size={14} />
+            <span>{itinerary.startDate && itinerary.endDate ? `${format(new Date(itinerary.startDate), "dd MMM", { locale: dateLocale })} - ${format(new Date(itinerary.endDate), "dd MMM yyyy", { locale: dateLocale })}` : t("trip.setDates")}</span>
+          </button>
 
-               <div className="flex flex-wrap items-center gap-4 md:gap-6">
-                <div className="relative group/dates">
-                     <button 
-                        onClick={() => {
-                            const start = prompt("Data Início (YYYY-MM-DD):", itinerary.startDate || "");
-                            const end = prompt("Data Fim (YYYY-MM-DD):", itinerary.endDate || "");
-                            if (start && end) handleUpdateDates(start, end);
-                        }}
-                        className="flex items-center gap-2 pr-4 pl-1 py-1 bg-accent/10 hover:bg-accent/20 text-accent rounded-xl border border-accent/20 transition-all shadow-lg backdrop-blur-md"
-                     >
-                        <div className="p-2 bg-accent rounded-lg text-canvas">
-                            <Calendar size={14} />
-                        </div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                            {itinerary.startDate && itinerary.endDate
-                            ? `${format(new Date(itinerary.startDate), "dd MMM", { locale: dateLocale })} - ${format(new Date(itinerary.endDate), "dd MMM yyyy", { locale: dateLocale })}`
-                            : t("trip.setDates") || "DEFINIR DATAS"}
-                        </span>
-                     </button>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                    <div className="scale-75 md:scale-90 origin-left">
-                      <CollaborationModule 
-                        participants={(itinerary.participants || []).map((p: any, i: number) => ({
-                          id: p.id || `p-${i}`,
-                          name: p.name || p.email.split('@')[0],
-                          role: i === 0 ? "Owner" : "Editor",
-                          online: i % 2 === 0
-                        }))}
-                        onInvite={() => {
-                          const url = `${window.location.origin}/trips/join/${itinerary.inviteToken}`;
-                          navigator.clipboard.writeText(url);
-                          setCopiedLink(true);
-                          setTimeout(() => setCopiedLink(false), 2000);
-                        }}
-                      />
-                    </div>
-                    
-                    {/* Compact Invite Button for Mobile */}
-                    {itinerary.inviteToken && (
-                        <button
-                            onClick={() => {
-                                const url = `${window.location.origin}/trips/join/${itinerary.inviteToken}`;
-                                navigator.clipboard.writeText(url);
-                                setCopiedLink(true);
-                                setTimeout(() => setCopiedLink(false), 2000);
-                            }}
-                            className="md:hidden flex items-center justify-center w-8 h-8 bg-surface/50 border border-stroke rounded-full text-text-high active:scale-90 transition-all"
-                        >
-                            {copiedLink ? <Check size={14} className="text-accent" /> : <Plus size={14} />}
-                        </button>
-                    )}
-              </div>
-            </div>
+          {/* Collaboration Module */}
+          <div className="flex-shrink-0">
+            <CollaborationModule 
+              participants={(itinerary.participants || []).map((p: any, i: number) => ({
+                id: p.id || `p-${i}`,
+                name: p.name || p.email.split('@')[0],
+                role: i === 0 ? "Owner" : "Editor",
+                online: i % 2 === 0
+              }))}
+              onInvite={() => {
+                const url = `${window.location.origin}/trips/join/${itinerary.inviteToken}`;
+                navigator.clipboard.writeText(url);
+                setCopiedLink(true);
+                setTimeout(() => setCopiedLink(false), 2000);
+              }}
+            />
           </div>
-        </motion.div>
-      </div>
-    </header>
+
+          {/* Language Toggle (desktop) */}
+          <div className="hidden md:block flex-shrink-0">
+            <LanguageToggle />
+          </div>
+
+          {/* Management Menu */}
+          <button 
+            onClick={() => setIsManagementMenuOpen(true)}
+            className="p-2 bg-surface/50 hover:bg-surface rounded-full border border-stroke transition-all text-text-medium hover:text-text-high flex-shrink-0"
+          >
+            <MoreVertical size={18} />
+          </button>
+        </div>
+      </header>
 
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row relative">
@@ -697,6 +623,26 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                       </div>
                       
                       <div className="space-y-3">
+                          <button 
+                            onClick={() => { setIsAIPlannerOpen(true); setIsManagementMenuOpen(false); }}
+                            className="w-full bg-gradient-to-r from-brand-indigo/10 to-brand-purple/10 hover:from-brand-indigo/20 hover:to-brand-purple/20 p-5 rounded-2xl border border-brand-indigo/20 flex items-center gap-4 transition-all"
+                          >
+                              <div className="w-10 h-10 bg-gradient-to-br from-brand-indigo to-brand-purple rounded-xl flex items-center justify-center text-white">
+                                  <Sparkles size={20} />
+                              </div>
+                              <span className="font-bold text-text-high">AI Architect</span>
+                          </button>
+
+                          <button 
+                            onClick={() => { setIsDatePickerOpen(true); setIsManagementMenuOpen(false); }}
+                            className="w-full bg-canvas hover:bg-stroke p-5 rounded-2xl border border-stroke flex items-center gap-4 transition-all md:hidden"
+                          >
+                              <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center text-accent border border-accent/20">
+                                  <Calendar size={20} />
+                              </div>
+                              <span className="font-bold text-text-medium">{itinerary.startDate && itinerary.endDate ? `${format(new Date(itinerary.startDate), "dd MMM", { locale: dateLocale })} - ${format(new Date(itinerary.endDate), "dd MMM yyyy", { locale: dateLocale })}` : t("trip.setDates")}</span>
+                          </button>
+
                           <button 
                             onClick={() => { setIsEditingTitle(true); setIsManagementMenuOpen(false); }}
                             className="w-full bg-canvas hover:bg-stroke p-5 rounded-2xl border border-stroke flex items-center gap-4 transition-all"

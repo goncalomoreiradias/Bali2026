@@ -277,13 +277,21 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
     };
 
     const handleSave = () => {
+        // Re-extract coordinates from all URLs before saving to ensure persistence
+        const finalLocations = locations.map(loc => {
+            if (loc.mapsUrl) {
+                const coords = extractCoordsFromUrl(loc.mapsUrl);
+                if (coords) {
+                    return { ...loc, lat: coords.lat, lng: coords.lng, timeSlot: loc.timeSlot };
+                }
+            }
+            return { ...loc, timeSlot: loc.timeSlot };
+        });
+
         onSave({
             ...editedDay,
             title: editedDay.title,
-            locations: locations.map(loc => ({
-                ...loc,
-                timeSlot: loc.timeSlot // Explicitly ensuring it's included
-            }))
+            locations: finalLocations
         });
         onClose();
     };
@@ -432,24 +440,36 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
                                                     onMoveLocation={onMoveLocation}
                                                 />
                                                 
-                                                {/* Travel indicator between items in the edit list */}
-                                                {index < locations.length - 1 && (
-                                                    <div className="flex justify-center -my-2 relative z-10">
-                                                        <div className="bg-canvas/80 backdrop-blur-md border border-stroke rounded-full px-4 py-1.5 flex gap-4 text-[9px] font-black uppercase tracking-wider shadow-lg">
-                                                            <div className="flex items-center gap-1.5 text-accent">
-                                                                <Car size={10} />
-                                                                <span>{formatDuration(estimateTravelTime(calculateDistance(loc.lat, loc.lng, locations[index+1].lat, locations[index+1].lng), 'drive'))}</span>
-                                                            </div>
-                                                            <div className="flex items-center gap-1.5 text-text-medium">
-                                                                <Footprints size={10} />
-                                                                <span>{formatDuration(estimateTravelTime(calculateDistance(loc.lat, loc.lng, locations[index+1].lat, locations[index+1].lng), 'walk'))}</span>
-                                                            </div>
-                                                            <div className="text-text-dim border-l border-stroke pl-3">
-                                                                {calculateDistance(loc.lat, loc.lng, locations[index+1].lat, locations[index+1].lng).toFixed(1)} km
+                                                {/* Travel indicator between items — only show if both points have valid coords */}
+                                                {index < locations.length - 1 && (() => {
+                                                    const next = locations[index + 1];
+                                                    const hasValidCoords = loc.lat !== 0 && loc.lng !== 0 && loc.lat !== -8.4 && loc.lng !== 115.2 && next.lat !== 0 && next.lng !== 0 && next.lat !== -8.4 && next.lng !== 115.2;
+                                                    if (!hasValidCoords) return (
+                                                        <div className="flex justify-center -my-2 relative z-10">
+                                                            <div className="bg-canvas/80 backdrop-blur-md border border-dashed border-stroke rounded-full px-4 py-1.5 text-[8px] font-black uppercase tracking-wider text-text-medium/50 shadow-md">
+                                                                Adiciona links do Maps para ver distâncias
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                )}
+                                                    );
+                                                    const dist = calculateDistance(loc.lat, loc.lng, next.lat, next.lng);
+                                                    return (
+                                                        <div className="flex justify-center -my-2 relative z-10">
+                                                            <div className="bg-canvas/80 backdrop-blur-md border border-stroke rounded-full px-4 py-1.5 flex gap-4 text-[9px] font-black uppercase tracking-wider shadow-lg">
+                                                                <div className="flex items-center gap-1.5 text-accent">
+                                                                    <Car size={10} />
+                                                                    <span>{formatDuration(estimateTravelTime(dist, 'drive'))}</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-1.5 text-text-medium">
+                                                                    <Footprints size={10} />
+                                                                    <span>{formatDuration(estimateTravelTime(dist, 'walk'))}</span>
+                                                                </div>
+                                                                <div className="text-text-dim border-l border-stroke pl-3">
+                                                                    {dist.toFixed(1)} km
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })()}
                                             </React.Fragment>
                                         ))}
                                     </SortableContext>

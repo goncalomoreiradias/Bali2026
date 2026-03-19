@@ -174,9 +174,14 @@ export default function MapSection({ days, selectedDayId }: MapSectionProps) {
     }
 
     // Get locations for the selected day, or all locations if none selected
-    const locationsToRender = selectedDayId
+    const rawLocations = selectedDayId
         ? days.find(d => d.id === selectedDayId)?.locations || []
         : days.flatMap(d => d.locations);
+    
+    // Filter out locations with default/invalid coordinates
+    const locationsToRender = rawLocations.filter(loc => 
+        loc.lat !== 0 && loc.lng !== 0 && !(loc.lat === -8.4 && loc.lng === 115.2)
+    );
 
     // Default to Bali center if no locations
     const defaultCenter: [number, number] = [-8.409518, 115.188919];
