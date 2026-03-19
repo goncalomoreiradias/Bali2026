@@ -3,7 +3,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import { DayPlan, Location } from "@/types";
-import { MapPin, Navigation, Edit2, CheckCircle } from "lucide-react";
+import { MapPin, Navigation, Edit2, CheckCircle, GripVertical } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface DayCardProps {
     day: DayPlan;
@@ -33,8 +35,26 @@ export default function DayCard({ day, onEdit, onToggleLocation, onAddLocation }
         visible: { opacity: 1, x: 0, transition: { duration: 0.3 } }
     };
 
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id: day.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 50 : 0,
+        opacity: isDragging ? 0.6 : 1,
+    };
+
     return (
         <motion.div
+            ref={setNodeRef}
+            style={style}
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
@@ -43,11 +63,20 @@ export default function DayCard({ day, onEdit, onToggleLocation, onAddLocation }
         >
             {/* Header with rich accent */}
             <div className="bg-accent p-8 text-canvas flex justify-between items-center z-10 relative">
-                <div className="space-y-1">
-                    <h2 className="text-3xl font-black font-outfit tracking-tighter flex items-center gap-3">
-                        {t("nav.day")} {day.dayNumber}
-                    </h2>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70">{day.title}</p>
+                <div className="flex items-center gap-4">
+                    <div 
+                        {...attributes} 
+                        {...listeners}
+                        className="p-2 -ml-2 hover:bg-canvas/20 rounded-lg cursor-grab active:cursor-grabbing transition-colors"
+                    >
+                        <GripVertical size={20} className="opacity-50" />
+                    </div>
+                    <div className="space-y-1">
+                        <h2 className="text-3xl font-black font-outfit tracking-tighter flex items-center gap-3">
+                            {t("nav.day")} {day.dayNumber}
+                        </h2>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70">{day.title}</p>
+                    </div>
                 </div>
                 <button
                     onClick={(e) => { e.stopPropagation(); onEdit(day); }}

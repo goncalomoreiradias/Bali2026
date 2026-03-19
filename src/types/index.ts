@@ -24,6 +24,9 @@ export interface DayPlan {
   dayNumber: number;
   title: string;
   locations: Location[];
+  tripId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Itinerary {

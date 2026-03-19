@@ -155,6 +155,8 @@ const pt = {
     "trip.linkCopied": "Link Copiado!",
     "trip.inviteCollaborators": "Convidar Colaboradores",
     "collab.invite": "Convidar",
+    "common.no_days": "Sem dias planeados",
+    "trip.addFirstDay": "Adicionar Primeiro Dia",
 };
 
 export default pt;

@@ -19,6 +19,23 @@ import { useI18n } from "@/lib/i18n";
 import LanguageToggle from "@/components/LanguageToggle";
 import Link from "next/link";
 import CollaborationModule from "@/components/CollaborationModule";
+import { 
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import AIPlannerModal from "@/components/AIPlannerModal";
+import { Sparkles } from "lucide-react";
 
 
 const MapSection = dynamic(() => import("@/components/MapSection"), {
@@ -60,6 +77,19 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [editedDesc, setEditedDesc] = useState("");
   const [isManagementMenuOpen, setIsManagementMenuOpen] = useState(false);
+  const [isAIPlannerOpen, setIsAIPlannerOpen] = useState(false);
+
+  // DND Sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+        activationConstraint: {
+            distance: 8,
+        },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // i18n
   const { t, language } = useI18n();
@@ -181,6 +211,69 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
     setIsAddLocationOpen(true);
   };
 
+  const handleAddDay = async () => {
+    if (!itinerary) return;
+    const nextDayNumber = itinerary.days.length + 1;
+    const newDay: DayPlan = {
+        id: `new-day-${Date.now()}`,
+        dayNumber: nextDayNumber,
+        title: `${t("nav.day")} ${nextDayNumber}`,
+        locations: [],
+        tripId: tripId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    };
+    const updated = { ...itinerary, days: [...itinerary.days, newDay] };
+    await saveItinerary(updated);
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+        const oldIndex = itinerary.days.findIndex((d: DayPlan) => d.id === active.id);
+        const newIndex = itinerary.days.findIndex((d: DayPlan) => d.id === over.id);
+
+        const reorderedDays = arrayMove(itinerary.days, oldIndex, newIndex).map((day: any, idx) => ({
+            ...day,
+            dayNumber: idx + 1
+        }));
+
+        const updated = { ...itinerary, days: reorderedDays };
+        saveItinerary(updated);
+    }
+  };
+
+  const handleMoveLocation = async (locationId: string, targetDayId: string) => {
+    if (!itinerary) return;
+    
+    let movedLocation: any | undefined;
+    const updatedDays = itinerary.days.map((day: any) => {
+        const locIndex = day.locations.findIndex((l: any) => l.id === locationId);
+        if (locIndex !== -1) {
+            movedLocation = day.locations[locIndex];
+            return {
+                ...day,
+                locations: day.locations.filter((l: any) => l.id !== locationId)
+            };
+        }
+        return day;
+    }).map((day: any) => {
+        if (day.id === targetDayId && movedLocation) {
+            return {
+                ...day,
+                locations: [...day.locations, movedLocation]
+            };
+        }
+        return day;
+    });
+
+    if (movedLocation) {
+        const updated = { ...itinerary, days: updatedDays };
+        await saveItinerary(updated);
+        setEditingDay(null); 
+    }
+  };
+
   if (loading || !itinerary) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bali-sand">
@@ -221,6 +314,13 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                     className="p-2 md:p-3 bg-surface/50 hover:bg-surface rounded-full border border-stroke transition-all text-text-medium hover:text-text-high"
                 >
                     <MoreVertical size={20} />
+                </button>
+                <button 
+                    onClick={() => setIsAIPlannerOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-full border border-accent/20 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md"
+                >
+                    <Sparkles size={14} className="animate-pulse" />
+                    <span>AI</span>
                 </button>
             </div>
           </div>
@@ -390,20 +490,46 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                 ))}
               </div>
 
-              {/* Day Cards */}
-              <AnimatePresence mode="popLayout">
-                {itinerary.days
-                  .filter((day: DayPlan) => (selectedDayId ? day.id === selectedDayId : true))
-                  .map((day: DayPlan) => (
-                    <DayCard
-                      key={day.id}
-                      day={day}
-                      onEdit={setEditingDay}
-                      onToggleLocation={toggleComplete}
-                      onAddLocation={handleAddLocationClick}
-                    />
-                  ))}
-              </AnimatePresence>
+              {/* Day Cards with Reordering */}
+              {itinerary.days.length > 0 ? (
+                <DndContext 
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext 
+                    items={itinerary.days.map((d: any) => d.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <AnimatePresence mode="popLayout">
+                      {itinerary.days
+                        .filter((day: DayPlan) => (selectedDayId ? day.id === selectedDayId : true))
+                        .map((day: DayPlan) => (
+                          <DayCard
+                            key={day.id}
+                            day={day}
+                            onEdit={setEditingDay}
+                            onToggleLocation={toggleComplete}
+                            onAddLocation={handleAddLocationClick}
+                          />
+                        ))}
+                    </AnimatePresence>
+                  </SortableContext>
+                </DndContext>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 px-10 border-2 border-dashed border-stroke rounded-[3rem] bg-surface/30">
+                  <div className="w-20 h-20 bg-accent/5 rounded-full flex items-center justify-center mb-6">
+                    <Plus size={40} className="text-accent/30" />
+                  </div>
+                  <h3 className="text-xl font-black text-text-medium uppercase tracking-widest mb-4 italic">{t("common.no_days") || "Sem dias planeados"}</h3>
+                  <button 
+                    onClick={handleAddDay}
+                    className="btn-primary px-10 py-4 text-xs tracking-[0.2em]"
+                  >
+                    + {t("trip.addFirstDay") || "Adicionar Primeiro Dia"}
+                  </button>
+                </div>
+              )}
             </>
           ) : (
             /* Finance Dashboard View */
@@ -422,9 +548,11 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
       {editingDay && (
         <EditItinerarySheet
           day={editingDay}
+          allDays={itinerary.days}
           isOpen={!!editingDay}
           onClose={() => setEditingDay(null)}
           onSave={handleDayEdit}
+          onMoveLocation={handleMoveLocation}
         />
       )}
 
@@ -458,8 +586,8 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
       {/* FAB - Desktop Only (Hidden on Mobile as it is now in Navigation) */}
       {activeTab === "itinerary" ? (
         <button
-          onClick={() => setIsAddLocationOpen(true)}
-          className="hidden lg:flex fixed bottom-12 right-12 z-[100] w-16 h-16 bg-accent text-canvas rounded-full shadow-2xl items-center justify-center transition-all hover:scale-110 hover:-translate-y-2 active:scale-95 border-2 border-canvas/30 group"
+          onClick={() => itinerary?.days.length > 0 ? setIsAddLocationOpen(true) : handleAddDay()}
+          className="lg:flex fixed bottom-12 right-12 z-[100] w-16 h-16 bg-accent text-canvas rounded-full shadow-2xl items-center justify-center transition-all hover:scale-110 hover:-translate-y-2 active:scale-95 border-2 border-canvas/30 group"
         >
           <Plus size={32} className="group-hover:rotate-90 transition-transform duration-300" />
         </button>
@@ -530,12 +658,21 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
             activeTab={activeTab} 
             onTabChange={setActiveTab} 
             onAddClick={() => {
-                if (activeTab === "itinerary") setIsAddLocationOpen(true);
+                if (activeTab === "itinerary") {
+                    if (itinerary?.days.length > 0) setIsAddLocationOpen(true);
+                    else handleAddDay();
+                }
                 else setIsAddExpenseOpen(true);
             }}
           />
         </div>
       </div>
+
+      <AIPlannerModal 
+          isOpen={isAIPlannerOpen}
+          onClose={() => setIsAIPlannerOpen(false)}
+          initialData={{ destination: itinerary.title }}
+      />
     </main>
   );
 }

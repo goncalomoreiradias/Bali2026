@@ -24,11 +24,14 @@ import { CSS } from '@dnd-kit/utilities';
 
 interface SortableLocationItemProps {
     loc: Location;
+    allDays: DayPlan[];
+    currentDayId: string;
     handleLocationChange: (id: string, field: keyof Location, value: any) => void;
     removeLocation: (id: string) => void;
+    onMoveLocation?: (locId: string, targetDayId: string) => void;
 }
 
-function SortableLocationItem({ loc, handleLocationChange, removeLocation }: SortableLocationItemProps) {
+function SortableLocationItem({ loc, allDays, currentDayId, handleLocationChange, removeLocation, onMoveLocation }: SortableLocationItemProps) {
     const {
         attributes,
         listeners,
@@ -132,6 +135,23 @@ function SortableLocationItem({ loc, handleLocationChange, removeLocation }: Sor
                             />
                         </div>
                     </div>
+
+                    {allDays.length > 1 && (
+                        <div className="pt-2 border-t border-stroke mt-4">
+                            <label className="text-[9px] uppercase text-text-medium font-black tracking-widest px-1 mb-2 block">Mover para Dia</label>
+                            <select
+                                value={currentDayId}
+                                onChange={(e) => onMoveLocation?.(loc.id, e.target.value)}
+                                className="input-surface w-full px-4 py-3 text-[10px] font-black uppercase tracking-widest text-accent appearance-none cursor-pointer"
+                            >
+                                {allDays.map(d => (
+                                    <option key={d.id} value={d.id} className="bg-surface">
+                                        Dia {d.dayNumber} - {d.title}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
@@ -140,12 +160,14 @@ function SortableLocationItem({ loc, handleLocationChange, removeLocation }: Sor
 
 interface EditItinerarySheetProps {
     day: DayPlan;
+    allDays: DayPlan[];
     isOpen: boolean;
     onClose: () => void;
     onSave: (updatedDay: DayPlan) => void;
+    onMoveLocation?: (locId: string, targetDayId: string) => void;
 }
 
-export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: EditItinerarySheetProps) {
+export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSave, onMoveLocation }: EditItinerarySheetProps) {
     const [editedDay, setEditedDay] = useState<DayPlan>({ ...day });
     const [locations, setLocations] = useState<Location[]>([...day.locations]);
 
@@ -274,8 +296,11 @@ export default function EditItinerarySheet({ day, isOpen, onClose, onSave }: Edi
                                             <SortableLocationItem
                                                 key={loc.id}
                                                 loc={loc}
+                                                allDays={allDays}
+                                                currentDayId={day.id}
                                                 handleLocationChange={handleLocationChange}
                                                 removeLocation={removeLocation}
+                                                onMoveLocation={onMoveLocation}
                                             />
                                         ))}
                                     </SortableContext>

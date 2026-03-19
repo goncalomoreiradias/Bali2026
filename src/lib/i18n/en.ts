@@ -155,6 +155,8 @@ const en = {
     "trip.linkCopied": "Link Copied!",
     "trip.inviteCollaborators": "Invite Collaborators",
     "collab.invite": "Invite",
+    "common.no_days": "No days planned",
+    "trip.addFirstDay": "Add First Day",
 };
 
 export default en;
