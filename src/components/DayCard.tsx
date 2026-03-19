@@ -6,7 +6,7 @@ import { DayPlan, Location } from "@/types";
 import { MapPin, Navigation, Edit2, CheckCircle, GripVertical, Car, Footprints } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { calculateDistance, estimateTravelTime, formatDuration } from "@/lib/maps";
+import { calculateDistance, estimateTravelTime, formatDuration, isValidCoord } from "@/lib/maps";
 import React from "react";
 
 interface DayCardProps {
@@ -92,29 +92,35 @@ export default function DayCard({ day, onEdit, onToggleLocation, onAddLocation }
             <div className="p-8 space-y-8 relative z-10 bg-canvas/20">
                 {day.locations.map((loc, index) => (
                     <React.Fragment key={loc.id}>
-                        {/* Distance/Time indicator between points */}
-                        {index > 0 && (
-                            <motion.div 
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                className="ml-[64px] my-[-16px] relative z-20 flex items-center gap-4 py-2"
-                            >
-                                <div className="flex items-center gap-3 px-3 py-1.5 bg-surface border border-stroke rounded-xl text-[9px] font-black text-text-medium shadow-xl backdrop-blur-md">
-                                    <div className="flex items-center gap-1.5 text-accent">
-                                        <Car size={10} />
-                                        <span>{formatDuration(estimateTravelTime(calculateDistance(day.locations[index-1].lat, day.locations[index-1].lng, loc.lat, loc.lng), 'drive'))}</span>
+                        {/* Distance/Time indicator between points — only when both have valid coords */}
+                        {index > 0 && (() => {
+                            const prev = day.locations[index - 1];
+                            const bothValid = isValidCoord(prev.lat, prev.lng) && isValidCoord(loc.lat, loc.lng);
+                            if (!bothValid) return null;
+                            const dist = calculateDistance(prev.lat, prev.lng, loc.lat, loc.lng);
+                            return (
+                                <motion.div 
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    className="ml-[64px] my-[-16px] relative z-20 flex items-center gap-4 py-2"
+                                >
+                                    <div className="flex items-center gap-3 px-3 py-1.5 bg-surface border border-stroke rounded-xl text-[9px] font-black text-text-medium shadow-xl backdrop-blur-md">
+                                        <div className="flex items-center gap-1.5 text-accent">
+                                            <Car size={10} />
+                                            <span>{formatDuration(estimateTravelTime(dist, 'drive'))}</span>
+                                        </div>
+                                        <span className="w-px h-2.5 bg-stroke" />
+                                        <div className="flex items-center gap-1.5 text-text-medium">
+                                            <Footprints size={10} />
+                                            <span>{formatDuration(estimateTravelTime(dist, 'walk'))}</span>
+                                        </div>
                                     </div>
-                                    <span className="w-px h-2.5 bg-stroke" />
-                                    <div className="flex items-center gap-1.5 text-text-medium">
-                                        <Footprints size={10} />
-                                        <span>{formatDuration(estimateTravelTime(calculateDistance(day.locations[index-1].lat, day.locations[index-1].lng, loc.lat, loc.lng), 'walk'))}</span>
+                                    <div className="text-[9px] font-black text-text-dim uppercase tracking-[0.2em] bg-canvas/40 px-2 py-0.5 rounded-md">
+                                        {dist.toFixed(1)} km
                                     </div>
-                                </div>
-                                <div className="text-[9px] font-black text-text-dim uppercase tracking-[0.2em] bg-canvas/40 px-2 py-0.5 rounded-md">
-                                    {calculateDistance(day.locations[index-1].lat, day.locations[index-1].lng, loc.lat, loc.lng).toFixed(1)} km
-                                </div>
-                            </motion.div>
-                        )}
+                                </motion.div>
+                            );
+                        })()}
 
                         <motion.div
                             variants={itemVariants}

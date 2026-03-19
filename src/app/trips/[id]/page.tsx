@@ -328,17 +328,19 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
 
   return (
     <main className="min-h-screen bg-canvas relative pb-24 lg:pb-0 selection:bg-accent/20 selection:text-accent">
+      {/* Date Picker Modal - rendered at top level for proper overlay */}
+      <DatePickerModal 
+          isOpen={isDatePickerOpen}
+          onClose={() => setIsDatePickerOpen(false)}
+          onSave={(start, end) => handleUpdateDates(start, end)}
+          initialStart={itinerary.startDate ? new Date(itinerary.startDate).toISOString().split('T')[0] : ""}
+          initialEnd={itinerary.endDate ? new Date(itinerary.endDate).toISOString().split('T')[0] : ""}
+      />
+
       {/* Header - Compact Single Row */}
       <header className="relative z-10 bg-surface/50 backdrop-blur-md border-b border-stroke pt-4 pb-4 px-4 sm:px-8 shadow-2xl">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(var(--text-high)_1px,transparent_1px)] [background-size:20px_20px]" />
         
-        <DatePickerModal 
-            isOpen={isDatePickerOpen}
-            onClose={() => setIsDatePickerOpen(false)}
-            onSave={(start, end) => handleUpdateDates(start, end)}
-            initialStart={itinerary.startDate ? new Date(itinerary.startDate).toISOString().split('T')[0] : ""}
-            initialEnd={itinerary.endDate ? new Date(itinerary.endDate).toISOString().split('T')[0] : ""}
-        />
         {isAnySheetOpen && <div className="fixed inset-0 z-40 bg-black/5" />}
 
         <div className="max-w-7xl mx-auto relative z-10 flex items-center gap-3 md:gap-4">

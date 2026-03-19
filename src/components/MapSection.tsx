@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import { DayPlan } from "@/types";
 import { Utensils, Camera, MapPin, Star, Hotel, ArrowUpRight } from "lucide-react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { isValidCoord } from "@/lib/maps";
 
 // Dynamically import react-leaflet components to avoid SSR issues
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from "react-leaflet";
@@ -179,9 +180,7 @@ export default function MapSection({ days, selectedDayId }: MapSectionProps) {
         : days.flatMap(d => d.locations);
     
     // Filter out locations with default/invalid coordinates
-    const locationsToRender = rawLocations.filter(loc => 
-        loc.lat !== 0 && loc.lng !== 0 && !(loc.lat === -8.4 && loc.lng === 115.2)
-    );
+    const locationsToRender = rawLocations.filter(loc => isValidCoord(loc.lat, loc.lng));
 
     // Default to Bali center if no locations
     const defaultCenter: [number, number] = [-8.409518, 115.188919];

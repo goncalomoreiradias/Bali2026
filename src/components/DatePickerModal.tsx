@@ -27,19 +27,19 @@ export default function DatePickerModal({ isOpen, onClose, onSave, initialStart 
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
+            <div className="fixed inset-0 z-[110] flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-4 overflow-y-auto">
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                    className="fixed inset-0 bg-black/60 backdrop-blur-md"
                     onClick={onClose}
                 />
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="glass bg-surface relative rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl border border-stroke overflow-hidden"
+                    className="glass bg-surface relative rounded-[2.5rem] p-8 sm:p-10 max-w-md w-full shadow-2xl border border-stroke overflow-hidden z-[111]"
                 >
                     {/* Decorative Background */}
                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-accent/10 blur-[80px] rounded-full" />

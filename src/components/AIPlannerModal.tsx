@@ -230,29 +230,23 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
                                         <label className="flex items-center gap-2 text-[9px] font-black text-text-medium uppercase tracking-[0.2em] px-1 leading-none">
                                             <Calendar size={10} className="text-accent" /> {t("ai.start")}
                                         </label>
-                                        <div className="relative group">
-                                            <Calendar size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-text-medium pointer-events-none group-focus-within:text-accent transition-colors z-10" />
-                                            <input
-                                                type="date"
-                                                value={startDate}
-                                                onChange={(e) => setStartDate(e.target.value)}
-                                                className="input-surface w-full pl-14 pr-4 py-4 outline-none font-black text-sm appearance-none relative"
-                                            />
-                                        </div>
+                                        <input
+                                            type="date"
+                                            value={startDate}
+                                            onChange={(e) => setStartDate(e.target.value)}
+                                            className="input-surface w-full px-5 py-4 outline-none font-black text-sm appearance-none"
+                                        />
                                     </div>
                                     <div className="space-y-2.5">
                                         <label className="flex items-center gap-2 text-[9px] font-black text-text-medium uppercase tracking-[0.2em] px-1 leading-none">
                                             <Calendar size={10} className="text-accent" /> {t("ai.end")}
                                         </label>
-                                        <div className="relative group">
-                                            <Calendar size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-text-medium pointer-events-none group-focus-within:text-accent transition-colors z-10" />
-                                            <input
-                                                type="date"
-                                                value={endDate}
-                                                onChange={(e) => setEndDate(e.target.value)}
-                                                className="input-surface w-full pl-14 pr-4 py-4 outline-none font-black text-sm appearance-none relative"
-                                            />
-                                        </div>
+                                        <input
+                                            type="date"
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e.target.value)}
+                                            className="input-surface w-full px-5 py-4 outline-none font-black text-sm appearance-none"
+                                        />
                                     </div>
                                 </div>
 
@@ -263,13 +257,13 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
                                             <Wallet size={10} className="text-accent" /> {t("ai.budget")}
                                         </label>
                                         <div className="relative group">
-                                            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-text-medium font-black text-xs group-focus-within:text-accent transition-colors z-10">€</span>
+                                            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-text-medium font-black text-xs group-focus-within:text-accent transition-colors z-10">€</span>
                                             <input
                                                 type="number"
                                                 placeholder={t("ai.placeholder.budget")}
                                                 value={budget}
                                                 onChange={(e) => setBudget(e.target.value)}
-                                                className="input-surface w-full pl-14 pr-4 py-4 outline-none font-black text-sm relative"
+                                                className="input-surface w-full pl-10 pr-4 py-4 outline-none font-black text-sm relative"
                                             />
                                         </div>
                                     </div>
@@ -277,25 +271,22 @@ export default function AIPlannerModal({ isOpen, onClose, initialData }: AIPlann
                                         <label className="flex items-center gap-2 text-[9px] font-black text-text-medium uppercase tracking-[0.2em] px-1 leading-none">
                                             <Users size={10} className="text-accent" /> {t("ai.guests")}
                                         </label>
-                                        <div className="relative group">
-                                            <Users size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-text-medium pointer-events-none group-focus-within:text-accent transition-colors z-10" />
-                                            <input
-                                                type="number"
-                                                min="1"
-                                                max="20"
-                                                value={numberOfPeople}
-                                                onChange={(e) => {
-                                                    const val = e.target.value;
-                                                    if (val === "") {
-                                                        setNumberOfPeople("");
-                                                    } else {
-                                                        const parsed = parseInt(val);
-                                                        if (!isNaN(parsed)) setNumberOfPeople(parsed);
-                                                    }
-                                                }}
-                                                className="input-surface w-full pl-14 pr-4 py-4 outline-none font-black text-sm appearance-none relative"
-                                            />
-                                        </div>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="20"
+                                            value={numberOfPeople}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                if (val === "") {
+                                                    setNumberOfPeople("");
+                                                } else {
+                                                    const parsed = parseInt(val);
+                                                    if (!isNaN(parsed)) setNumberOfPeople(parsed);
+                                                }
+                                            }}
+                                            className="input-surface w-full px-5 py-4 outline-none font-black text-sm appearance-none"
+                                        />
                                     </div>
                                 </div>
 

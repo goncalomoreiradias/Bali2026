@@ -4,7 +4,7 @@ import { useState } from "react";
 import { X, Plus, Save, Trash2, GripVertical, Map as MapIcon, Calendar } from "lucide-react";
 import { DayPlan, Location } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { calculateDistance, estimateTravelTime, formatDuration, extractCoordsFromUrl } from "@/lib/maps";
+import { calculateDistance, estimateTravelTime, formatDuration, extractCoordsFromUrl, isValidCoord } from "@/lib/maps";
 import { Car, Footprints } from "lucide-react";
 import React from "react";
 import {
@@ -443,7 +443,7 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
                                                 {/* Travel indicator between items — only show if both points have valid coords */}
                                                 {index < locations.length - 1 && (() => {
                                                     const next = locations[index + 1];
-                                                    const hasValidCoords = loc.lat !== 0 && loc.lng !== 0 && loc.lat !== -8.4 && loc.lng !== 115.2 && next.lat !== 0 && next.lng !== 0 && next.lat !== -8.4 && next.lng !== 115.2;
+                                                    const hasValidCoords = isValidCoord(loc.lat, loc.lng) && isValidCoord(next.lat, next.lng);
                                                     if (!hasValidCoords) return (
                                                         <div className="flex justify-center -my-2 relative z-10">
                                                             <div className="bg-canvas/80 backdrop-blur-md border border-dashed border-stroke rounded-full px-4 py-1.5 text-[8px] font-black uppercase tracking-wider text-text-medium/50 shadow-md">
