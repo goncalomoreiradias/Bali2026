@@ -74,21 +74,28 @@ export async function POST(
 
         for (const url of trip.bucketListUrls) {
             try {
-                // Resolve short URLs first
+                // 1. Fetch the content of each URL
                 let resolvedUrl = url;
                 try {
-                    const resolveRes = await fetch(`${getBaseUrl(request)}/api/resolve-url?url=${encodeURIComponent(url)}`);
+                    const resolveRes = await fetch(`${getBaseUrl(request)}/api/resolve-url`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ url })
+                    });
                     if (resolveRes.ok) {
                         const data = await resolveRes.json();
                         resolvedUrl = data.resolvedUrl || url;
                     }
-                } catch { /* use original URL */ }
+                } catch (e) { 
+                    console.error("Resolve error:", e);
+                }
 
                 // Fetch the page HTML
                 const pageRes = await fetch(resolvedUrl, {
                     headers: {
-                        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+                        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                         "Accept-Language": "pt-PT,pt;q=0.9,en;q=0.8",
+                        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
                     },
                 });
 
@@ -99,13 +106,19 @@ export async function POST(
 
                 const html = await pageRes.text();
                 
-                // Truncate HTML to avoid token limits — keep the most relevant parts
-                const truncatedHtml = html
-                    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+                // Truncate HTML smartly. 
+                // Google Maps data is often in window.APP_INITIALIZATION_STATE or similar inside script tags.
+                // We remove style/svg but keep large inline scripts that might contain data.
+                const cleanedHtml = html
                     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
                     .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, "")
+                    .replace(/<link[^>]*>/gi, "")
+                    .replace(/<path[^>]*>/gi, "")
+                    .replace(/<meta[^>]*>/gi, "")
+                    // We remove external scripts but keep inline ones as they often contain the list data
+                    .replace(/<script[^>]*src=[^>]*>[\s\S]*?<\/script>/gi, "")
                     .replace(/\s+/g, " ")
-                    .substring(0, 15000);
+                    .substring(0, 50000); 
 
                 // 2. Use AI to extract places from the HTML
                 const prompt = `Analisa o seguinte conteúdo HTML de uma página Google Maps que contém uma lista de locais guardados. 
@@ -127,7 +140,7 @@ Devolve APENAS um JSON válido no formato:
 Se não conseguires encontrar locais, devolve: { "places": [] }
 
 HTML:
-${truncatedHtml}`;
+${cleanedHtml}`;
 
                 const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                     method: "POST",

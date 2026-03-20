@@ -33,7 +33,7 @@ export default function DashboardClient({ session }: Props) {
     const [newTripDesc, setNewTripDesc] = useState("");
     const [newTripStartDate, setNewTripStartDate] = useState("");
     const [newTripEndDate, setNewTripEndDate] = useState("");
-    const [newTripBucketListUrl, setNewTripBucketListUrl] = useState("");
+    const [newTripBucketListUrls, setNewTripBucketListUrls] = useState("");
     const [isCreating, setIsCreating] = useState(false);
 
     // i18n
@@ -94,7 +94,7 @@ export default function DashboardClient({ session }: Props) {
                     description: newTripDesc,
                     startDate: newTripStartDate || undefined,
                     endDate: newTripEndDate || undefined,
-                    bucketListUrl: newTripBucketListUrl || undefined,
+                    bucketListUrls: newTripBucketListUrls.split("\n").map(u => u.trim()).filter(Boolean),
                     participants: [session.userId],
                 }),
             });
@@ -107,6 +107,7 @@ export default function DashboardClient({ session }: Props) {
                 setNewTripDesc("");
                 setNewTripStartDate("");
                 setNewTripEndDate("");
+                setNewTripBucketListUrls("");
             }
         } catch (error) {
             console.error("Failed to create trip", error);
@@ -595,20 +596,20 @@ export default function DashboardClient({ session }: Props) {
                                 </div>
                             </div>
 
-                            {/* Bucket List URL */}
+                            {/* Bucket List URLs */}
                             <div className="space-y-3">
                                 <label className="flex items-center gap-2 text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] px-2 leading-none">
                                     📍 Bucket List (Google Maps)
                                 </label>
-                                <input
-                                    type="url"
-                                    placeholder="Cola o link da tua lista do Google Maps..."
-                                    value={newTripBucketListUrl}
-                                    onChange={(e) => setNewTripBucketListUrl(e.target.value)}
-                                    className="input-surface w-full p-4 text-xs font-bold bg-emerald-500/5 border-emerald-500/20 placeholder:text-emerald-500/30"
+                                <textarea
+                                    placeholder={"Cola links de listas do Maps...\nUm link por linha"}
+                                    value={newTripBucketListUrls}
+                                    onChange={(e) => setNewTripBucketListUrls(e.target.value)}
+                                    rows={3}
+                                    className="input-surface w-full p-6 text-xs font-bold resize-none bg-emerald-500/5 border-emerald-500/20 placeholder:text-emerald-500/30"
                                 />
-                                <p className="text-[8px] font-medium text-text-dim px-2">
-                                    Adiciona um link de lista do Google Maps para teres um catálogo de pontos de interesse na edição do roteiro.
+                                <p className="text-[8px] font-bold text-text-dim px-2 uppercase tracking-widest leading-relaxed">
+                                    Adiciona um link por linha. A nossa AI vai extrair os pontos automaticamente para o teu catálogo.
                                 </p>
                             </div>
 
