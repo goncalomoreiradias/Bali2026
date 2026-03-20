@@ -1,30 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus, Save, MapPin, List } from "lucide-react";
-import { DayPlan, Location } from "@/types";
+import { X, Plus, MapPin, List, RefreshCw, Loader2 } from "lucide-react";
+import { DayPlan, Location, BucketListItem } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
-
-interface BucketListItem {
-    name: string;
-    lat: number;
-    lng: number;
-    city?: string;
-    mapsUrl?: string;
-}
 
 interface AddLocationSheetProps {
     isOpen: boolean;
     onClose: () => void;
     days: DayPlan[];
     onAdd: (dayId: string, location: Location) => void;
-    bucketListUrl?: string;
+    bucketListUrls?: string[];
     bucketListItems?: BucketListItem[];
+    onRefreshBucketList?: () => Promise<void>;
 }
 
-export default function AddLocationSheet({ isOpen, onClose, days, onAdd, bucketListUrl, bucketListItems }: AddLocationSheetProps) {
+export default function AddLocationSheet({ isOpen, onClose, days, onAdd, bucketListUrls, bucketListItems, onRefreshBucketList }: AddLocationSheetProps) {
     const [selectedDayId, setSelectedDayId] = useState<string>(days[0]?.id || "");
     const [showBucketList, setShowBucketList] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const [location, setLocation] = useState<Partial<Location>>({
         name: "",
         description: "",
@@ -70,17 +64,23 @@ export default function AddLocationSheet({ isOpen, onClose, days, onAdd, bucketL
             lat: item.lat,
             lng: item.lng,
             mapsUrl: item.mapsUrl || "",
-            tag: "Must Go",
+            tag: item.category || "Must Go",
         });
         setShowBucketList(false);
     };
 
-    // Demo items — will be replaced by real items from parsed Google Maps list
-    const demoItems: BucketListItem[] = bucketListItems || [
-        { name: "Torre Eiffel", lat: 48.8584, lng: 2.2945, city: "Paris" },
-        { name: "Central Park", lat: 40.7829, lng: -73.9654, city: "New York" },
-        { name: "Coliseu", lat: 41.8902, lng: 12.4922, city: "Roma" },
-    ];
+    const handleRefresh = async () => {
+        if (!onRefreshBucketList || refreshing) return;
+        setRefreshing(true);
+        try {
+            await onRefreshBucketList();
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
+    const hasUrls = bucketListUrls && bucketListUrls.length > 0;
+    const hasItems = bucketListItems && bucketListItems.length > 0;
 
     if (!isOpen) return null;
 
@@ -115,7 +115,7 @@ export default function AddLocationSheet({ isOpen, onClose, days, onAdd, bucketL
                     <div className="flex-1 overflow-y-auto p-8 space-y-8" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
 
                         {/* Bucket List Toggle */}
-                        {bucketListUrl && (
+                        {hasUrls && (
                             <div className="space-y-4">
                                 <button
                                     onClick={() => setShowBucketList(!showBucketList)}
@@ -127,7 +127,9 @@ export default function AddLocationSheet({ isOpen, onClose, days, onAdd, bucketL
                                         </div>
                                         <div>
                                             <span className="text-xs font-black uppercase tracking-widest block">Bucket List</span>
-                                            <span className="text-[8px] font-bold text-text-dim uppercase tracking-wider">Escolhe da tua lista de favoritos</span>
+                                            <span className="text-[8px] font-bold text-text-dim uppercase tracking-wider">
+                                                {hasItems ? `${bucketListItems!.length} locais guardados` : 'Clica para carregar'}
+                                            </span>
                                         </div>
                                     </div>
                                     <List size={18} className={showBucketList ? 'text-emerald-500' : 'text-text-dim'} />
@@ -144,27 +146,49 @@ export default function AddLocationSheet({ isOpen, onClose, days, onAdd, bucketL
                                             <div className="bg-canvas/40 border border-stroke rounded-2xl p-4 space-y-3">
                                                 <div className="flex items-center justify-between px-1">
                                                     <span className="text-[8px] font-black uppercase tracking-[0.2em] text-text-medium">Toca para preencher</span>
-                                                    <a href={bucketListUrl} target="_blank" rel="noopener noreferrer" className="text-[8px] font-bold text-accent hover:underline">Abrir no Maps</a>
+                                                    <button
+                                                        onClick={handleRefresh}
+                                                        disabled={refreshing}
+                                                        className="flex items-center gap-1.5 text-[8px] font-black text-accent hover:text-emerald-500 transition-colors uppercase tracking-wider disabled:opacity-50"
+                                                    >
+                                                        {refreshing ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
+                                                        {refreshing ? 'A carregar...' : 'Atualizar'}
+                                                    </button>
                                                 </div>
-                                                <div className="space-y-2 max-h-48 overflow-y-auto">
-                                                    {demoItems.map((item, i) => (
+
+                                                {hasItems ? (
+                                                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                                                        {bucketListItems!.map((item) => (
+                                                            <button
+                                                                key={item.id}
+                                                                type="button"
+                                                                onClick={() => handleBucketListSelect(item)}
+                                                                className="w-full bg-surface/60 border border-stroke p-3 rounded-xl flex justify-between items-center group/item hover:border-emerald-500/50 transition-all text-left"
+                                                            >
+                                                                <div className="flex flex-col gap-0.5">
+                                                                    <span className="text-xs font-black text-text-high group-hover/item:text-emerald-500 transition-colors">{item.name}</span>
+                                                                    <div className="flex items-center gap-2">
+                                                                        {item.category && <span className="text-[7px] font-bold text-accent uppercase bg-accent/10 px-1.5 py-0.5 rounded">{item.category}</span>}
+                                                                        {item.address && <span className="text-[7px] font-bold text-text-dim uppercase truncate max-w-[140px]">{item.address}</span>}
+                                                                    </div>
+                                                                </div>
+                                                                <Plus size={14} className="text-text-dim group-hover/item:text-emerald-500 transition-colors flex-shrink-0" />
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <div className="text-center py-6 space-y-3">
+                                                        <p className="text-[9px] font-bold text-text-dim">Nenhum ponto carregado ainda.</p>
                                                         <button
-                                                            key={i}
-                                                            type="button"
-                                                            onClick={() => handleBucketListSelect(item)}
-                                                            className="w-full bg-surface/60 border border-stroke p-3 rounded-xl flex justify-between items-center group/item hover:border-emerald-500/50 transition-all text-left"
+                                                            onClick={handleRefresh}
+                                                            disabled={refreshing}
+                                                            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-500 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-500/20 hover:bg-emerald-500/20 transition-all disabled:opacity-50"
                                                         >
-                                                            <div className="flex flex-col gap-0.5">
-                                                                <span className="text-xs font-black text-text-high group-hover/item:text-emerald-500 transition-colors">{item.name}</span>
-                                                                {item.city && <span className="text-[8px] font-bold text-text-dim uppercase">{item.city}</span>}
-                                                            </div>
-                                                            <Plus size={14} className="text-text-dim group-hover/item:text-emerald-500 transition-colors" />
+                                                            {refreshing ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+                                                            {refreshing ? 'A processar via AI...' : 'Carregar pontos da lista'}
                                                         </button>
-                                                    ))}
-                                                </div>
-                                                <p className="text-[7px] font-medium text-text-dim italic px-1">
-                                                    Nota: Os pontos são carregados a partir da tua lista do Google Maps.
-                                                </p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </motion.div>
                                     )}

@@ -22,13 +22,28 @@ model Trip {
   // M:N relationship for invited participants
   participants User[]   @relation("TripParticipants")
   inviteToken  String   @unique @default(cuid())
-  bucketListUrl String?  // Google Maps list URL for the "Bucket List" catalog
+  bucketListUrls String[]  // Google Maps list URLs for the "Bucket List" catalog
+  bucketListItems BucketListItem[]
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   days     DayPlan[]
   expenses Expense[]
+}
+
+model BucketListItem {
+  id        String   @id @default(cuid())
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  name      String
+  lat       Float    @default(0)
+  lng       Float    @default(0)
+  category  String?  // e.g. "Restaurante", "Templo", "Praia"
+  address   String?
+  mapsUrl   String?
+  sourceUrl String?  // Which list URL this item came from
+  createdAt DateTime @default(now())
 }
 
 enum Role {

@@ -44,9 +44,14 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { title, description, password, startDate, endDate, bucketListUrl } = body;
+        const { title, description, password, startDate, endDate, bucketListUrls } = body;
 
         const userId = session.userId as string;
+
+        // Normalize: accept string or array for backwards compat
+        const urls = Array.isArray(bucketListUrls)
+            ? bucketListUrls.filter((u: string) => u && u.trim())
+            : (bucketListUrls ? [bucketListUrls] : []);
 
         const newTrip = await prisma.trip.create({
             data: {
@@ -55,7 +60,7 @@ export async function POST(request: Request) {
                 password,
                 startDate: startDate ? new Date(startDate) : null,
                 endDate: endDate ? new Date(endDate) : null,
-                bucketListUrl: bucketListUrl || null,
+                bucketListUrls: urls,
                 ownerId: userId,
                 // Automatically add the creator as a participant as well for easier querying
                 participants: {

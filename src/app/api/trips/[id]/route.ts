@@ -21,6 +21,7 @@ export async function GET(
             where: { id },
             include: {
                 participants: { select: { id: true, name: true, email: true } },
+                bucketListItems: { orderBy: { createdAt: 'asc' } },
                 days: {
                     include: {
                         locations: {
@@ -89,7 +90,9 @@ export async function PUT(
                 where: { id: tripId },
                 data: {
                     title: newItinerary.title,
-                    bucketListUrl: newItinerary.bucketListUrl || null,
+                    bucketListUrls: Array.isArray(newItinerary.bucketListUrls)
+                        ? newItinerary.bucketListUrls.filter((u: string) => u && u.trim())
+                        : (newItinerary.bucketListUrls ? [newItinerary.bucketListUrls] : []),
                     // If you want to update participants from user IDs you would use connect/disconnect. 
                     // Skipping participants update here unless explicitly sent as user IDs
 

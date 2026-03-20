@@ -657,7 +657,15 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
           onClose={() => setEditingDay(null)}
           onSave={handleDayEdit}
           onMoveLocation={handleMoveLocation}
-          bucketListUrl={itinerary.bucketListUrl}
+          bucketListUrls={itinerary.bucketListUrls}
+          bucketListItems={itinerary.bucketListItems || []}
+          onRefreshBucketList={async () => {
+            const res = await fetch(`/api/trips/${tripId}/bucket-list`, { method: 'POST' });
+            if (res.ok) {
+              const data = await res.json();
+              setItinerary((prev: any) => ({ ...prev, bucketListItems: data.items }));
+            }
+          }}
         />
       )}
 
@@ -666,7 +674,15 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
         isOpen={isAddLocationOpen}
         onClose={() => setIsAddLocationOpen(false)}
         days={itinerary?.days || []}
-        bucketListUrl={itinerary?.bucketListUrl}
+        bucketListUrls={itinerary?.bucketListUrls}
+        bucketListItems={itinerary?.bucketListItems || []}
+        onRefreshBucketList={async () => {
+          const res = await fetch(`/api/trips/${tripId}/bucket-list`, { method: 'POST' });
+          if (res.ok) {
+            const data = await res.json();
+            setItinerary((prev: any) => ({ ...prev, bucketListItems: data.items }));
+          }
+        }}
         onAdd={(dayId, location) => {
           if (!itinerary) return;
           const newDays = itinerary.days.map((d: DayPlan) =>
@@ -763,26 +779,32 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                               <span className="font-bold text-text-medium">{t("trip.duplicate")}</span>
                           </button>
 
-                          {/* Bucket List URL */}
+                          {/* Bucket List URLs */}
                           <div className="w-full bg-emerald-500/5 p-5 rounded-2xl border border-emerald-500/20 space-y-3">
                               <div className="flex items-center gap-3">
                                   <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500 border border-emerald-500/20">
                                       📍
                                   </div>
-                                  <span className="font-bold text-text-medium">Bucket List (Maps)</span>
+                                  <div>
+                                      <span className="font-bold text-text-medium block">Bucket List (Maps)</span>
+                                      <span className="text-[8px] text-text-dim font-bold">Um link por linha</span>
+                                  </div>
                               </div>
-                              <input
-                                  type="url"
-                                  placeholder="Cola o link da lista do Google Maps..."
-                                  defaultValue={itinerary.bucketListUrl || ""}
+                              <textarea
+                                  placeholder={"Cola links de listas do Google Maps...\nUm link por linha"}
+                                  defaultValue={(itinerary.bucketListUrls || []).join("\n")}
                                   onBlur={(e) => {
-                                      const val = e.target.value;
-                                      if (val !== (itinerary.bucketListUrl || "")) {
-                                          saveItinerary({ ...itinerary, bucketListUrl: val || undefined });
-                                      }
+                                      const urls = e.target.value.split("\n").map((u: string) => u.trim()).filter(Boolean);
+                                      saveItinerary({ ...itinerary, bucketListUrls: urls });
                                   }}
-                                  className="w-full bg-canvas/50 border border-stroke rounded-xl px-4 py-3 text-xs font-bold text-text-medium placeholder:text-text-dim/40 focus:ring-1 focus:ring-emerald-500/30 outline-none"
+                                  rows={3}
+                                  className="w-full bg-canvas/50 border border-stroke rounded-xl px-4 py-3 text-xs font-bold text-text-medium placeholder:text-text-dim/40 focus:ring-1 focus:ring-emerald-500/30 outline-none resize-none"
                               />
+                              {(itinerary.bucketListUrls?.length > 0) && (
+                                  <div className="flex items-center gap-2">
+                                      <span className="text-[8px] font-bold text-emerald-500">{itinerary.bucketListItems?.length || 0} pontos carregados</span>
+                                  </div>
+                              )}
                           </div>
 
                           <button 

@@ -11,6 +11,17 @@ export interface Location {
   notes?: string; // General notes/links (reels, booking, tips, etc.)
 }
 
+export interface BucketListItem {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  category?: string;
+  address?: string;
+  mapsUrl?: string;
+  sourceUrl?: string;
+}
+
 export interface Expense {
   id: string;
   amount: number;
@@ -37,7 +48,8 @@ export interface Itinerary {
   password?: string;
   startDate?: string;
   endDate?: string;
-  bucketListUrl?: string;
+  bucketListUrls?: string[];
+  bucketListItems?: BucketListItem[];
   participants: string[];
   days: DayPlan[];
   expenses?: Expense[];

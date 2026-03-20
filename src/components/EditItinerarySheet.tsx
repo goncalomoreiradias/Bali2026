@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus, Save, Trash2, GripVertical, Map as MapIcon, Calendar, Link2 } from "lucide-react";
-import { DayPlan, Location } from "@/types";
+import { X, Plus, Save, Trash2, GripVertical, Map as MapIcon, Calendar, Link2, RefreshCw, Loader2 } from "lucide-react";
+import { DayPlan, Location, BucketListItem } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { calculateDistance, estimateTravelTime, formatDuration, extractCoordsFromUrl, isValidCoord } from "@/lib/maps";
 import { Car, Footprints } from "lucide-react";
@@ -225,14 +225,17 @@ interface EditItinerarySheetProps {
     onClose: () => void;
     onSave: (updatedDay: DayPlan) => void;
     onMoveLocation?: (locId: string, targetDayId: string) => void;
-    bucketListUrl?: string;
+    bucketListUrls?: string[];
+    bucketListItems?: BucketListItem[];
+    onRefreshBucketList?: () => Promise<void>;
 }
 
-export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSave, onMoveLocation, bucketListUrl }: EditItinerarySheetProps) {
+export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSave, onMoveLocation, bucketListUrls, bucketListItems, onRefreshBucketList }: EditItinerarySheetProps) {
     const [editedDay, setEditedDay] = useState<DayPlan>({ ...day });
     const [locations, setLocations] = useState<Location[]>([...day.locations]);
     const [showBucketList, setShowBucketList] = useState(false);
     const [isResolving, setIsResolving] = useState(false);
+    const [refreshingBucketList, setRefreshingBucketList] = useState(false);
 
     /**
      * Resolves a short URL (goo.gl, maps.app) to its full form via our API.
@@ -422,12 +425,12 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
                              <div className="flex justify-between items-center mb-6 px-2">
                                 <div className="flex items-center gap-6">
                                     <h3 className="text-[10px] font-black text-text-medium uppercase tracking-[0.3em]">LOCAIS ({locations.length})</h3>
-                                    {bucketListUrl && (
+                                    {(bucketListUrls && bucketListUrls.length > 0) && (
                                         <button 
                                             onClick={() => setShowBucketList(!showBucketList)}
                                             className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border transition-all ${showBucketList ? 'bg-accent text-canvas border-accent' : 'bg-surface text-accent border-stroke'}`}
                                         >
-                                            {showBucketList ? 'Esconder Bucket List' : 'Ver Bucket List'}
+                                            {showBucketList ? 'Esconder Bucket List' : `📍 Bucket List (${bucketListItems?.length || 0})`}
                                         </button>
                                     )}
                                 </div>
@@ -440,7 +443,7 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
                             </div>
 
                             <AnimatePresence>
-                                {showBucketList && bucketListUrl && (
+                                {showBucketList && (bucketListUrls && bucketListUrls.length > 0) && (
                                     <motion.div
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: "auto" }}
@@ -449,34 +452,58 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
                                     >
                                         <div className="bg-canvas/40 border border-stroke rounded-[2rem] p-6 space-y-4">
                                             <div className="flex items-center justify-between px-2">
-                                                <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-text-medium">Catalogo Bucket List</h4>
-                                                <a href={bucketListUrl} target="_blank" rel="noopener noreferrer" className="text-[8px] font-bold text-accent hover:underline">Abrir Original</a>
+                                                <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-text-medium">Catálogo Bucket List</h4>
+                                                <button
+                                                    onClick={async () => {
+                                                        if (!onRefreshBucketList || refreshingBucketList) return;
+                                                        setRefreshingBucketList(true);
+                                                        try { await onRefreshBucketList(); } finally { setRefreshingBucketList(false); }
+                                                    }}
+                                                    disabled={refreshingBucketList}
+                                                    className="flex items-center gap-1.5 text-[8px] font-black text-accent hover:text-emerald-500 transition-colors uppercase tracking-wider disabled:opacity-50"
+                                                >
+                                                    {refreshingBucketList ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
+                                                    {refreshingBucketList ? 'A carregar...' : 'Atualizar'}
+                                                </button>
                                             </div>
                                             
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                {/* Demo items since we can't reliably scrape/fetch private google maps lists without major auth/API overhead */}
-                                                {[
-                                                    { name: "Torre Eiffel", lat: 48.8584, lng: 2.2945, city: "Paris" },
-                                                    { name: "Central Park", lat: 40.7829, lng: -73.9654, city: "New York" },
-                                                    { name: "Coliseu", lat: 41.8902, lng: 12.4922, city: "Roma" }
-                                                ].map((item, i) => (
-                                                    <div key={i} className="bg-surface/60 border border-stroke p-4 rounded-2xl flex justify-between items-center group/item hover:border-accent transition-colors">
-                                                        <div className="flex flex-col gap-1">
-                                                            <span className="text-xs font-black text-text-high">{item.name}</span>
-                                                            <span className="text-[8px] font-bold text-text-dim uppercase">{item.city}</span>
+                                            {(bucketListItems && bucketListItems.length > 0) ? (
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                    {bucketListItems.map((item) => (
+                                                        <div key={item.id} className="bg-surface/60 border border-stroke p-4 rounded-2xl flex justify-between items-center group/item hover:border-accent transition-colors">
+                                                            <div className="flex flex-col gap-1">
+                                                                <span className="text-xs font-black text-text-high">{item.name}</span>
+                                                                <div className="flex items-center gap-1.5">
+                                                                    {item.category && <span className="text-[7px] font-bold text-accent uppercase bg-accent/10 px-1.5 py-0.5 rounded">{item.category}</span>}
+                                                                    {item.address && <span className="text-[7px] font-bold text-text-dim uppercase truncate max-w-[100px]">{item.address}</span>}
+                                                                </div>
+                                                            </div>
+                                                            <button 
+                                                                onClick={() => addToItinerary(item.name, item.lat, item.lng)}
+                                                                className="p-2 bg-accent/10 text-accent rounded-xl hover:bg-accent hover:text-canvas transition-all"
+                                                            >
+                                                                <Plus size={14} />
+                                                            </button>
                                                         </div>
-                                                        <button 
-                                                            onClick={() => addToItinerary(item.name, item.lat, item.lng)}
-                                                            className="p-2 bg-accent/10 text-accent rounded-xl hover:bg-accent hover:text-canvas transition-all"
-                                                        >
-                                                            <Plus size={14} />
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <div className="text-[8px] font-medium text-text-dim italic px-2">
-                                                Nota: Os pontos são carregados a partir da tua lista do Google Maps configurada.
-                                            </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="text-center py-6 space-y-3">
+                                                    <p className="text-[9px] font-bold text-text-dim">Nenhum ponto carregado.</p>
+                                                    <button
+                                                        onClick={async () => {
+                                                            if (!onRefreshBucketList || refreshingBucketList) return;
+                                                            setRefreshingBucketList(true);
+                                                            try { await onRefreshBucketList(); } finally { setRefreshingBucketList(false); }
+                                                        }}
+                                                        disabled={refreshingBucketList}
+                                                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-500 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-500/20 hover:bg-emerald-500/20 transition-all disabled:opacity-50"
+                                                    >
+                                                        {refreshingBucketList ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+                                                        {refreshingBucketList ? 'A processar via AI...' : 'Carregar pontos da lista'}
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </motion.div>
                                 )}
