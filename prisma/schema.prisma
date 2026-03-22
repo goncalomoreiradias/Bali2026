@@ -91,11 +91,29 @@ model User {
   updatedAt DateTime @updatedAt
   
   // Relations
-  ownedTrips    Trip[]     @relation("TripOwner")
-  joinedTrips   Trip[]     @relation("TripParticipants")
-  adminLogs     AdminLog[]
-  issuedCoupons Coupon[]
-  aiUsages      AiUsage[]
+  ownedTrips     Trip[]          @relation("TripOwner")
+  joinedTrips    Trip[]          @relation("TripParticipants")
+  adminLogs      AdminLog[]
+  issuedCoupons  Coupon[]
+  aiUsages       AiUsage[]
+  supportTickets SupportTicket[]
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+model SupportTicket {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject   String
+  message   String
+  status    TicketStatus @default(OPEN)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 }
 
 model AiUsage {

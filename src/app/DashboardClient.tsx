@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Trip } from "@/types";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { Loader2, Plus, Plane, MapPin, Calendar, Users, Sparkles, MoreVertical, Edit2, Trash2, ArrowRight } from "lucide-react";
+import { Loader2, Plus, Plane, MapPin, Calendar, Users, Sparkles, MoreVertical, Edit2, Trash2, ArrowRight, UserCircle, LogOut, Shield, Settings, LifeBuoy } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import LanguageToggle from "@/components/LanguageToggle";
@@ -11,9 +11,10 @@ import AIPlannerTrigger from "@/components/AIPlannerTrigger";
 import { useRouter } from "next/navigation";
 import AIPlannerModal from "@/components/AIPlannerModal";
 import UpgradeModal from "@/components/UpgradeModal";
+import SettingsModal from "@/components/SettingsModal"; // We will create this
 
 interface Props {
-    session: { userId: string; role: string } | any;
+    session: { userId: string; role: string; name?: string; email?: string } | any;
 }
 
 export default function DashboardClient({ session }: Props) {
@@ -21,12 +22,26 @@ export default function DashboardClient({ session }: Props) {
     const router = useRouter();
     const [trips, setTrips] = useState<Trip[]>([]);
     const [loading, setLoading] = useState(true);
-    // const [isAuthenticated, setIsAuthenticated] = useState(false); // Removed, handled by session prop
-    // const [userName, setUserName] = useState(""); // Removed, handled by session prop
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isAIPlannerOpen, setIsAIPlannerOpen] = useState(false);
     const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
     const [userPlan, setUserPlan] = useState<string>("FREE");
+    
+    // New Profile / Settings state
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const profileMenuRef = useRef<HTMLDivElement>(null);
+
+    // Close dropdown on click outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+                setIsProfileMenuOpen(false);
+            }
+        };
+        if (isProfileMenuOpen) document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [isProfileMenuOpen]);
 
     // New Trip Form State
     const [newTripTitle, setNewTripTitle] = useState("");
@@ -300,6 +315,63 @@ export default function DashboardClient({ session }: Props) {
                             <div className="hidden sm:block">
                                 <LanguageToggle />
                             </div>
+
+                            {/* Profile Dropdown */}
+                            <div className="relative" ref={profileMenuRef}>
+                                <button
+                                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                                    className="w-10 h-10 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-accent hover:bg-accent hover:text-canvas transition-colors active:scale-95"
+                                >
+                                    <UserCircle size={22} />
+                                </button>
+
+                                <AnimatePresence>
+                                    {isProfileMenuOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            transition={{ duration: 0.15 }}
+                                            className="absolute right-0 mt-3 w-56 bg-surface border border-stroke rounded-2xl shadow-2xl overflow-hidden z-50 flex flex-col"
+                                        >
+                                            <div className="p-4 border-b border-stroke bg-canvas/30">
+                                                <p className="text-xs font-black text-text-high truncate">{session.name || session.email?.split("@")[0] || t("common.viajante") || "Viajante"}</p>
+                                                <p className="text-[10px] text-text-medium truncate">{session.email || ""}</p>
+                                                <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-accent/10 border border-accent/20 text-[9px] font-bold text-accent tracking-widest uppercase">
+                                                    {userPlan}
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="p-2 flex flex-col gap-1">
+                                                <button
+                                                    onClick={() => { setIsProfileMenuOpen(false); setIsSettingsModalOpen(true); }}
+                                                    className="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-text-medium hover:text-text-high hover:bg-stroke/50 rounded-xl transition-colors text-left"
+                                                >
+                                                    <Settings size={16} /> Perfil & Suporte
+                                                </button>
+                                                
+                                                {session.role === "ADMIN" && (
+                                                    <button
+                                                        onClick={() => router.push("/admin")}
+                                                        className="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-amber-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-xl transition-colors text-left"
+                                                    >
+                                                        <Shield size={16} /> {t("dash.adminDashboard") || "Dashboard Admin"}
+                                                    </button>
+                                                )}
+                                                
+                                                <div className="h-px bg-stroke my-1" />
+                                                
+                                                <button
+                                                    onClick={handleLogout}
+                                                    className="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors text-left"
+                                                >
+                                                    <LogOut size={16} /> {t("dash.logout") || "Sair"}
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         </div>
                     </div>
                 </motion.div>
@@ -514,24 +586,6 @@ export default function DashboardClient({ session }: Props) {
                 >
                     <Plus size={32} />
                 </button>
-            </div>
-
-            <div className="mt-20 text-center pb-12 flex flex-col items-center gap-6">
-                <button
-                    onClick={handleLogout}
-                    className="px-8 py-3 text-xs font-black uppercase tracking-[0.3em] text-rose-500 bg-rose-500/5 hover:bg-rose-500/10 rounded-full border border-rose-500/10 transition-all active:scale-95"
-                >
-                    {t("dash.logout") || 'Logout'}
-                </button>
-
-                {session.role === "ADMIN" && (
-                    <button
-                        onClick={() => router.push("/admin")}
-                        className="px-6 py-2 text-sm font-semibold text-text-medium hover:text-text-high transition-colors"
-                    >
-                        {t("dash.adminDashboard")}
-                    </button>
-                )}
             </div>
 
             {/* Create Modal */}

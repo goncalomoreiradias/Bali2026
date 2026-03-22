@@ -16,6 +16,7 @@ export default function RegisterPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -173,9 +174,33 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
+                        <div className="flex items-start gap-3 mt-4">
+                            <div className="flex items-center h-5">
+                                <input
+                                    id="terms"
+                                    type="checkbox"
+                                    checked={acceptedTerms}
+                                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                                    className="w-4 h-4 rounded border-stroke text-accent focus:ring-accent bg-surface cursor-pointer"
+                                    required
+                                />
+                            </div>
+                            <label htmlFor="terms" className="text-[10px] font-black uppercase tracking-[0.2em] text-text-medium leading-relaxed cursor-pointer">
+                                Li e aceito os{" "}
+                                <Link href="/legal/terms" target="_blank" className="text-accent hover:underline">
+                                    Termos e Condições
+                                </Link>
+                                {" "}e a{" "}
+                                <Link href="/legal/privacy" target="_blank" className="text-accent hover:underline">
+                                    Política de Privacidade
+                                </Link>
+                                .
+                            </label>
+                        </div>
+
                         <button
                             type="submit"
-                            disabled={loading}
+                            disabled={loading || !acceptedTerms}
                             className="btn-primary w-full py-5 text-[11px] uppercase tracking-[0.2em] shadow-2xl mt-4"
                         >
                             {loading ? <Loader2 className="animate-spin" size={20} /> : (
