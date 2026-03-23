@@ -6,9 +6,10 @@ const prisma = new PrismaClient();
 
 export async function PATCH(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const session = await getSession();
         
         // Only allow ADMIN role 
@@ -23,12 +24,12 @@ export async function PATCH(
         }
 
         // Prevent admin from banning themselves
-        if (session.userId === params.id) {
+        if (session.userId === id) {
             return NextResponse.json({ error: "Cannot ban yourself" }, { status: 400 });
         }
 
         const updatedUser = await prisma.user.update({
-            where: { id: params.id },
+            where: { id },
             data: { isBanned }
         });
 
