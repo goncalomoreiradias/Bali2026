@@ -440,8 +440,12 @@ export default function DashboardClient({ session }: Props) {
                             const prog = getProgress(trip);
                             return (
                                 <div key={trip.id} className="relative">
-                                    <Link href={`/trips/${trip.id}`}>
-                                            <motion.div
+                                        <motion.div
+                                            onClick={(e) => {
+                                                if (activeTripMenu !== trip.id) {
+                                                    router.push(`/trips/${trip.id}`);
+                                                }
+                                            }}
                                                 initial={{ opacity: 0, y: 30 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: i * 0.05 }}
@@ -524,7 +528,6 @@ export default function DashboardClient({ session }: Props) {
                                                     </div>
                                                 </div>
                                             </motion.div>
-                                    </Link>
 
                                     {/* Context Menu / Management Menu */}
                                     <AnimatePresence>

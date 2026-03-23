@@ -80,8 +80,9 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
   const [editedDesc, setEditedDesc] = useState("");
   const [isManagementMenuOpen, setIsManagementMenuOpen] = useState(false);
   const [isAIPlannerOpen, setIsAIPlannerOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
-  const isAnySheetOpen = !!editingDay || isAddLocationOpen || isAddExpenseOpen || isManagementMenuOpen || isAIPlannerOpen || isDatePickerOpen;
+  const isAnySheetOpen = !!editingDay || isAddLocationOpen || isAddExpenseOpen || isManagementMenuOpen || isAIPlannerOpen || isDatePickerOpen || isDeleteDialogOpen;
 
   // DND Sensors
   const sensors = useSensors(
@@ -309,8 +310,9 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
   };
 
   const handleDeleteTrip = async () => {
-    if (!confirm(t("trip.deleteConfirmation"))) return;
       try {
+          // setIsDeleteDialogOpen(false) will be called automatically due to unmount or we can call it here.
+          setIsDeleteDialogOpen(false);
           const res = await fetch(`/api/trips/${tripId}`, { method: "DELETE" });
           if (res.ok) router.push("/");
       } catch (e) {
@@ -808,7 +810,10 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
                           </div>
 
                           <button 
-                            onClick={handleDeleteTrip}
+                            onClick={() => {
+                                setIsManagementMenuOpen(false);
+                                setIsDeleteDialogOpen(true);
+                            }}
                             className="w-full bg-rose-500/10 hover:bg-rose-500/20 p-4 rounded-2xl border border-rose-500/10 flex items-center gap-4 transition-all"
                           >
                               <div className="w-10 h-10 bg-rose-500/20 rounded-xl flex items-center justify-center text-rose-500 shrink-0">
@@ -844,6 +849,49 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
               />
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {isDeleteDialogOpen && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                    onClick={() => setIsDeleteDialogOpen(false)}
+                />
+                <motion.div
+                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                    className="relative z-10 w-full max-w-sm bg-[#141820] border border-white/10 rounded-[2rem] p-8 shadow-2xl flex flex-col items-center text-center"
+                >
+                    <div className="w-16 h-16 bg-rose-500/10 rounded-full flex items-center justify-center text-rose-500 mb-6 shrink-0">
+                        <Trash2 size={28} />
+                    </div>
+                    <h3 className="text-2xl font-black text-white mb-4 tracking-tight">{t("trip.delete")}?</h3>
+                    <p className="text-sm font-medium text-text-medium mb-8 leading-relaxed">
+                        {t("trip.deleteConfirmation")}
+                    </p>
+                    <div className="flex gap-4 w-full">
+                        <button
+                            onClick={() => setIsDeleteDialogOpen(false)}
+                            className="flex-1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest text-text-high bg-surface hover:bg-stroke transition-all"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleDeleteTrip}
+                            className="flex-1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest text-white bg-rose-500 hover:bg-rose-600 transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)]"
+                        >
+                            {t("trip.delete")}
+                        </button>
+                    </div>
+                </motion.div>
+            </div>
         )}
       </AnimatePresence>
 
