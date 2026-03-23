@@ -28,10 +28,10 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                 <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent-indigo/20 rounded-full blur-[120px] animate-mesh" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent-magenta/10 rounded-full blur-[120px] animate-mesh" style={{ animationDelay: '-5s' }} />
                 <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-accent-cobalt/15 rounded-full blur-[100px] animate-mesh" style={{ animationDelay: '-10s' }} />
-                
+
                 {/* Visual Glow behind text (Mobile optimization) */}
                 <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full h-[60%] bg-accent-cobalt/10 blur-[150px] sm:hidden" />
-                
+
                 <div className="absolute inset-0 noise-overlay opacity-[0.05] sm:opacity-[0.4] mix-blend-overlay" />
             </div>
 
@@ -68,15 +68,15 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
             {/* Hero Section */}
             <main className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pt-12 md:pt-40 pb-20">
                 <div className="grid lg:grid-cols-2 gap-12 md:gap-20 items-center min-h-[85dvh] lg:min-h-0">
-                    
+
                     <motion.div
                         style={{ opacity, scale }}
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                        className="mt-20 md:mt-0"
+                        className="mt-20 md:mt-0 flex flex-col items-center lg:items-start text-center lg:text-left"
                     >
-                        <div className="inline-flex items-center gap-3 px-4 md:px-5 py-2 md:py-2.5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[8px] md:text-[10px] mb-8 md:mb-12 shadow-2xl tracking-[0.2em] md:tracking-[0.3em] uppercase backdrop-blur-md max-w-full">
+                        <div className="inline-flex items-center gap-3 px-4 md:px-5 py-2 md:py-2.5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[8px] md:text-[10px] mb-8 md:mb-12 shadow-2xl tracking-[0.2em] md:tracking-[0.3em] uppercase backdrop-blur-md max-w-full lg:mr-auto">
                             <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-accent-magenta rounded-full animate-pulse shadow-[0_0_10px_rgba(217,70,239,0.8)]" />
                             <span className="truncate">{t("landing.social.trusted")}</span>
                         </div>
@@ -90,7 +90,7 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                             {t("landing.hero.subtitle")}
                         </p>
 
-                        <div className="flex flex-col sm:flex-row items-center gap-6">
+                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 w-full">
                             <Link
                                 href="/register"
                                 className="w-full sm:w-auto px-10 py-5 bg-gradient-to-br from-accent-cobalt to-accent-indigo text-white font-black rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(46,91,255,0.5)] flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95 uppercase tracking-widest text-xs border border-white/20 group relative overflow-hidden"
@@ -108,23 +108,16 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                 {t("landing.hero.cta.secondary")}
                             </Link>
                         </div>
-
-                        {/* Social Proof Logos */}
-                        <div className="mt-20 flex flex-wrap items-center gap-10 opacity-30 grayscale hover:grayscale-0 transition-all duration-700">
-                             <div className="flex items-center gap-2 font-black text-xl tracking-tighter opacity-50"><MapPin size={24} /> MAPS</div>
-                             <div className="flex items-center gap-2 font-black text-xl tracking-tighter opacity-50"><CreditCard size={24} /> SPLITWISE</div>
-                             <div className="flex items-center gap-2 font-black text-xl tracking-tighter opacity-50 uppercase italic">Booking.com</div>
-                        </div>
                     </motion.div>
 
                     {/* Mockup App - The Right Side Visual */}
                     <div className="relative">
-                         <motion.div
+                        <motion.div
                             initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
                             animate={{ opacity: 1, scale: 1, rotate: 0 }}
                             transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
                             className="relative z-20 perspective-1000"
-                         >
+                        >
                             <div className="glass bg-[#0F172A]/80 border border-white/10 rounded-[3rem] shadow-2xl overflow-hidden backdrop-blur-3xl transform rotate-[-2deg] lg:rotate-[-4deg]">
                                 {/* Browser Header */}
                                 <div className="h-12 border-b border-white/5 flex items-center px-6 gap-2 bg-white/5">
@@ -140,36 +133,36 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                 <div className="p-8 space-y-8">
                                     {/* Map & Live Pins Section */}
                                     <div className="relative h-48 bg-slate-800/50 rounded-3xl overflow-hidden border border-white/5 group">
-                                         <div className="absolute inset-0 bg-[#1E293B] flex items-center justify-center opacity-30">
+                                        <div className="absolute inset-0 bg-[#1E293B] flex items-center justify-center opacity-30">
                                             <div className="w-full h-full noise-overlay opacity-20" />
-                                         </div>
-                                         <div className="absolute inset-0 flex items-center justify-center">
-                                             <div className="relative w-full h-full">
-                                                  {/* Pins with avatars */}
-                                                  <motion.div 
+                                        </div>
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="relative w-full h-full">
+                                                {/* Pins with avatars */}
+                                                <motion.div
                                                     animate={{ y: [0, -5, 0] }}
                                                     transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
                                                     className="absolute top-10 left-[20%] p-1 bg-accent-cobalt rounded-full shadow-2xl border-2 border-slate-950"
-                                                  >
-                                                      <div className="w-8 h-8 rounded-full bg-slate-500 overflow-hidden">
-                                                          <img src="https://ui-avatars.com/api/?name=John+Doe&background=random" alt="Avatar" className="w-full h-full object-cover" />
-                                                      </div>
-                                                  </motion.div>
-                                                  <motion.div 
+                                                >
+                                                    <div className="w-8 h-8 rounded-full bg-slate-500 overflow-hidden">
+                                                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=random" alt="Avatar" className="w-full h-full object-cover" />
+                                                    </div>
+                                                </motion.div>
+                                                <motion.div
                                                     animate={{ y: [0, -5, 0] }}
                                                     transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 1 }}
                                                     className="absolute bottom-12 right-[30%] p-1 bg-accent-magenta rounded-full shadow-2xl border-2 border-slate-950"
-                                                  >
-                                                      <div className="w-8 h-8 rounded-full bg-slate-500 overflow-hidden">
-                                                          <img src="https://ui-avatars.com/api/?name=Jane+Smith&background=random" alt="Avatar" className="w-full h-full object-cover" />
-                                                      </div>
-                                                  </motion.div>
-                                             </div>
-                                         </div>
-                                         <div className="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border border-white/5 flex items-center gap-2">
-                                             <div className="w-1.5 h-1.5 bg-accent-emerald rounded-full animate-pulse" />
-                                             {t("landing.mockup.live")}
-                                         </div>
+                                                >
+                                                    <div className="w-8 h-8 rounded-full bg-slate-500 overflow-hidden">
+                                                        <img src="https://ui-avatars.com/api/?name=Jane+Smith&background=random" alt="Avatar" className="w-full h-full object-cover" />
+                                                    </div>
+                                                </motion.div>
+                                            </div>
+                                        </div>
+                                        <div className="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border border-white/5 flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 bg-accent-emerald rounded-full animate-pulse" />
+                                            {t("landing.mockup.live")}
+                                        </div>
                                     </div>
 
                                     {/* Shared Wallet Visual */}
@@ -182,22 +175,22 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                             <div className="space-y-3">
                                                 <div className="flex items-center gap-2">
                                                     <div className="flex-1 h-3 bg-white/5 rounded-full overflow-hidden">
-                                                        <motion.div 
+                                                        <motion.div
                                                             initial={{ width: 0 }}
                                                             animate={{ width: '65%' }}
                                                             transition={{ duration: 1, delay: 1 }}
-                                                            className="h-full bg-accent-indigo" 
+                                                            className="h-full bg-accent-indigo"
                                                         />
                                                     </div>
                                                     <span className="text-[10px] font-black">€450</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <div className="flex-1 h-3 bg-white/5 rounded-full overflow-hidden">
-                                                         <motion.div 
+                                                        <motion.div
                                                             initial={{ width: 0 }}
                                                             animate={{ width: '40%' }}
                                                             transition={{ duration: 1, delay: 1.2 }}
-                                                            className="h-full bg-accent-magenta opacity-50" 
+                                                            className="h-full bg-accent-magenta opacity-50"
                                                         />
                                                     </div>
                                                     <span className="text-[10px] font-black">€120</span>
@@ -205,8 +198,8 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                             </div>
                                         </div>
                                         <div className="p-6 bg-accent-indigo/10 border border-accent-indigo/20 rounded-3xl flex flex-col justify-center">
-                                             <p className="text-[9px] font-black uppercase tracking-widest text-accent-indigo mb-1">Spent Today</p>
-                                             <h4 className="text-3xl font-black tracking-tight text-white italic">€570.80</h4>
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-accent-indigo mb-1">Spent Today</p>
+                                            <h4 className="text-3xl font-black tracking-tight text-white italic">€570.80</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -247,7 +240,7 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                     </div>
                                 </div>
                             </motion.div>
-                         </motion.div>
+                        </motion.div>
                     </div>
                 </div>
 
@@ -291,18 +284,18 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                             <Sparkles size={20} className="text-accent-indigo" />
                                         </div>
                                     </div>
-                                    
+
                                     <div className="space-y-4">
                                         {[
                                             { time: "09:00", title: "Sacred Monkey Forest", detail: "Santuário Natural • 2h" },
                                             { time: "11:30", title: "Campuhan Ridge Walk", detail: "Caminhada Panorâmica • 1.5h" },
                                             { time: "13:30", title: "Locavore", detail: "Restaurante Estrela Michelin" }
                                         ].map((item, i) => (
-                                            <motion.div 
+                                            <motion.div
                                                 initial={{ opacity: 0, y: 10 }}
                                                 whileInView={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: i * 0.2 }}
-                                                key={i} 
+                                                key={i}
                                                 className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 items-center hover:bg-white/10 transition-colors"
                                             >
                                                 <span className="text-xs font-black text-gray-500 w-12">{item.time}</span>
@@ -321,7 +314,7 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                             <div className="w-14 h-14 bg-gradient-to-br from-accent-indigo to-accent-magenta rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(139,92,246,0.5)]">
                                 <Sparkles size={28} className="text-white" />
                             </div>
-                            <h3 className="text-3xl md:text-4xl font-black tracking-tight mb-6">Arquiteto AI <br/><span className="italic font-light text-gray-400">O seu tempo é precioso.</span></h3>
+                            <h3 className="text-3xl md:text-4xl font-black tracking-tight mb-6">Arquiteto AI <br /><span className="italic font-light text-gray-400">O seu tempo é precioso.</span></h3>
                             <p className="text-gray-400 leading-relaxed mb-8">
                                 Insira as datas, o destino e as suas preferências logísticas. O Arquiteto constrói roteiros detalhados, clusterizando pontos geograficamente próximos, calculando tempos de deslocação reais e considerando as horas de ponta.
                             </p>
@@ -360,11 +353,11 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                         { name: "Praia Secreta", cat: "Praia" },
                                         { name: "Museu de Arte", cat: "Cultura" }
                                     ].map((item, i) => (
-                                        <motion.div 
+                                        <motion.div
                                             initial={{ opacity: 0, scale: 0.9 }}
                                             whileInView={{ opacity: 1, scale: 1 }}
                                             transition={{ delay: i * 0.15 }}
-                                            key={i} 
+                                            key={i}
                                             className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl hover:bg-emerald-500/20 transition-all cursor-pointer"
                                         >
                                             <MapPin size={16} className="text-emerald-500 mb-3" />
@@ -380,7 +373,7 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                             <div className="w-14 h-14 bg-emerald-500/20 border border-emerald-500/30 rounded-2xl flex items-center justify-center mb-8">
                                 <MapPin size={28} className="text-emerald-500" />
                             </div>
-                            <h3 className="text-3xl md:text-4xl font-black tracking-tight mb-6">Bucket Lists Mágicas <br/><span className="italic font-light text-gray-400">Do Google para a sua App.</span></h3>
+                            <h3 className="text-3xl md:text-4xl font-black tracking-tight mb-6">Bucket Lists Mágicas <br /><span className="italic font-light text-gray-400">Do Google para a sua App.</span></h3>
                             <p className="text-gray-400 leading-relaxed mb-8">
                                 Tem dezenas de locais guardados no Google Maps ao longo de anos? Basta colar os URLs partilhados das suas listas e a nossa plataforma extrai todos os locais num catálogo imersivo para os distribuir pelos dias da viagem.
                             </p>
@@ -397,9 +390,9 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                 {/* PRICING SECTION */}
                 <section id="pricing" className="mt-40 mb-32 relative z-10 pt-20 border-t border-white/5">
                     <div className="text-center mb-24 max-w-3xl mx-auto">
-                         <span className="text-amber-500 font-black text-[10px] tracking-[0.4em] uppercase mb-4 block">Planos e Preços</span>
-                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif mb-6 tracking-tight">O Investimento na Sua <br/> <span className="italic font-light text-amber-500">Paz de Espírito</span>.</h2>
-                         <p className="text-gray-400 font-light text-lg">Pague o justo. Escolha entre criar roteiros manuais de forma gratuita, um passe para uma expedição única, ou um passaporte anual ilimitado.</p>
+                        <span className="text-amber-500 font-black text-[10px] tracking-[0.4em] uppercase mb-4 block">Planos e Preços</span>
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif mb-6 tracking-tight">O Investimento na Sua <br /> <span className="italic font-light text-amber-500">Paz de Espírito</span>.</h2>
+                        <p className="text-gray-400 font-light text-lg">Pague o justo. Escolha entre criar roteiros manuais de forma gratuita, um passe para uma expedição única, ou um passaporte anual ilimitado.</p>
                     </div>
 
                     <div className="grid lg:grid-cols-4 gap-6 max-w-7xl mx-auto items-stretch">
@@ -412,7 +405,7 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">/ para sempre</span>
                             </div>
                             <ul className="space-y-4 mb-12 flex-1">
-                                {["Planeador Manual", "Até 3 Viagens", "Convites Ilimitados"].map((f,i) => (
+                                {["Planeador Manual", "Até 3 Viagens", "Convites Ilimitados"].map((f, i) => (
                                     <li key={i} className="flex items-start gap-3">
                                         <CheckCircle size={16} className="text-gray-400 shrink-0 mt-0.5" />
                                         <span className="text-xs font-medium text-gray-300">{f}</span>
@@ -435,7 +428,7 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">/ Roteiro</span>
                                 </div>
                                 <ul className="space-y-4 mb-12 flex-1">
-                                    {["Tudo do Basic", "1 Geração Completa por IA", "Pendente de Config Bucketlist"].map((f,i) => (
+                                    {["Tudo do Basic", "1 Geração Completa por IA", "Pendente de Config Bucketlist"].map((f, i) => (
                                         <li key={i} className="flex items-start gap-3">
                                             <Sparkles size={16} className="text-accent-indigo shrink-0 mt-0.5" />
                                             <span className="text-xs font-medium text-white">{f}</span>
@@ -457,7 +450,7 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">/ mês</span>
                             </div>
                             <ul className="space-y-4 mb-12 flex-1">
-                                {["Tudo do plano Única", `Até €${(pricingConfig?.monthlyAiMax ?? 1.00).toFixed(2)} em Consumo IA`, "Acesso a Bucketlist Google", "Múltiplos Roteiros"].map((f,i) => (
+                                {["Tudo do plano Única", "Gerações por IA", "Acesso a Bucketlist Google", "Múltiplos Roteiros"].map((f, i) => (
                                     <li key={i} className="flex items-start gap-3">
                                         <CheckCircle size={16} className="text-emerald-500 shrink-0 mt-0.5" />
                                         <span className="text-xs font-medium text-gray-300">{f}</span>
@@ -478,7 +471,7 @@ export default function LandingPage({ pricingConfig }: { pricingConfig?: any }) 
                                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">/ por ano</span>
                             </div>
                             <ul className="space-y-4 mb-12 flex-1">
-                                {["Tudo do plano Mensal", `Tolerância Premium AI (€${(pricingConfig?.yearlyAiMax ?? 5.00).toFixed(2)})`, "Preço Reduzido Anual", "Suporte Prioritário"].map((f,i) => (
+                                {["Tudo do plano Mensal", "Gerações por IA", "Preço Reduzido Anual", "Suporte Prioritário"].map((f, i) => (
                                     <li key={i} className="flex items-start gap-3">
                                         <CheckCircle size={16} className="text-emerald-500 shrink-0 mt-0.5" />
                                         <span className="text-xs font-medium text-gray-300">{f}</span>
