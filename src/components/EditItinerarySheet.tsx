@@ -52,6 +52,7 @@ function SortableLocationItem({ loc, allDays, currentDayId, handleLocationChange
 
     return (
         <div
+            id={loc.id}
             ref={setNodeRef}
             style={style}
             className={`group bg-surface/40 hover:bg-surface/60 rounded-[2.5rem] border-2 transition-all p-6 relative ${isDragging ? 'border-accent shadow-2xl scale-[1.02] z-50' : 'border-stroke hover:border-accent/20'}`}
@@ -336,15 +337,25 @@ export default function EditItinerarySheet({
     };
 
     const addLocation = () => {
+        const newId = `new-${Date.now()}`;
         const newLoc: Location = {
-            id: `new-${Date.now()}`,
-            name: "New Location",
+            id: newId,
+            name: "Nova Paragem",
             description: "",
             lat: -8.4,
             lng: 115.2,
             completed: false
         };
         setLocations([...locations, newLoc]);
+
+        setTimeout(() => {
+            const element = document.getElementById(newId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const input = element.querySelector('input[type="text"]') as HTMLInputElement;
+                if (input) input.focus();
+            }
+        }, 100);
     };
 
     const removeLocation = (id: string) => {
@@ -616,6 +627,15 @@ export default function EditItinerarySheet({
                                         ))}
                                     </SortableContext>
                                 </DndContext>
+                                
+                                {locations.length > 0 && (
+                                    <button
+                                        onClick={addLocation}
+                                        className="w-full mt-6 py-6 border-2 border-dashed border-stroke hover:border-accent/50 rounded-[2.5rem] flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-text-medium hover:text-accent transition-all bg-surface/30 hover:bg-surface active:scale-[0.98]"
+                                    >
+                                        <Plus size={16} /> ADICIONAR NOVA PARAGEM ABAIXO
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
