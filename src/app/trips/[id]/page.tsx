@@ -311,7 +311,6 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
 
   const handleDeleteTrip = async () => {
       try {
-          // setIsDeleteDialogOpen(false) will be called automatically due to unmount or we can call it here.
           setIsDeleteDialogOpen(false);
           const res = await fetch(`/api/trips/${tripId}`, { method: "DELETE" });
           if (res.ok) router.push("/");
@@ -326,6 +325,37 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
       d.id === updatedDay.id ? updatedDay : d
     );
     saveItinerary({ ...itinerary, days: newDays });
+  };
+
+  const handleDeleteDay = async (dayId: string) => {
+    if (!itinerary) return;
+    const remainingDays = itinerary.days
+      .filter((d: DayPlan) => d.id !== dayId)
+      .map((d: DayPlan, idx: number) => ({ ...d, dayNumber: idx + 1 }));
+      
+    const updated = { ...itinerary, days: remainingDays };
+    await saveItinerary(updated);
+    setEditingDay(null);
+  };
+
+  const handleMoveDay = async (dayId: string, direction: 'up' | 'down') => {
+    if (!itinerary) return;
+    const oldIndex = itinerary.days.findIndex((d: DayPlan) => d.id === dayId);
+    if (oldIndex === -1) return;
+    
+    let newIndex = oldIndex;
+    if (direction === 'up' && oldIndex > 0) newIndex = oldIndex - 1;
+    if (direction === 'down' && oldIndex < itinerary.days.length - 1) newIndex = oldIndex + 1;
+    
+    if (oldIndex !== newIndex) {
+      const reorderedDays = arrayMove(itinerary.days, oldIndex, newIndex).map((day: any, idx) => ({
+          ...day,
+          dayNumber: idx + 1
+      }));
+      const updated = { ...itinerary, days: reorderedDays };
+      await saveItinerary(updated);
+      setEditingDay(reorderedDays[newIndex]);
+    }
   };
 
   const toggleComplete = (dayId: string, locId: string) => {
@@ -658,6 +688,8 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
           isOpen={!!editingDay}
           onClose={() => setEditingDay(null)}
           onSave={handleDayEdit}
+          onDeleteDay={handleDeleteDay}
+          onMoveDay={handleMoveDay}
           onMoveLocation={handleMoveLocation}
           bucketListUrls={itinerary.owner?.plan === "FREE" ? [] : itinerary.bucketListUrls}
           bucketListItems={itinerary.owner?.plan === "FREE" ? [] : (itinerary.bucketListItems || [])}
@@ -698,7 +730,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
       <AddExpenseSheet
         isOpen={isAddExpenseOpen}
         onClose={() => setIsAddExpenseOpen(false)}
-        participants={itinerary?.participants || [userName]}
+        participants={(itinerary?.participants || [userName]).map((p: any) => typeof p === 'string' ? p : p.name || p.email || p.id)}
         currentUser={userName}
         onAdd={(expense) => {
           if (!itinerary) return;
@@ -833,7 +865,7 @@ export default function TripPage({ params }: { params: Promise<{ id: string }> }
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-0 left-0 right-0 sm:sticky sm:bottom-auto sm:top-[400px] lg:top-[500px] z-50 pointer-events-none"
+            className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none"
           >
             <div className="pointer-events-auto">
               <Navigation 

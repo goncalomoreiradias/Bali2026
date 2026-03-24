@@ -76,14 +76,14 @@ export default function AddExpenseSheet({ isOpen, onClose, participants, current
                     {/* Drag Handle Indicator */}
                     <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-canvas/20 rounded-full sm:hidden z-50" />
                     {/* Header */}
-                    <div className="px-8 py-7 pt-10 sm:pt-7 border-b border-stroke flex justify-between items-center bg-accent text-canvas shadow-lg">
-                        <div className="space-y-1">
+                    <div className="px-6 sm:px-8 py-6 sm:py-7 pt-12 sm:pt-7 border-b border-stroke flex justify-between items-start sm:items-center bg-accent text-canvas shadow-lg relative">
+                        <div className="space-y-1 pr-12">
                             <h2 className="text-xl font-black uppercase tracking-tighter font-outfit leading-tight text-canvas flex items-center gap-3">
-                                <Plus size={22} /> {t("exp.new")}
+                                <Plus size={22} className="shrink-0" /> {t("exp.new")}
                             </h2>
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-canvas/70">Otimiza as tuas despesas em grupo</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-canvas/70 leading-relaxed">Otimiza as tuas despesas em grupo</p>
                         </div>
-                        <button onClick={onClose} className="p-3 bg-canvas/10 hover:bg-canvas/20 rounded-full transition-all active:scale-90 border border-canvas/10 shadow-xl">
+                        <button onClick={onClose} className="absolute right-6 top-10 sm:static p-3 bg-canvas/10 hover:bg-canvas/20 rounded-full transition-all active:scale-90 border border-canvas/10 shadow-xl z-20">
                             <X size={20} />
                         </button>
                     </div>
@@ -153,10 +153,12 @@ export default function AddExpenseSheet({ isOpen, onClose, participants, current
                                     <select
                                         value={paidBy}
                                         onChange={(e) => setPaidBy(e.target.value)}
-                                        className="input-surface w-full p-6 text-sm appearance-none"
+                                        className="input-surface w-full p-6 text-sm appearance-none pr-12"
                                     >
-                                        {participants.map(person => (
-                                            <option key={person} value={person} className="bg-surface text-text-high">{person} {person === currentUser ? (t("fin.you") ? "(" + t("fin.you") + ")" : "") : ""}</option>
+                                        {(participants && participants.length > 0 ? participants : [currentUser]).map(person => (
+                                            <option key={person} value={person} className="bg-surface text-text-high">
+                                                {person} {person === currentUser ? (t("fin.you") ? "(" + t("fin.you") + ")" : "") : ""}
+                                            </option>
                                         ))}
                                     </select>
                                     <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-text-medium opacity-50">

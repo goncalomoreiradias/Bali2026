@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus, Save, Trash2, GripVertical, Map as MapIcon, Calendar, Link2, RefreshCw, Loader2 } from "lucide-react";
+import { X, Plus, Save, Trash2, GripVertical, Map as MapIcon, Calendar, Link2, RefreshCw, Loader2, ArrowUp, ArrowDown } from "lucide-react";
 import { DayPlan, Location, BucketListItem } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { calculateDistance, estimateTravelTime, formatDuration, extractCoordsFromUrl, isValidCoord } from "@/lib/maps";
@@ -223,14 +223,28 @@ interface EditItinerarySheetProps {
     allDays: DayPlan[];
     isOpen: boolean;
     onClose: () => void;
-    onSave: (updatedDay: DayPlan) => void;
-    onMoveLocation?: (locId: string, targetDayId: string) => void;
+    onSave: (day: DayPlan) => void;
+    onDeleteDay?: (dayId: string) => void;
+    onMoveDay?: (dayId: string, direction: 'up' | 'down') => void;
+    onMoveLocation?: (locationId: string, targetDayId: string) => void;
     bucketListUrls?: string[];
     bucketListItems?: BucketListItem[];
-    onRefreshBucketList?: () => Promise<void>;
+    onRefreshBucketList?: () => void;
 }
 
-export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSave, onMoveLocation, bucketListUrls, bucketListItems, onRefreshBucketList }: EditItinerarySheetProps) {
+export default function EditItinerarySheet({ 
+    day, 
+    allDays, 
+    isOpen, 
+    onClose, 
+    onSave, 
+    onDeleteDay,
+    onMoveDay,
+    onMoveLocation,
+    bucketListUrls,
+    bucketListItems,
+    onRefreshBucketList
+}: EditItinerarySheetProps) {
     const [editedDay, setEditedDay] = useState<DayPlan>({ ...day });
     const [locations, setLocations] = useState<Location[]>([...day.locations]);
     const [showBucketList, setShowBucketList] = useState(false);
@@ -405,6 +419,39 @@ export default function EditItinerarySheet({ day, allDays, isOpen, onClose, onSa
                             <X size={20} />
                         </button>
                     </div>
+
+                    {/* Day Management Toolbar - Only show if functions are passed */}
+                    {(onDeleteDay || onMoveDay) && (
+                        <div className="px-8 py-4 bg-surface border-b border-stroke flex items-center justify-between">
+                            <div className="flex bg-canvas rounded-xl border border-stroke shadow-sm p-1">
+                                <button 
+                                    onClick={() => onMoveDay && onMoveDay(day.id, 'up')}
+                                    disabled={day.dayNumber === 1}
+                                    className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-text-high hover:text-accent hover:bg-surface rounded-lg disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-text-high transition-all flex items-center gap-2"
+                                >
+                                    <ArrowUp size={14} /> Mover Cima
+                                </button>
+                                <div className="w-px bg-stroke mx-1"></div>
+                                <button 
+                                    onClick={() => onMoveDay && onMoveDay(day.id, 'down')}
+                                    disabled={day.dayNumber === allDays.length}
+                                    className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-text-high hover:text-accent hover:bg-surface rounded-lg disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-text-high transition-all flex items-center gap-2"
+                                >
+                                    Mover Baixo <ArrowDown size={14} />
+                                </button>
+                            </div>
+                            <button 
+                                onClick={() => {
+                                    if (confirm("Tens a certeza que queres eliminar este dia e todos os seus locais?")) {
+                                        onDeleteDay && onDeleteDay(day.id);
+                                    }
+                                }}
+                                className="p-2.5 text-text-medium hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all"
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                        </div>
+                    )}
 
                     {/* Scrollable Content — touch-optimized */}
                     <div className="flex-1 overflow-y-auto p-8 space-y-10" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
