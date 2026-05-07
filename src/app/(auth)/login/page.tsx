@@ -50,7 +50,7 @@ export default function LoginPage() {
         }
     };
     const handleGoogleAuth = () => {
-        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "584142333503-d7tjgcd3fqht0acjndsut2v3rvjkgs9g.apps.googleusercontent.com";
         if (!clientId) {
             setError("Google Login is not configured yet. Missing Client ID.");
             return;
